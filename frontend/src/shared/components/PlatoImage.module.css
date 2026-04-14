@@ -1,0 +1,52 @@
+/* Imagen real */
+.img {
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+/* Placeholder gradiente */
+.placeholder {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Sizes */
+.sm  { width: 48px;  height: 48px;  border-radius: 8px;  }
+.md  { width: 64px;  height: 64px;                       }
+.lg  { width: 96px;  height: 96px;  border-radius: 14px; }
+.xl  { width: 100%;  aspect-ratio: 1; border-radius: 14px; }
+
+/* Patrón sutil sobre el gradiente */
+.placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12) 0%, transparent 60%);
+}
+
+.iconWrap {
+  position: absolute;
+  width: 55%;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.initial {
+  position: relative;
+  font-size: 1.375em;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  line-height: 1;
+}
+
+/* Ajustar initial según size */
+.sm  .initial { font-size: 1rem; }
+.lg  .initial { font-size: 2rem; }

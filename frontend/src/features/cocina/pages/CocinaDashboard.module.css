@@ -1,0 +1,145 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.info {
+  font-size: 0.9375rem;
+  color: #78716c;
+  margin: 0;
+}
+
+.badge {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.3rem 0.75rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+}
+
+/* Grid de comandas */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.card {
+  background: #fff;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pedidoId {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1c1917;
+}
+
+.mesa {
+  font-size: 0.875rem;
+  background: #fff4ee;
+  color: #d4500a;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+.hora {
+  font-size: 0.8125rem;
+  color: #a8a29e;
+  margin-left: auto;
+}
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.items li {
+  font-size: 0.9375rem;
+  color: #44403c;
+  padding: 0.375rem 0.625rem;
+  background: #fafaf8;
+  border-radius: 6px;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.estado {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.btnAccion {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #d4500a, #f26419);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.btnAccion:hover {
+  opacity: 0.88;
+}
+
+/* Card vacía */
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  background: #fafaf8;
+  border: 2px dashed #e7e5e4;
+  border-radius: 14px;
+  color: #a8a29e;
+  font-size: 0.9375rem;
+  text-align: center;
+}
+
+.emptyCard span {
+  font-size: 2rem;
+}
+
+.emptyCard p {
+  margin: 0;
+}

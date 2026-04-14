@@ -1,0 +1,142 @@
+.wrapper { display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* Stats */
+.statsRow { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.statChip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  font-size: 0.875rem;
+}
+
+.statLabel { color: #78716c; }
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.leftTools { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+
+.search {
+  padding: 0.55rem 0.875rem;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #1c1917;
+  background: #fff;
+  outline: none;
+  max-width: 320px;
+  transition: border-color 0.15s;
+}
+
+.search:focus { border-color: #d4500a; }
+
+.filtros { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+
+.filtroChip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1.5px solid #e7e5e4;
+  background: #fff;
+  color: #78716c;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.filtroChip:hover { border-color: #d4500a; color: #d4500a; }
+.filtroActive { background: #d4500a; border-color: #d4500a; color: #fff; }
+
+.btnNuevo {
+  padding: 0.5rem 1.125rem;
+  background: linear-gradient(135deg, #d4500a, #f26419);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.btnNuevo:hover { opacity: 0.88; }
+
+/* Tabla */
+.tableWrap {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+
+.table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: #fafaf8;
+  color: #78716c;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e7e5e4;
+  white-space: nowrap;
+}
+
+.table td { padding: 0.875rem 1rem; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: #fafaf8; }
+.rowInactiva td { opacity: 0.5; }
+
+.userCell { display: flex; align-items: center; gap: 0.5rem; }
+.userAvatar { font-size: 1.125rem; }
+.userName { font-weight: 600; color: #1c1917; }
+.correo { color: #78716c; font-size: 0.8125rem; }
+
+.rolBadge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.625rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.toggleBtn { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 999px; border: none; cursor: pointer; transition: opacity 0.15s; }
+.toggleBtn:hover { opacity: 0.8; }
+.toggleOn { background: #dcfce7; color: #15803d; }
+.toggleOff { background: #f5f5f4; color: #a8a29e; }
+
+.btnEdit { padding: 0.3rem 0.625rem; font-size: 0.8125rem; background: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 6px; color: #44403c; cursor: pointer; transition: border-color 0.15s; white-space: nowrap; }
+.btnEdit:hover { border-color: #d4500a; color: #d4500a; }
+
+.count { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
+
+/* Modal */
+.modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.modal { background: #fff; border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 440px; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+.modalTitle { font-size: 1.125rem; font-weight: 700; color: #1c1917; margin: 0 0 1.25rem; }
+.modalForm { display: flex; flex-direction: column; gap: 0.875rem; margin-bottom: 1.5rem; }
+.modalField { display: flex; flex-direction: column; gap: 0.375rem; }
+.modalField label { font-size: 0.8125rem; font-weight: 500; color: #44403c; }
+.input { padding: 0.65rem 0.875rem; border: 1.5px solid #e7e5e4; border-radius: 8px; font-size: 0.9375rem; color: #1c1917; background: #fafaf8; outline: none; transition: border-color 0.15s; }
+.input:focus { border-color: #d4500a; background: #fff; }
+.checkLabel { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #44403c; cursor: pointer; }
+.rolNote { font-size: 0.75rem; color: #78716c; background: #f5f5f4; border-radius: 6px; padding: 0.5rem 0.625rem; margin: 0.25rem 0 0; border-left: 3px solid #d4500a; }
+.modalActions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+.btnCancel { padding: 0.6rem 1.125rem; background: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: #44403c; cursor: pointer; }
+.btnCancel:hover { background: #e7e5e4; }
+.btnSave { padding: 0.6rem 1.25rem; background: linear-gradient(135deg, #d4500a, #f26419); color: #fff; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+.btnSave:hover { opacity: 0.88; }

@@ -1,0 +1,366 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Sub-header ── */
+.subHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.subHeadText {
+  font-size: 0.875rem;
+  color: #a8a29e;
+  margin: 0;
+}
+
+.clientLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #d4500a;
+  text-decoration: none;
+  padding: 0.375rem 0.875rem;
+  border: 1.5px solid #d4500a;
+  border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+}
+.clientLink:hover {
+  background: #d4500a;
+  color: #fff;
+}
+
+/* ── KPI cards ── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) { .kpiGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .kpiGrid { grid-template-columns: 1fr; } }
+
+.kpiCard {
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 1.125rem;
+  border: 1px solid #e7e5e4;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.kpiCard:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+
+/* Left accent bar via CSS var */
+.kpiCard::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--accent, #d4500a);
+  border-radius: 4px 0 0 4px;
+}
+
+/* Faint glow behind the icon area */
+.kpiCard::after {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--accent, #d4500a);
+  opacity: 0.06;
+}
+
+.kpiIcon {
+  font-size: 1.375rem;
+  margin-bottom: 0.625rem;
+  position: relative;
+  z-index: 1;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.3rem;
+}
+
+.kpiValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0 0 0.3rem;
+  letter-spacing: -1.5px;
+  line-height: 1;
+}
+
+.kpiMeta {
+  font-size: 0.75rem;
+  color: #78716c;
+  margin: 0;
+}
+
+/* ── Area chart card ── */
+.areaCard {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.areaHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.areaTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0 0 0.2rem;
+}
+
+.areaSub {
+  font-size: 0.75rem;
+  color: #a8a29e;
+  margin: 0;
+}
+
+.areaBadge {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #d4500a;
+  background: #fff7f3;
+  border: 1.5px solid #fcd4bc;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  white-space: nowrap;
+}
+
+/* Chart container */
+.svgWrap {
+  position: relative;
+}
+
+/* Y grid */
+.yGrid {
+  position: absolute;
+  inset: 0 0 32px 40px;
+  pointer-events: none;
+}
+
+.yLine {
+  position: absolute;
+  left: 0; right: 0;
+  border-top: 1px dashed #f0ede9;
+  display: flex;
+  align-items: flex-end;
+}
+
+.yLabel {
+  position: absolute;
+  left: -40px;
+  font-size: 0.625rem;
+  color: #d4c8c0;
+  white-space: nowrap;
+  transform: translateY(50%);
+}
+
+.areaSvg {
+  display: block;
+  width: 100%;
+  height: 160px;
+}
+
+/* X axis */
+.xAxis {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 6px 0;
+}
+
+.xItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.xLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #44403c;
+}
+
+.xPedidos {
+  font-size: 0.625rem;
+  color: #a8a29e;
+}
+
+/* ── Bottom grid ── */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 700px) { .bottomGrid { grid-template-columns: 1fr; } }
+
+.card {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0 0 1.25rem;
+}
+
+/* ── Top platos ── */
+.topList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.topItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.topRank {
+  font-size: 1.1rem;
+  width: 26px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.topInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.topNombre {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1c1917;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topCount {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #d4500a;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.topTrack {
+  height: 5px;
+  background: #f5f5f4;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.topFill {
+  height: 100%;
+  background: linear-gradient(to right, #d4500a, #f97316);
+  border-radius: 999px;
+}
+
+/* ── Donut chart ── */
+.donutWrap {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.donutSvg {
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.donutCenter {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #1c1917;
+  font-family: inherit;
+}
+
+.donutSub {
+  font-size: 7.5px;
+  fill: #a8a29e;
+  font-family: inherit;
+}
+
+.donutLegend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  flex: 1;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: 0.8125rem;
+  color: #44403c;
+  flex: 1;
+}
+
+.legendPct {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* ── Note ── */
+.note {
+  font-size: 0.75rem;
+  color: #c4bfba;
+  margin: 0;
+  text-align: center;
+}

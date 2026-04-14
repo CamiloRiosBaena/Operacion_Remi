@@ -1,0 +1,66 @@
+.wrapper { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.kpiRow { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+
+.kpiCard {
+  background: #fff; border: 1px solid #e7e5e4;
+  border-top: 3px solid transparent; border-radius: 10px;
+  padding: 1rem; cursor: pointer; transition: box-shadow 0.15s;
+}
+.kpiCard:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.kpiNum { font-size: 1.75rem; font-weight: 800; margin: 0 0 0.125rem; letter-spacing: -0.5px; color: #1c1917; }
+.kpiLabel { font-size: 0.8125rem; color: #78716c; margin: 0; }
+
+.filtros { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.chip {
+  padding: 0.35rem 0.875rem; border-radius: 999px;
+  border: 1.5px solid #e7e5e4; background: #fff;
+  color: #78716c; font-size: 0.8125rem; font-weight: 500; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.chip:hover { border-color: #d4500a; color: #d4500a; }
+.chipActive { color: #fff !important; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; align-items: start; }
+
+.card {
+  background: #fff; border: 1.5px solid #e7e5e4;
+  border-radius: 14px; padding: 1.125rem;
+  display: flex; flex-direction: column; gap: 0.875rem;
+}
+
+.cardHeader { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.cardId { display: flex; align-items: center; gap: 0.5rem; }
+.pedidoId { font-weight: 700; font-size: 0.9375rem; color: #1c1917; }
+.hora { font-size: 0.8125rem; color: #a8a29e; }
+
+.estadoBadge { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 999px; white-space: nowrap; }
+
+.clienteInfo { display: flex; flex-direction: column; gap: 0.2rem; }
+.clienteNombre { font-size: 0.9375rem; font-weight: 600; color: #1c1917; margin: 0; }
+.clienteTel { font-size: 0.8125rem; color: #78716c; margin: 0; }
+.clienteDir { font-size: 0.8125rem; color: #78716c; margin: 0; }
+
+.items { display: flex; flex-direction: column; gap: 0.2rem; }
+.items li { font-size: 0.8125rem; color: #44403c; padding: 0.25rem 0.5rem; background: #fafaf8; border-radius: 6px; }
+
+.cardFooter { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.total { font-size: 1rem; font-weight: 700; color: #d4500a; }
+
+.asignacion { flex: 1; display: flex; justify-content: flex-end; }
+
+.selectDomiciliario {
+  padding: 0.4rem 0.625rem; border: 1.5px solid #e7e5e4; border-radius: 8px;
+  font-size: 0.8125rem; color: #44403c; background: #fafaf8;
+  outline: none; cursor: pointer; transition: border-color 0.15s;
+  max-width: 160px; width: 100%;
+}
+.selectDomiciliario:focus { border-color: #d4500a; }
+.selectDomiciliario:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.entregadoPor { font-size: 0.8125rem; font-weight: 500; color: #16a34a; }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 3rem; text-align: center; color: #a8a29e; }
+.empty span { font-size: 2.5rem; }
+.empty p { font-size: 0.9375rem; margin: 0; }
