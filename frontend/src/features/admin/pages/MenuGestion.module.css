@@ -272,3 +272,56 @@
 .btnSave:hover { opacity: 0.88; }
 
 .btnDanger { background: linear-gradient(135deg, #b91c1c, #dc2626) !important; }
+
+/* ── Image uploader ── */
+.imgUploadArea {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.imgPreview { flex-shrink: 0; }
+
+.imgActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btnUpload {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.875rem;
+  background: #fff;
+  border: 1.5px dashed #d4500a;
+  border-radius: 8px;
+  color: #d4500a;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btnUpload:hover { background: #fff4ee; }
+
+.btnRemoveImg {
+  font-size: 0.75rem;
+  color: #b91c1c;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+}
+.btnRemoveImg:hover { opacity: 0.75; }
+
+.imgHint {
+  font-size: 0.72rem;
+  color: #a8a29e;
+  margin: 0;
+  line-height: 1.4;
+  max-width: 200px;
+}
+
+.fileInputHidden { display: none; }

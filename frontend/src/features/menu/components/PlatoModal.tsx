@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
 import { PlatoImage } from '@/shared/components/PlatoImage';
-import type { Plato } from '../pages/MenuPage';
+import type { Plato } from '../types/plato.types';
 import styles from './PlatoModal.module.css';
 
 interface Props {
@@ -65,7 +65,6 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
       platoId: plato.id,
       nombre: plato.nombre,
       precio: plato.precio,
-      emoji: plato.emoji,
       categoria: plato.categoria,
       ingredientesRemovidos: removidos.size > 0 ? Array.from(removidos) : undefined,
       extras: extrasActivos.length > 0 ? extrasActivos : undefined,
@@ -98,7 +97,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
         <div className={styles.body}>
           {/* Hero image */}
           <div className={styles.hero}>
-            <PlatoImage nombre={plato.nombre} categoria={plato.categoria} size="xl" className={styles.heroImg} />
+            <PlatoImage nombre={plato.nombre} categoria={plato.categoria} imageUrl={plato.imageUrl} size="xl" className={styles.heroImg} />
             <span className={styles.catBadge}>{plato.categoria}</span>
           </div>
 

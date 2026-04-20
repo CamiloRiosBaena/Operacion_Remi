@@ -13,6 +13,7 @@ import { MesasModule } from './modules/mesas/mesas.module';
 import { Categoria } from './modules/menu/entities/categoria.entity';
 import { Plato } from './modules/menu/entities/plato.entity';
 import { Ingrediente } from './modules/menu/entities/ingrediente.entity';
+import { PlatoIngrediente } from './modules/menu/entities/plato-ingrediente.entity';
 import { Extra } from './modules/menu/entities/extra.entity';
 import { UserStaff } from './modules/auth/entities/user-staff.entity';
 import { Cliente } from './modules/auth/entities/cliente.entity';
@@ -45,7 +46,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
           ? { rejectUnauthorized: false }
           : false,
         entities: [
-          Categoria, Plato, Ingrediente, Extra,
+          Categoria, Plato, Ingrediente, PlatoIngrediente, Extra,
           UserStaff, Cliente, SesionCliente,
           Mesa,
           Pedido, DetallePedido, Pago, HistorialEstado, TokenQr,

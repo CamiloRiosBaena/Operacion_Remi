@@ -1,7 +1,8 @@
 import { type FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedBg } from '../components/AnimatedBg';
+import { RemiLogo } from '@/shared/components/RemiLogo';
 import type { UserRole } from '../types/auth.types';
 import styles from './LoginPage.module.css';
 
@@ -13,21 +14,12 @@ const ROLE_HOME: Record<UserRole, string> = {
 };
 
 const DEMO_ACCOUNTS = [
-  { rol: 'Admin', correo: 'admin@remi.com', contrasena: 'admin123', emoji: '⚙️' },
-  { rol: 'Cocina', correo: 'cocina@remi.com', contrasena: 'cocina123', emoji: '👨‍🍳' },
-  { rol: 'Domiciliario', correo: 'domicilio@remi.com', contrasena: 'domicilio123', emoji: '🛵' },
+  { rol: 'Admin',        correo: 'admin@remi.com',     contrasena: 'admin123',     emoji: '⚙️' },
+  { rol: 'Cocina',       correo: 'cocina@remi.com',     contrasena: 'cocina123',    emoji: '👨‍🍳' },
+  { rol: 'Domiciliario', correo: 'domicilio@remi.com',  contrasena: 'domicilio123', emoji: '🛵' },
+  { rol: 'Cliente',      correo: 'cliente@remi.com',    contrasena: 'cliente123',   emoji: '👤' },
 ];
 
-/* Ícono de plato (SVG) */
-function PlateIcon() {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-      <ellipse cx="16" cy="23" rx="12" ry="3" />
-      <path d="M4 23 Q4 13 16 11 Q28 13 28 23" />
-      <path d="M10 11 Q16 4 22 11" />
-    </svg>
-  );
-}
 
 export function LoginPage() {
   const { login, isLoading, isAuthenticated, user } = useAuth();
@@ -64,10 +56,7 @@ export function LoginPage() {
       <div className={styles.card}>
         {/* Brand */}
         <div className={styles.brand}>
-          <div className={styles.logoWrap}>
-            <PlateIcon />
-          </div>
-          <h1 className={styles.title}>Operación Remi</h1>
+          <RemiLogo size={110} />
           <p className={styles.subtitle}>Sistema de autoservicio para restaurante</p>
         </div>
 
@@ -118,6 +107,12 @@ export function LoginPage() {
             {isLoading ? 'Ingresando…' : 'Ingresar al sistema'}
           </button>
         </form>
+
+        {/* Registro */}
+        <p className={styles.registerRow}>
+          ¿Eres cliente? {' '}
+          <Link to="/registro" className={styles.registerLink}>Crea tu cuenta gratis</Link>
+        </p>
 
         {/* Demo */}
         <div className={styles.demoSection}>

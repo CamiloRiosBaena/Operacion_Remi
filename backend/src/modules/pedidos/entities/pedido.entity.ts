@@ -46,6 +46,18 @@ export class Pedido {
   @CreateDateColumn()
   fechaHora: Date;
 
+  /** Suma de detalles.subtotal (base gravable sin IVA). */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  totalSinIva: number;
+
+  /** Suma de detalles.montoIva. */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  ivaTotal: number;
+
+  /** totalSinIva + ivaTotal — lo que paga el cliente. */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  total: number;
+
   @ManyToOne(() => Cliente, (c) => c.pedidos, { nullable: true })
   @JoinColumn({ name: 'id_cliente' })
   cliente: Cliente | null;

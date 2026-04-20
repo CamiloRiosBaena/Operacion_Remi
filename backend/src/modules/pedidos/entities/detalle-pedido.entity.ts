@@ -14,8 +14,13 @@ export class DetallePedido {
   @Column({ type: 'text', nullable: true })
   personalizacion: string | null;
 
+  /** Precio base sin IVA × cantidad. */
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   subtotal: number;
+
+  /** IVA cobrado en esta línea (subtotal × tasaIva del plato al momento del pedido). */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  montoIva: number;
 
   @ManyToOne(() => Plato, (p) => p.detalles, { nullable: false })
   @JoinColumn({ name: 'id_plato' })

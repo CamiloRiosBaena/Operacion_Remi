@@ -178,10 +178,26 @@
   transform: translateY(50%);
 }
 
+.chartArea {
+  position: relative;
+}
+
 .areaSvg {
   display: block;
   width: 100%;
   height: 160px;
+}
+
+/* Dots posicionados como CSS para que no se distorsionen con el SVG */
+.dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #d4500a;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 4px rgba(212,80,10,0.18);
+  pointer-events: none;
 }
 
 /* X axis */
@@ -300,14 +316,14 @@
 /* ── Donut chart ── */
 .donutWrap {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .donutSvg {
-  width: 140px;
-  height: 140px;
-  flex-shrink: 0;
+  width: min(200px, 75%);
+  height: auto;
 }
 
 .donutCenter {
@@ -327,10 +343,10 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
-  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1.25rem;
+  width: 100%;
 }
 
 .legendItem {

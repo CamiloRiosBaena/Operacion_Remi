@@ -142,34 +142,36 @@ export function EstadisticasPage() {
               ))}
             </div>
 
-            <svg
-              viewBox={`0 0 ${W} ${H}`}
-              preserveAspectRatio="none"
-              className={styles.areaSvg}
-              aria-hidden="true"
-            >
-              <defs>
-                <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#d4500a" stopOpacity="0.35" />
-                  <stop offset="100%" stopColor="#d4500a" stopOpacity="0.02" />
-                </linearGradient>
-              </defs>
-              {/* Area fill */}
-              <path d={area} fill="url(#areaGrad)" />
-              {/* Line */}
-              <path d={line} fill="none" stroke="#d4500a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              {/* Data points */}
+            {/* SVG fills full width; dots are CSS divs to stay circular */}
+            <div className={styles.chartArea}>
+              <svg
+                viewBox={`0 0 ${W} ${H}`}
+                preserveAspectRatio="none"
+                className={styles.areaSvg}
+                aria-hidden="true"
+              >
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stopColor="#d4500a" stopOpacity="0.35" />
+                    <stop offset="100%" stopColor="#d4500a" stopOpacity="0.02" />
+                  </linearGradient>
+                </defs>
+                <path d={area} fill="url(#areaGrad)" />
+                <path d={line} fill="none" stroke="#d4500a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+
               {pts.map((pt, i) => (
-                <g key={i}>
-                  <circle cx={pt.x} cy={pt.y} r="5" fill="#d4500a" />
-                  <circle cx={pt.x} cy={pt.y} r="9" fill="#d4500a" fillOpacity="0.15" />
-                </g>
+                <div
+                  key={i}
+                  className={styles.dot}
+                  style={{ left: `${(pt.x / W) * 100}%`, top: `${(pt.y / H) * 100}%` }}
+                />
               ))}
-            </svg>
+            </div>
 
             {/* X-axis labels */}
             <div className={styles.xAxis}>
-              {VENTAS_SEMANA.map((d, i) => (
+              {VENTAS_SEMANA.map((d) => (
                 <div key={d.dia} className={styles.xItem}>
                   <span className={styles.xLabel}>{d.dia}</span>
                   <span className={styles.xPedidos}>{d.pedidos}p</span>

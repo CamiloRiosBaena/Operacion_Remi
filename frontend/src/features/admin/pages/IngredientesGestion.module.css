@@ -1,67 +1,147 @@
 .wrapper { display: flex; flex-direction: column; gap: 1.25rem; }
 
-/* Alertas */
+/* ── Alertas ────────────────────────────────────────────────────────────── */
 .alert {
   display: flex; align-items: flex-start; gap: 0.75rem;
   padding: 0.875rem 1rem; border-radius: 10px; border: 1px solid transparent;
 }
-.alertIcon { font-size: 1.25rem; flex-shrink: 0; line-height: 1.4; }
+.alertIcon  { font-size: 1.25rem; flex-shrink: 0; line-height: 1.4; }
 .alertTitle { font-size: 0.9rem; font-weight: 700; color: #1c1917; margin: 0 0 0.125rem; }
-.alertText { font-size: 0.8125rem; color: #78716c; margin: 0; }
+.alertText  { font-size: 0.8125rem; color: #78716c; margin: 0; }
 
-/* Toolbar */
-.toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.leftTools { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
-.search { padding: 0.55rem 0.875rem; border: 1.5px solid #e7e5e4; border-radius: 8px; font-size: 0.875rem; color: #1c1917; background: #fff; outline: none; max-width: 280px; transition: border-color 0.15s; }
+/* ── Toolbar ────────────────────────────────────────────────────────────── */
+.toolbar    { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.leftTools  { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.search     { padding: 0.55rem 0.875rem; border: 1.5px solid #e7e5e4; border-radius: 8px; font-size: 0.875rem; color: #1c1917; background: #fff; outline: none; max-width: 280px; transition: border-color 0.15s; }
 .search:focus { border-color: #d4500a; }
-.filtros { display: flex; gap: 0.375rem; flex-wrap: wrap; }
-.chip { padding: 0.35rem 0.75rem; border-radius: 999px; border: 1.5px solid #e7e5e4; background: #fff; color: #78716c; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: border-color 0.15s, background 0.15s, color 0.15s; }
+.filtros    { display: flex; gap: 0.375rem; flex-wrap: wrap; }
+.chip       { padding: 0.35rem 0.75rem; border-radius: 999px; border: 1.5px solid #e7e5e4; background: #fff; color: #78716c; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: border-color 0.15s, background 0.15s, color 0.15s; }
 .chip:hover { border-color: #d4500a; color: #d4500a; }
-.chipActive { color: #fff !important; }
-.btnNuevo { padding: 0.5rem 1.125rem; background: linear-gradient(135deg, #d4500a, #f26419); color: #fff; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+.chipActive { background: #44403c; border-color: #44403c; color: #fff; }
+.btnNuevo   { padding: 0.5rem 1.125rem; background: linear-gradient(135deg, #d4500a, #f26419); color: #fff; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
 .btnNuevo:hover { opacity: 0.88; }
 
-/* Tabla */
-.tableWrap { background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden; overflow-x: auto; }
-.table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-.table th { text-align: left; padding: 0.75rem 1rem; background: #fafaf8; color: #78716c; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e7e5e4; white-space: nowrap; }
-.table td { padding: 0.75rem 1rem; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
+/* ── Tabla ──────────────────────────────────────────────────────────────── */
+.tableWrap  { background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden; overflow-x: auto; }
+.table      { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.table th   { text-align: left; padding: 0.75rem 1rem; background: #fafaf8; color: #78716c; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e7e5e4; white-space: nowrap; }
+.table td   { padding: 0.75rem 1rem; border-bottom: 1px solid #f5f5f4; vertical-align: middle; }
 .table tbody tr:last-child td { border-bottom: none; }
 .table tbody tr:hover { background: #fafaf8; }
 
-.nombre { font-weight: 600; color: #1c1917; }
+/* Celda ingrediente */
+.ingCell      { display: flex; flex-direction: column; gap: 0.2rem; }
+.nombre       { font-weight: 600; color: #1c1917; }
+.eliminableBadge {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #7c3aed; background: #ede9fe; border-radius: 999px; padding: 0.1rem 0.45rem; width: fit-content;
+}
 
+/* Celda compra / stock */
+.stockMeta  { display: flex; flex-direction: column; gap: 0.15rem; }
+.stockNum   { font-size: 1.125rem; font-weight: 700; color: #1c1917; line-height: 1; }
+.stockUnit  { font-size: 0.75rem; color: #78716c; }
+.stockEq    { font-size: 0.75rem; color: #a8a29e; }
+
+/* Gramos disponibles */
+.gramosDisp { font-size: 0.9375rem; font-weight: 600; color: #1c1917; white-space: nowrap; }
+
+/* Porciones */
+.porcionesCell    { display: flex; flex-direction: column; gap: 0.15rem; }
+.porcionesNum     { font-size: 1.25rem; font-weight: 800; line-height: 1; }
+.porcionesSub     { font-size: 0.7rem; color: #78716c; text-transform: uppercase; letter-spacing: 0.04em; }
+.porcionesDetalle { font-size: 0.7rem; color: #a8a29e; white-space: nowrap; }
+
+/* Badge de estado */
 .stockBadge { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 999px; white-space: nowrap; }
 
+/* Tags de platos */
 .platosTags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-.platoTag { font-size: 0.6875rem; font-weight: 500; padding: 0.15rem 0.5rem; background: #f5f5f4; color: #57534e; border-radius: 999px; border: 1px solid #e7e5e4; white-space: nowrap; }
-.noPlatos { font-size: 0.8125rem; color: #a8a29e; }
+.platoTag   {
+  font-size: 0.6875rem; font-weight: 500; padding: 0.15rem 0.5rem 0.15rem 0.45rem;
+  background: #f5f5f4; color: #57534e; border-radius: 999px; border: 1px solid #e7e5e4;
+  white-space: nowrap; display: flex; align-items: center; gap: 0.3rem;
+  cursor: default;
+}
+.gramosTag  { font-size: 0.6rem; color: #a8a29e; background: #e7e5e4; border-radius: 999px; padding: 0.05rem 0.35rem; }
+.noPlatos   { font-size: 0.8125rem; color: #a8a29e; }
 
-.stockControls { display: flex; gap: 0.25rem; flex-wrap: wrap; }
-.stockBtn { padding: 0.25rem 0.5rem; border-radius: 6px; border: 1.5px solid #e7e5e4; background: #fff; font-size: 0.7rem; font-weight: 500; color: #78716c; cursor: pointer; transition: border-color 0.15s, background 0.15s, color 0.15s; white-space: nowrap; }
-.stockBtn:hover { border-color: #d4500a; }
-.stockBtnActive { font-weight: 700 !important; }
+.count   { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
+.btnEdit { padding: 0.3rem 0.625rem; border: 1px solid #e7e5e4; border-radius: 6px; background: transparent; cursor: pointer; font-size: 0.8rem; font-weight: 500; color: #57534e; transition: border-color 0.15s, background 0.15s; white-space: nowrap; }
+.btnEdit:hover { border-color: #d4500a; background: #fff4ee; color: #d4500a; }
 
-.btnEdit { padding: 0.3rem 0.5rem; border: 1px solid #e7e5e4; border-radius: 6px; background: transparent; cursor: pointer; font-size: 0.875rem; transition: border-color 0.15s, background 0.15s; }
-.btnEdit:hover { border-color: #d4500a; background: #fff4ee; }
-
-.count { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
-
-/* Modal */
+/* ── Modal ──────────────────────────────────────────────────────────────── */
 .modalOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.modal { background: #fff; border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 480px; max-height: 85dvh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
-.modalTitle { font-size: 1.125rem; font-weight: 700; color: #1c1917; margin: 0 0 1.25rem; }
-.modalForm { display: flex; flex-direction: column; gap: 0.875rem; margin-bottom: 1.5rem; }
-.modalField { display: flex; flex-direction: column; gap: 0.375rem; }
+.modal        { background: #fff; border-radius: 16px; padding: 1.75rem; width: 100%; max-width: 560px; max-height: 88dvh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+.modalTitle   { font-size: 1.125rem; font-weight: 700; color: #1c1917; margin: 0 0 1.25rem; }
+.modalForm    { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+.modalField   { display: flex; flex-direction: column; gap: 0.375rem; }
 .modalField label { font-size: 0.8125rem; font-weight: 500; color: #44403c; }
-.input { padding: 0.65rem 0.875rem; border: 1.5px solid #e7e5e4; border-radius: 8px; font-size: 0.9375rem; color: #1c1917; background: #fafaf8; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
-.input:focus { border-color: #d4500a; background: #fff; }
+.fieldHint    { font-size: 0.78rem; color: #a8a29e; margin: 0 0 0.375rem; }
 
-.platosCheckGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem; max-height: 200px; overflow-y: auto; padding: 0.75rem; background: #fafaf8; border: 1.5px solid #e7e5e4; border-radius: 8px; }
-.checkLabel { display: flex; align-items: center; gap: 0.375rem; font-size: 0.8125rem; color: #44403c; cursor: pointer; }
+/* Fila de 2 columnas */
+.modalRow     { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
 
+.input        { padding: 0.65rem 0.875rem; border: 1.5px solid #e7e5e4; border-radius: 8px; font-size: 0.9375rem; color: #1c1917; background: #fafaf8; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
+.input:focus  { border-color: #d4500a; background: #fff; }
+
+.inputSuffix  { display: flex; align-items: center; gap: 0.5rem; }
+.inputSuffix .input { flex: 1; }
+.suffix       { font-size: 0.8rem; color: #78716c; white-space: nowrap; }
+
+.checkLabel   { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: #44403c; cursor: pointer; }
+
+/* ── Conversor ──────────────────────────────────────────────────────────── */
+.conversor {
+  background: linear-gradient(135deg, #fff7ed, #fff4ee);
+  border: 1.5px solid #fed7aa;
+  border-radius: 12px;
+  padding: 1rem 1.125rem;
+  display: flex; flex-direction: column; gap: 0.625rem;
+}
+.conversorTitle    { font-size: 0.875rem; font-weight: 700; color: #9a3412; margin: 0; }
+.conversorSubtitle { font-size: 0.78rem; font-weight: 600; color: #c2410c; margin: 0 0 0.25rem; }
+
+.conversorFormula  { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.375rem; }
+.conversorVal      { font-size: 1.125rem; font-weight: 800; color: #1c1917; }
+.conversorTotal    { color: #d4500a; }
+.conversorOp       { font-size: 0.875rem; color: #78716c; }
+
+.conversorResultados { display: flex; flex-direction: column; gap: 0.3rem; }
+.conversorRow        { display: flex; align-items: center; gap: 0.5rem; }
+.conversorPlato      { font-size: 0.8125rem; font-weight: 600; color: #1c1917; min-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conversorDots       { flex: 1; border-bottom: 1.5px dotted #d6d3d1; min-width: 16px; }
+.conversorPorciones  { font-size: 0.8125rem; font-weight: 700; color: #d4500a; white-space: nowrap; }
+.conversorGramos     { font-size: 0.75rem; color: #a8a29e; white-space: nowrap; }
+
+/* ── Platos + gramos ────────────────────────────────────────────────────── */
+.platosGramosGrid {
+  display: flex; flex-direction: column; gap: 0.375rem;
+  max-height: 260px; overflow-y: auto;
+  padding: 0.75rem; background: #fafaf8;
+  border: 1.5px solid #e7e5e4; border-radius: 8px;
+}
+
+.platoGramoRow {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 0.625rem; border-radius: 7px; border: 1.5px solid transparent;
+  transition: border-color 0.15s, background 0.15s;
+  gap: 0.75rem;
+}
+.platoGramoRowActive {
+  background: #fff4ee; border-color: #fed7aa;
+}
+.platoGramoCheck  { display: flex; align-items: center; gap: 0.45rem; font-size: 0.875rem; color: #44403c; cursor: pointer; flex: 1; min-width: 0; }
+.platoGramoNombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.gramoField  { display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0; }
+.gramoInput  { width: 72px; padding: 0.35rem 0.5rem; border: 1.5px solid #e7e5e4; border-radius: 6px; font-size: 0.875rem; color: #1c1917; background: #fff; outline: none; text-align: right; }
+.gramoInput:focus { border-color: #d4500a; }
+.gramoSuffix { font-size: 0.75rem; color: #78716c; white-space: nowrap; }
+
+/* ── Acciones del modal ─────────────────────────────────────────────────── */
 .modalActions { display: flex; justify-content: flex-end; gap: 0.5rem; }
-.btnCancel { padding: 0.6rem 1.125rem; background: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: #44403c; cursor: pointer; }
+.btnCancel    { padding: 0.6rem 1.125rem; background: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 8px; font-size: 0.875rem; font-weight: 500; color: #44403c; cursor: pointer; }
 .btnCancel:hover { background: #e7e5e4; }
-.btnSave { padding: 0.6rem 1.25rem; background: linear-gradient(135deg, #d4500a, #f26419); color: #fff; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+.btnSave      { padding: 0.6rem 1.25rem; background: linear-gradient(135deg, #d4500a, #f26419); color: #fff; border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
 .btnSave:hover { opacity: 0.88; }

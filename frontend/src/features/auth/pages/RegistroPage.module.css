@@ -6,6 +6,28 @@
   padding: 1.5rem;
   position: relative;
   isolation: isolate;
+
+  /* Mismo ambiente oscuro que LoginPage */
+  background:
+    radial-gradient(ellipse 80% 55% at 50%  -5%, rgba(190,58,8,0.35)  0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 90% 105%, rgba(120,38,0,0.25)  0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at  5%  90%, rgba(30,12,2,0.55)   0%, transparent 55%),
+    #0e0704;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 45% at 50% -2%, rgba(212,80,10,0.2) 0%, transparent 70%);
+  animation: ambientPulse 7s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 1;   }
 }
 
 .card {

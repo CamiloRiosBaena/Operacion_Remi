@@ -20,7 +20,7 @@
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 .chip:hover { border-color: #d4500a; color: #d4500a; }
-.chipActive { color: #fff !important; }
+.chipActive { background: #44403c; border-color: #44403c; color: #fff; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; align-items: start; }
 

@@ -1,36 +1,38 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { PlatoImage } from '@/shared/components/PlatoImage';
+import { usePlatos } from '@/features/menu/context/PlatosContext';
+import type { Plato } from '@/features/menu/types/plato.types';
 import styles from './MenuGestion.module.css';
 
 const CATEGORIAS = ['Entradas', 'Platos fuertes', 'Bebidas', 'Postres'];
 
-const PLATOS_INIT = [
-  { id: 1, nombre: 'Bandeja Paisa', categoria: 'Platos fuertes', precio: 28000, disponible: true, emoji: '🫘' },
-  { id: 2, nombre: 'Ajiaco Bogotano', categoria: 'Platos fuertes', precio: 22000, disponible: true, emoji: '🍲' },
-  { id: 3, nombre: 'Empanadas (x3)', categoria: 'Entradas', precio: 9000, disponible: true, emoji: '🥟' },
-  { id: 4, nombre: 'Jugo de Lulo', categoria: 'Bebidas', precio: 5000, disponible: true, emoji: '🥤' },
-  { id: 5, nombre: 'Sancocho de Gallina', categoria: 'Platos fuertes', precio: 25000, disponible: false, emoji: '🍗' },
-  { id: 6, nombre: 'Patacones con Hogao', categoria: 'Entradas', precio: 8000, disponible: true, emoji: '🍌' },
-  { id: 7, nombre: 'Agua Panela con Limón', categoria: 'Bebidas', precio: 3500, disponible: true, emoji: '🍋' },
-  { id: 8, nombre: 'Arroz con Leche', categoria: 'Postres', precio: 6000, disponible: true, emoji: '🍚' },
-];
+interface FormState {
+  nombre: string;
+  categoria: string;
+  precio: string;
+  disponible: boolean;
+  imageUrl?: string;      // base64 persistida
+  imagePreview?: string;  // misma base64, usada para preview
+}
 
-type Plato = typeof PLATOS_INIT[0];
 type Modal = { mode: 'crear' } | { mode: 'editar'; plato: Plato } | null;
 
-const EMPTY_FORM = { nombre: '', categoria: 'Entradas', precio: '', disponible: true, emoji: '🍽️' };
+const EMPTY_FORM: FormState = {
+  nombre: '', categoria: 'Entradas', precio: '', disponible: true,
+};
 
 function formatPrecio(n: number) {
   return `$${n.toLocaleString('es-CO')}`;
 }
 
 export function MenuGestion() {
-  const [platos, setPlatos] = useState(PLATOS_INIT);
-  const [filtro, setFiltro] = useState('Todos');
-  const [modal, setModal] = useState<Modal>(null);
-  const [form, setForm] = useState(EMPTY_FORM);
+  const { platos, upsertPlato, deletePlato, toggleDisponible } = usePlatos();
+  const [filtro, setFiltro]     = useState('Todos');
+  const [modal, setModal]       = useState<Modal>(null);
+  const [form, setForm]         = useState<FormState>(EMPTY_FORM);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const fileInputRef            = useRef<HTMLInputElement>(null);
 
   const platosFiltrados =
     filtro === 'Todos' ? platos : platos.filter((p) => p.categoria === filtro);
@@ -41,38 +43,73 @@ export function MenuGestion() {
   }
 
   function openEditar(plato: Plato) {
-    setForm({ ...plato, precio: String(plato.precio) });
+    setForm({
+      nombre: plato.nombre,
+      categoria: plato.categoria,
+      precio: String(plato.precio),
+      disponible: plato.disponible,
+      imageUrl: plato.imageUrl,
+      imagePreview: plato.imageUrl,
+    });
     setModal({ mode: 'editar', plato });
   }
 
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Convertir a base64 para que persista en el estado del componente.
+    // TODO: cuando haya backend de uploads, hacer POST aquí y guardar la URL real.
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setForm((prev) => ({ ...prev, imagePreview: base64, imageUrl: base64 }));
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage() {
+    setForm((prev) => ({ ...prev, imagePreview: undefined, imageUrl: undefined }));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  }
+
   function handleGuardar() {
-    const precio = parseInt(form.precio as string);
+    const precio = parseInt(form.precio);
     if (!form.nombre.trim() || isNaN(precio)) return;
 
-    if (modal?.mode === 'crear') {
-      setPlatos((prev) => [
-        ...prev,
-        { id: Date.now(), nombre: form.nombre, categoria: form.categoria, precio, disponible: form.disponible, emoji: form.emoji },
-      ]);
-    } else if (modal?.mode === 'editar') {
-      setPlatos((prev) =>
-        prev.map((p) =>
-          p.id === modal.plato.id
-            ? { ...p, nombre: form.nombre, categoria: form.categoria, precio, disponible: form.disponible, emoji: form.emoji }
-            : p,
-        ),
-      );
+    if (modal?.mode === 'editar') {
+      // Preservar descripcion, ingredientes y extras del plato existente
+      const existing = platos.find((p) => p.id === modal.plato.id);
+      upsertPlato({
+        ...(existing!),
+        nombre: form.nombre,
+        categoria: form.categoria,
+        precio,
+        disponible: form.disponible,
+        imageUrl: form.imageUrl,
+      });
+    } else {
+      upsertPlato({
+        id: Date.now(),
+        nombre: form.nombre,
+        categoria: form.categoria,
+        precio,
+        disponible: form.disponible,
+        imageUrl: form.imageUrl,
+        descripcion: '',
+        ingredientes: [],
+        extras: [],
+      });
     }
     setModal(null);
   }
 
   function handleToggleDisponible(id: number) {
-    setPlatos((prev) => prev.map((p) => (p.id === id ? { ...p, disponible: !p.disponible } : p)));
+    toggleDisponible(id);
   }
 
   function confirmDelete() {
     if (deleteId !== null) {
-      setPlatos((prev) => prev.filter((p) => p.id !== deleteId));
+      deletePlato(deleteId);
       setDeleteId(null);
     }
   }
@@ -93,9 +130,7 @@ export function MenuGestion() {
               </button>
             ))}
           </div>
-          <button className={styles.btnNuevo} onClick={openCrear}>
-            + Nuevo plato
-          </button>
+          <button className={styles.btnNuevo} onClick={openCrear}>+ Nuevo plato</button>
         </div>
 
         {/* Tabla */}
@@ -115,13 +150,16 @@ export function MenuGestion() {
                 <tr key={plato.id} className={!plato.disponible ? styles.rowInactiva : ''}>
                   <td>
                     <div className={styles.platoCell}>
-                      <PlatoImage nombre={plato.nombre} categoria={plato.categoria} size="sm" />
+                      <PlatoImage
+                        nombre={plato.nombre}
+                        categoria={plato.categoria}
+                        imageUrl={plato.imageUrl}
+                        size="sm"
+                      />
                       <span className={styles.platoNombre}>{plato.nombre}</span>
                     </div>
                   </td>
-                  <td>
-                    <span className={styles.catBadge}>{plato.categoria}</span>
-                  </td>
+                  <td><span className={styles.catBadge}>{plato.categoria}</span></td>
                   <td className={styles.precio}>{formatPrecio(plato.precio)}</td>
                   <td>
                     <button
@@ -133,12 +171,8 @@ export function MenuGestion() {
                   </td>
                   <td>
                     <div className={styles.actions}>
-                      <button className={styles.btnEdit} onClick={() => openEditar(plato)}>
-                        ✏️ Editar
-                      </button>
-                      <button className={styles.btnDelete} onClick={() => setDeleteId(plato.id)}>
-                        🗑
-                      </button>
+                      <button className={styles.btnEdit} onClick={() => openEditar(plato)}>✏️ Editar</button>
+                      <button className={styles.btnDelete} onClick={() => setDeleteId(plato.id)}>🗑</button>
                     </div>
                   </td>
                 </tr>
@@ -159,16 +193,59 @@ export function MenuGestion() {
             </h3>
 
             <div className={styles.modalForm}>
+
+              {/* ── Imagen del plato ── */}
               <div className={styles.modalField}>
-                <label>Emoji</label>
+                <label>Imagen del plato</label>
+                <div className={styles.imgUploadArea}>
+                  {/* Preview */}
+                  <div className={styles.imgPreview}>
+                    <PlatoImage
+                      nombre={form.nombre || 'Plato'}
+                      categoria={form.categoria}
+                      imageUrl={form.imagePreview}
+                      size="lg"
+                    />
+                  </div>
+
+                  <div className={styles.imgActions}>
+                    <button
+                      type="button"
+                      className={styles.btnUpload}
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                      {form.imagePreview ? 'Cambiar foto' : 'Subir foto'}
+                    </button>
+
+                    {form.imagePreview && (
+                      <button type="button" className={styles.btnRemoveImg} onClick={removeImage}>
+                        Quitar imagen
+                      </button>
+                    )}
+
+                    <p className={styles.imgHint}>
+                      {form.imagePreview
+                        ? 'Si no subes imagen, se mostrará el gradiente de categoría.'
+                        : 'JPG o PNG · máx. 2 MB · recomendado 1:1'}
+                    </p>
+                  </div>
+                </div>
+
                 <input
-                  type="text"
-                  className={styles.input}
-                  value={form.emoji}
-                  onChange={(e) => setForm({ ...form, emoji: e.target.value })}
-                  maxLength={4}
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className={styles.fileInputHidden}
+                  onChange={handleImageChange}
                 />
               </div>
+
+              {/* Nombre */}
               <div className={styles.modalField}>
                 <label>Nombre del plato</label>
                 <input
@@ -179,6 +256,8 @@ export function MenuGestion() {
                   placeholder="Ej: Bandeja Paisa"
                 />
               </div>
+
+              {/* Categoría + Precio */}
               <div className={styles.modalRow}>
                 <div className={styles.modalField}>
                   <label>Categoría</label>
@@ -201,6 +280,8 @@ export function MenuGestion() {
                   />
                 </div>
               </div>
+
+              {/* Disponible */}
               <label className={styles.checkLabel}>
                 <input
                   type="checkbox"
@@ -221,7 +302,7 @@ export function MenuGestion() {
         </div>
       )}
 
-      {/* ── Modal confirmar eliminación ── */}
+      {/* ── Modal eliminar ── */}
       {deleteId !== null && (
         <div className={styles.modalOverlay} onClick={() => setDeleteId(null)}>
           <div className={`${styles.modal} ${styles.modalSmall}`} onClick={(e) => e.stopPropagation()}>

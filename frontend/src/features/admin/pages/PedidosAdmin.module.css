@@ -38,7 +38,7 @@
 }
 
 .filtroChip:hover { border-color: #d4500a; color: #d4500a; }
-.filtroActive { color: #fff !important; }
+.filtroActive { background: #44403c; border-color: #44403c; color: #fff; }
 
 /* Tabla */
 .tableWrap { background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; overflow: hidden; overflow-x: auto; }

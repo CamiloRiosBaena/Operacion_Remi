@@ -9,7 +9,7 @@ export interface CartItem {
   nombre: string;
   precio: number;
   cantidad: number;
-  emoji: string;
+  emoji?: string;
   categoria: string;
   // Personalizaciones
   ingredientesRemovidos?: string[];

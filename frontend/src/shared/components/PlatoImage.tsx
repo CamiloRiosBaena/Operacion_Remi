@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './PlatoImage.module.css';
 
 /** Gradientes por categoría */
@@ -67,6 +67,12 @@ interface Props {
 export function PlatoImage({ imageUrl, nombre, categoria, className = '', size = 'md' }: Props) {
   const [imgError, setImgError] = useState(false);
   const cat = CAT_STYLE[categoria] ?? FALLBACK;
+
+  // Cuando cambia imageUrl (ej: se sube una nueva foto), resetear el error
+  // para que la imagen tenga otra oportunidad de cargarse.
+  useEffect(() => {
+    setImgError(false);
+  }, [imageUrl]);
 
   if (imageUrl && !imgError) {
     return (

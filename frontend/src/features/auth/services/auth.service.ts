@@ -2,9 +2,10 @@ import type { LoginCredentials, User } from '../types/auth.types';
 
 // ── Usuarios base del sistema (staff) ───────────────────────────────────────
 const MOCK_USERS: (User & { contrasena: string })[] = [
-  { id: '1', nombre: 'Admin Remi', correo: 'admin@remi.com', rol: 'admin', contrasena: 'admin123' },
-  { id: '2', nombre: 'Chef Carlos', correo: 'cocina@remi.com', rol: 'cocinero', contrasena: 'cocina123' },
+  { id: '1', nombre: 'Admin Remi',      correo: 'admin@remi.com',     rol: 'admin',        contrasena: 'admin123'     },
+  { id: '2', nombre: 'Chef Carlos',     correo: 'cocina@remi.com',    rol: 'cocinero',     contrasena: 'cocina123'    },
   { id: '3', nombre: 'Repartidor Juan', correo: 'domicilio@remi.com', rol: 'domiciliario', contrasena: 'domicilio123' },
+  { id: '4', nombre: 'Cliente Demo',    correo: 'cliente@remi.com',   rol: 'cliente',      contrasena: 'cliente123'   },
 ];
 
 // Clientes registrados en sesión (se pierde al recargar — OK para demo)

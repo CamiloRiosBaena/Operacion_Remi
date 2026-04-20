@@ -7,6 +7,40 @@
   padding: 1.5rem;
   position: relative;
   isolation: isolate;
+
+  /* Fondo oscuro tipo restaurante de noche */
+  background:
+    radial-gradient(ellipse 80% 55% at 50%  -5%, rgba(190,58,8,0.38)  0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 90% 105%, rgba(120,38,0,0.28)  0%, transparent 60%),
+    radial-gradient(ellipse 40% 35% at  5%  90%, rgba(30,12,2,0.6)    0%, transparent 55%),
+    #0e0704;
+}
+
+/* Glow naranja animado — vela sobre el formulario */
+.page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 45% at 50% -2%, rgba(212,80,10,0.22) 0%, transparent 70%);
+  animation: ambientPulse 6s ease-in-out infinite;
+}
+
+/* Segundo glow ámbar suave en la esquina inferior */
+.page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 50% 40% at 88% 98%, rgba(251,146,60,0.12) 0%, transparent 60%);
+  animation: ambientPulse 8s ease-in-out infinite reverse;
+}
+
+@keyframes ambientPulse {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 1;   }
 }
 
 /* ── Card glassmorphism ── */
@@ -46,34 +80,11 @@
 
 /* ── Brand ── */
 .brand {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.logoWrap {
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, #d4500a, #f26419);
-  border-radius: 18px;
-  margin-bottom: 1rem;
-  box-shadow: 0 8px 24px rgba(212, 80, 10, 0.35);
-}
-
-.logoWrap svg {
-  width: 32px;
-  height: 32px;
-  color: #fff;
-}
-
-.title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #0c0a09;
-  margin: 0 0 0.25rem;
-  letter-spacing: -0.5px;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .subtitle {
@@ -234,3 +245,19 @@
 }
 
 .demoChip:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Registro ── */
+.registerRow {
+  text-align: center;
+  font-size: 0.875rem;
+  color: #78716c;
+  margin: 1.25rem 0 0;
+}
+
+.registerLink {
+  color: #d4500a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.registerLink:hover { opacity: 0.75; text-decoration: underline; }

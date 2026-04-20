@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Categoria } from './categoria.entity';
-import { Ingrediente } from './ingrediente.entity';
+import { PlatoIngrediente } from './plato-ingrediente.entity';
 import { Extra } from './extra.entity';
 import { DetallePedido } from '../../pedidos/entities/detalle-pedido.entity';
 
@@ -31,12 +31,16 @@ export class Plato {
   @Column({ default: true })
   disponible: boolean;
 
+  /** Tasa de IVA aplicable. 0.19 = 19 %, 0 = exento. */
+  @Column({ type: 'decimal', precision: 5, scale: 4, default: 0.19 })
+  tasaIva: number;
+
   @ManyToOne(() => Categoria, (c) => c.platos, { nullable: false })
   @JoinColumn({ name: 'id_categoria' })
   categoria: Categoria;
 
-  @OneToMany(() => Ingrediente, (i) => i.plato, { cascade: true })
-  ingredientes: Ingrediente[];
+  @OneToMany(() => PlatoIngrediente, (pi) => pi.plato, { cascade: true })
+  platoIngredientes: PlatoIngrediente[];
 
   @OneToMany(() => Extra, (e) => e.plato, { cascade: true })
   extras: Extra[];

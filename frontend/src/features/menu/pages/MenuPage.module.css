@@ -1,8 +1,28 @@
 .page {
   min-height: 100dvh;
-  background: #f5f3ef;
   display: flex;
   flex-direction: column;
+  position: relative;
+
+  background:
+    radial-gradient(rgba(160,90,20,0.08) 1.2px, transparent 1.2px),
+    linear-gradient(
+      120deg,
+      #ece6dc 0%,
+      #f4e9d4 20%,
+      #faeee0 40%,
+      #ede0c8 60%,
+      #f5e8d0 80%,
+      #ece6dc 100%
+    );
+  background-size: 22px 22px, 300% 300%;
+  animation: warmBreath 16s ease-in-out infinite;
+}
+
+@keyframes warmBreath {
+  0%   { background-position: 0% 0%,   0% 50%; }
+  50%  { background-position: 0% 0%, 100% 50%; }
+  100% { background-position: 0% 0%,   0% 50%; }
 }
 
 /* ── Header ── */
@@ -19,8 +39,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  padding: 0.875rem 1rem 0;
-  max-width: 900px;
+  padding: 0.875rem 1.5rem 0;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
 }
@@ -32,7 +52,7 @@
   flex-shrink: 0;
 }
 
-.logo { font-size: 1.625rem; line-height: 1; }
+.logo { display: flex; align-items: center; flex-shrink: 0; }
 
 .restaurantName {
   font-size: 1.0625rem;
@@ -159,9 +179,9 @@
 .catScroll {
   display: flex;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.5rem;
   overflow-x: auto;
-  max-width: 900px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
   scrollbar-width: none;
@@ -191,10 +211,12 @@
 /* ── Main content ── */
 .main {
   flex: 1;
-  max-width: 900px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
-  padding: 1rem;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .seccionLabel {
@@ -213,8 +235,10 @@
   gap: 0.875rem;
 }
 
-@media (min-width: 560px) { .gallery { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 780px) { .gallery { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 500px)  { .gallery { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 720px)  { .gallery { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 960px)  { .gallery { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1200px) { .gallery { grid-template-columns: repeat(6, 1fr); gap: 1rem; } }
 
 /* ── Card ── */
 .card {
