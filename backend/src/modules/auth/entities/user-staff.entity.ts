@@ -17,11 +17,11 @@ export class UserStaff {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ length: 36, unique: true })
+  supabase_uid: string;
+
   @Column({ length: 100 })
   nombre: string;
-
-  @Column({ length: 255 })
-  contrasena: string; // almacenar hash bcrypt, nunca texto plano
 
   @Column({ length: 100, unique: true })
   correo: string;

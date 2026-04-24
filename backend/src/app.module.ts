@@ -45,6 +45,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
         ssl: cfg.get<string>('DB_SSL') === 'true'
           ? { rejectUnauthorized: false }
           : false,
+        extra: { family: 4 },
         entities: [
           Categoria, Plato, Ingrediente, PlatoIngrediente, Extra,
           UserStaff, Cliente, SesionCliente,

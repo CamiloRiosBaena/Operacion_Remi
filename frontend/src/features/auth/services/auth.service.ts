@@ -1,15 +1,6 @@
-import type { LoginCredentials, User } from '../types/auth.types';
-
-// ── Usuarios base del sistema (staff) ───────────────────────────────────────
-const MOCK_USERS: (User & { contrasena: string })[] = [
-  { id: '1', nombre: 'Admin Remi',      correo: 'admin@remi.com',     rol: 'admin',        contrasena: 'admin123'     },
-  { id: '2', nombre: 'Chef Carlos',     correo: 'cocina@remi.com',    rol: 'cocinero',     contrasena: 'cocina123'    },
-  { id: '3', nombre: 'Repartidor Juan', correo: 'domicilio@remi.com', rol: 'domiciliario', contrasena: 'domicilio123' },
-  { id: '4', nombre: 'Cliente Demo',    correo: 'cliente@remi.com',   rol: 'cliente',      contrasena: 'cliente123'   },
-];
-
-// Clientes registrados en sesión (se pierde al recargar — OK para demo)
-const clientesRegistrados: (User & { contrasena: string })[] = [];
+import { supabase } from '@/shared/lib/supabase';
+import { apiFetch } from '@/shared/lib/api';
+import type { LoginCredentials, User, UserRole } from '../types/auth.types';
 
 export interface AuthResponse {
   user: User;
@@ -22,42 +13,39 @@ export interface RegistroData {
   contrasena: string;
 }
 
-// ── Login ────────────────────────────────────────────────────────────────────
-export async function loginService(credentials: LoginCredentials): Promise<AuthResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 700));
-
-  const todos = [...MOCK_USERS, ...clientesRegistrados];
-  const found = todos.find(
-    (u) => u.correo === credentials.correo && u.contrasena === credentials.contrasena,
-  );
-
-  if (!found) throw new Error('Correo o contraseña incorrectos');
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { contrasena: _removed, ...user } = found;
-  return { user, token: `mock-jwt-${user.id}-${Date.now()}` };
+function sbUserToUser(sbUser: {
+  id: string;
+  email?: string;
+  user_metadata?: Record<string, unknown>;
+}): User {
+  return {
+    id: sbUser.id,
+    nombre: (sbUser.user_metadata?.nombre as string) ?? sbUser.email ?? '',
+    correo: sbUser.email ?? '',
+    rol: (sbUser.user_metadata?.rol as UserRole) ?? 'cliente',
+  };
 }
 
-// ── Registro de cliente ──────────────────────────────────────────────────────
+export async function loginService(credentials: LoginCredentials): Promise<AuthResponse> {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: credentials.correo,
+    password: credentials.contrasena,
+  });
+
+  if (error) throw new Error(error.message);
+  if (!data.user || !data.session) throw new Error('Error al iniciar sesión');
+
+  return { user: sbUserToUser(data.user), token: data.session.access_token };
+}
+
 export async function registroService(data: RegistroData): Promise<AuthResponse> {
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  // El backend crea el usuario en Supabase con email_confirm:true (sin enviar correo)
+  // y luego lo sincroniza en nuestra DB en un solo paso.
+  await apiFetch('/auth/registro', {
+    method: 'POST',
+    body: { nombre: data.nombre, correo: data.correo, contrasena: data.contrasena },
+  });
 
-  const todos = [...MOCK_USERS, ...clientesRegistrados];
-  if (todos.find((u) => u.correo === data.correo)) {
-    throw new Error('Ya existe una cuenta con ese correo');
-  }
-
-  const newUser: User & { contrasena: string } = {
-    id: `c-${Date.now()}`,
-    nombre: data.nombre,
-    correo: data.correo,
-    rol: 'cliente',
-    contrasena: data.contrasena,
-  };
-
-  clientesRegistrados.push(newUser);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { contrasena: _removed, ...user } = newUser;
-  return { user, token: `mock-jwt-${user.id}` };
+  // Con la cuenta creada, iniciamos sesión para obtener el token
+  return loginService({ correo: data.correo, contrasena: data.contrasena });
 }

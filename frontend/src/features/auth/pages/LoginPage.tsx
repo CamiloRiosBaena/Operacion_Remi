@@ -13,11 +13,12 @@ const ROLE_HOME: Record<UserRole, string> = {
   cliente: '/menu',
 };
 
+// Cuentas demo — deben existir en la BD (créalas desde Swagger /api/auth/staff)
 const DEMO_ACCOUNTS = [
-  { rol: 'Admin',        correo: 'admin@remi.com',     contrasena: 'admin123',     emoji: '⚙️' },
-  { rol: 'Cocina',       correo: 'cocina@remi.com',     contrasena: 'cocina123',    emoji: '👨‍🍳' },
-  { rol: 'Domiciliario', correo: 'domicilio@remi.com',  contrasena: 'domicilio123', emoji: '🛵' },
-  { rol: 'Cliente',      correo: 'cliente@remi.com',    contrasena: 'cliente123',   emoji: '👤' },
+  { rol: 'Admin',        correo: 'carlos@remi.co',      contrasena: 'admin123',     emoji: '⚙️' },
+  { rol: 'Cocina',       correo: 'cocina@remi.co',       contrasena: 'cocina123',    emoji: '👨‍🍳' },
+  { rol: 'Domiciliario', correo: 'domicilio@remi.co',    contrasena: 'domicilio123', emoji: '🛵' },
+  { rol: 'Cliente',      correo: 'cliente@remi.co',      contrasena: 'cliente123',   emoji: '👤' },
 ];
 
 

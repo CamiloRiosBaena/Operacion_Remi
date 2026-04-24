@@ -25,7 +25,7 @@ export class Plato {
   @Column({ type: 'varchar', length: 500, nullable: true })
   descripcion: string | null;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'text', nullable: true })
   imagenUrl: string | null;
 
   @Column({ default: true })

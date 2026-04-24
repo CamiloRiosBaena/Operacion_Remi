@@ -281,3 +281,174 @@
   color: #a8a29e;
   margin: 0;
 }
+
+.btnPagar:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ── Checkout ── */
+.btnBack {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #78716c;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  transition: color 0.15s;
+}
+.btnBack:hover { color: #1c1917; }
+
+.checkoutForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0;
+}
+
+.checkoutField { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.checkoutLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #292524;
+}
+
+.checkoutHint { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
+
+.checkoutInput {
+  padding: 0.75rem 0.875rem;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  color: #1c1917;
+  background: #fafaf8;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.checkoutInput:focus { border-color: #d4500a; box-shadow: 0 0 0 3px rgba(212,80,10,0.1); }
+
+/* Tipo de pedido */
+.tipoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.tipoBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 10px;
+  background: #fafaf8;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #78716c;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.tipoBtn:hover { border-color: #d4500a; background: #fff4ee; color: #d4500a; }
+.tipoBtnActive { border-color: #d4500a; background: #fff4ee; color: #d4500a; }
+
+.tipoEmoji { font-size: 1.5rem; }
+
+/* Mesas */
+.mesaGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.mesaBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.625rem 0.25rem;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 8px;
+  background: #fafaf8;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #44403c;
+  transition: border-color 0.15s, background 0.15s;
+}
+.mesaBtn:hover:not(:disabled) { border-color: #d4500a; background: #fff4ee; }
+.mesaBtnActive { border-color: #d4500a; background: #fff4ee; color: #d4500a; }
+.mesaOcupada { opacity: 0.45; cursor: not-allowed; }
+.mesaTag { font-size: 0.625rem; color: #b91c1c; font-weight: 500; }
+
+/* Resumen */
+.resumen {
+  background: #fafaf8;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.resumenTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #a8a29e;
+  margin: 0 0 0.25rem;
+}
+
+.resumenRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #44403c;
+}
+
+.resumenTotal {
+  border-top: 1px solid #e7e5e4;
+  padding-top: 0.375rem;
+  margin-top: 0.25rem;
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #1c1917;
+}
+
+.pedidoError {
+  font-size: 0.875rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+  margin: 0;
+}
+
+/* ── Confirmado ── */
+.confirmado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.confirmadoEmoji { font-size: 4rem; }
+
+.confirmadoTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0;
+}
+
+.confirmadoText {
+  font-size: 0.9375rem;
+  color: #78716c;
+  margin: 0;
+  line-height: 1.6;
+}

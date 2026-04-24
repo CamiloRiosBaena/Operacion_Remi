@@ -2,10 +2,12 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from 'react';
-import type { AuthContextValue, AuthState, LoginCredentials } from '../types/auth.types';
+import { supabase } from '@/shared/lib/supabase';
+import type { AuthContextValue, AuthState, LoginCredentials, User, UserRole } from '../types/auth.types';
 import { loginService, registroService, type RegistroData } from '../services/auth.service';
 
 interface ExtendedAuthContextValue extends AuthContextValue {
@@ -14,39 +16,46 @@ interface ExtendedAuthContextValue extends AuthContextValue {
 
 const AuthContext = createContext<ExtendedAuthContextValue | null>(null);
 
-const STORAGE_KEY = 'remi_auth';
-
-function loadFromStorage(): AuthState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { user: null, token: null, isAuthenticated: false };
-    return JSON.parse(raw) as AuthState;
-  } catch {
-    return { user: null, token: null, isAuthenticated: false };
-  }
-}
-
-function persist(state: AuthState) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+function sbUserToState(
+  sbUser: { id: string; email?: string; user_metadata?: Record<string, unknown> } | null,
+  token: string | null,
+): AuthState {
+  if (!sbUser || !token) return { user: null, token: null, isAuthenticated: false };
+  const user: User = {
+    id: sbUser.id,
+    nombre: (sbUser.user_metadata?.nombre as string) ?? sbUser.email ?? '',
+    correo: sbUser.email ?? '',
+    rol: (sbUser.user_metadata?.rol as UserRole) ?? 'cliente',
+  };
+  return { user, token, isAuthenticated: true };
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>(loadFromStorage);
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, setState] = useState<AuthState>({ user: null, token: null, isAuthenticated: false });
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const setSession = useCallback((user: AuthState['user'], token: string) => {
-    const next: AuthState = { user, token, isAuthenticated: true };
-    setState(next);
-    persist(next);
+  useEffect(() => {
+    // Cargar sesión existente al montar (Supabase la persiste en localStorage)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setState(sbUserToState(session?.user ?? null, session?.access_token ?? null));
+      setIsLoading(false);
+    });
+
+    // Escuchar cambios de sesión: login, logout, refresh de token
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setState(sbUserToState(session?.user ?? null, session?.access_token ?? null));
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user, token } = await loginService(credentials);
-      setSession(user, token);
+      await loginService(credentials);
+      // onAuthStateChange actualizará el state automáticamente
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error al iniciar sesión';
       setError(msg);
@@ -54,14 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [setSession]);
+  }, []);
 
   const registrar = useCallback(async (data: RegistroData) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { user, token } = await registroService(data);
-      setSession(user, token);
+      await registroService(data);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error al crear la cuenta';
       setError(msg);
@@ -69,11 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, [setSession]);
+  }, []);
 
   const logout = useCallback(() => {
-    setState({ user: null, token: null, isAuthenticated: false });
-    localStorage.removeItem(STORAGE_KEY);
+    void supabase.auth.signOut();
+    // onAuthStateChange limpiará el state automáticamente
   }, []);
 
   return (

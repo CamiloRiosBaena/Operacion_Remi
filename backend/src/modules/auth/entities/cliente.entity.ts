@@ -19,14 +19,14 @@ export class Cliente {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ length: 36, unique: true })
+  supabase_uid: string;
+
   @Column({ length: 100 })
   nombre: string;
 
   @Column({ length: 100, unique: true })
   correo: string;
-
-  @Column({ length: 255 })
-  contrasena: string; // hash bcrypt
 
   @Column({ type: 'enum', enum: EstadoCliente, default: EstadoCliente.ACTIVO })
   estado: EstadoCliente;
