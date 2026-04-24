@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
+import {
+  fetchIngredientes, createIngrediente, updateIngrediente, deleteIngrediente,
+  type ApiIngrediente,
+} from '../services/admin.service';
 import styles from './IngredientesGestion.module.css';
 
 // ── Tipos ────────────────────────────────────────────────────────────────────
@@ -60,58 +64,29 @@ const STOCK_CONFIG: Record<Stock, { label: string; color: string; bg: string }> 
 
 const UNIDADES_COMPRA = ['bulto', 'caja', 'kg', 'litro', 'racimo', 'paca', 'unidad'];
 
-// ── Datos iniciales ──────────────────────────────────────────────────────────
+// ── Mapper API → local ───────────────────────────────────────────────────────
 
-const INGREDIENTES_INIT: Ingrediente[] = [
-  { id: 1,  nombre: 'Fríjoles rojos',  unidadCompra: 'bulto',  gramosPorUnidad: 50000, stockUnidades: 3,  stockMinimoPorciones: 20, eliminable: true  },
-  { id: 2,  nombre: 'Arroz',           unidadCompra: 'bulto',  gramosPorUnidad: 50000, stockUnidades: 5,  stockMinimoPorciones: 30, eliminable: false },
-  { id: 3,  nombre: 'Carne molida',    unidadCompra: 'kg',     gramosPorUnidad: 1000,  stockUnidades: 8,  stockMinimoPorciones: 10, eliminable: true  },
-  { id: 4,  nombre: 'Chicharrón',      unidadCompra: 'kg',     gramosPorUnidad: 1000,  stockUnidades: 2,  stockMinimoPorciones: 15, eliminable: true  },
-  { id: 5,  nombre: 'Aguacate',        unidadCompra: 'caja',   gramosPorUnidad: 18000, stockUnidades: 2,  stockMinimoPorciones: 20, eliminable: true  },
-  { id: 6,  nombre: 'Pollo criollo',   unidadCompra: 'kg',     gramosPorUnidad: 1000,  stockUnidades: 12, stockMinimoPorciones: 10, eliminable: false },
-  { id: 7,  nombre: 'Papa criolla',    unidadCompra: 'bulto',  gramosPorUnidad: 25000, stockUnidades: 1,  stockMinimoPorciones: 20, eliminable: false },
-  { id: 8,  nombre: 'Mazorca',         unidadCompra: 'caja',   gramosPorUnidad: 12000, stockUnidades: 3,  stockMinimoPorciones: 15, eliminable: false },
-  { id: 9,  nombre: 'Guascas',         unidadCompra: 'kg',     gramosPorUnidad: 1000,  stockUnidades: 0,  stockMinimoPorciones: 5,  eliminable: false },
-  { id: 10, nombre: 'Masa de maíz',    unidadCompra: 'bulto',  gramosPorUnidad: 25000, stockUnidades: 2,  stockMinimoPorciones: 30, eliminable: false },
-  { id: 11, nombre: 'Lulo',            unidadCompra: 'caja',   gramosPorUnidad: 8000,  stockUnidades: 4,  stockMinimoPorciones: 20, eliminable: false },
-  { id: 12, nombre: 'Plátano verde',   unidadCompra: 'racimo', gramosPorUnidad: 15000, stockUnidades: 3,  stockMinimoPorciones: 20, eliminable: false },
-  { id: 13, nombre: 'Panela',          unidadCompra: 'paca',   gramosPorUnidad: 20000, stockUnidades: 2,  stockMinimoPorciones: 40, eliminable: false },
-  { id: 14, nombre: 'Leche',           unidadCompra: 'litro',  gramosPorUnidad: 1000,  stockUnidades: 20, stockMinimoPorciones: 50, eliminable: false },
-];
+function mapApi(a: ApiIngrediente): Ingrediente {
+  return {
+    id:                  a.id,
+    nombre:              a.nombre,
+    unidadCompra:        a.unidadCompra,
+    gramosPorUnidad:     Number(a.gramosPorUnidad),
+    stockUnidades:       Number(a.stockUnidades),
+    stockMinimoPorciones: a.stockMinimoPorciones,
+    eliminable:          a.eliminable,
+  };
+}
 
-/**
- * Cada fila indica: el plato X usa Y gramos de este ingrediente por porción.
- * De aquí se calcula: porciones posibles = gramos disponibles ÷ gramosPorPorcion
- */
-const RELACIONES_INIT: PlatoIngrediente[] = [
-  // Bandeja Paisa (id 1)
-  { platoId: 1, ingredienteId: 1,  gramosPorPorcion: 200 },
-  { platoId: 1, ingredienteId: 2,  gramosPorPorcion: 150 },
-  { platoId: 1, ingredienteId: 3,  gramosPorPorcion: 120 },
-  { platoId: 1, ingredienteId: 4,  gramosPorPorcion: 100 },
-  { platoId: 1, ingredienteId: 5,  gramosPorPorcion: 80  },
-  // Ajiaco Bogotano (id 2)
-  { platoId: 2, ingredienteId: 6,  gramosPorPorcion: 250 },
-  { platoId: 2, ingredienteId: 7,  gramosPorPorcion: 200 },
-  { platoId: 2, ingredienteId: 8,  gramosPorPorcion: 100 },
-  { platoId: 2, ingredienteId: 9,  gramosPorPorcion: 5   },
-  // Empanadas (id 3)
-  { platoId: 3, ingredienteId: 10, gramosPorPorcion: 100 },
-  // Jugo de Lulo (id 4)
-  { platoId: 4, ingredienteId: 11, gramosPorPorcion: 150 },
-  // Sancocho de Gallina (id 5)
-  { platoId: 5, ingredienteId: 6,  gramosPorPorcion: 300 },
-  { platoId: 5, ingredienteId: 7,  gramosPorPorcion: 200 },
-  { platoId: 5, ingredienteId: 8,  gramosPorPorcion: 150 },
-  // Patacones con Hogao (id 6)
-  { platoId: 6, ingredienteId: 12, gramosPorPorcion: 200 },
-  { platoId: 6, ingredienteId: 5,  gramosPorPorcion: 50  },
-  // Agua Panela con Limón (id 7)
-  { platoId: 7, ingredienteId: 13, gramosPorPorcion: 100 },
-  // Arroz con Leche (id 8)
-  { platoId: 8, ingredienteId: 2,  gramosPorPorcion: 80  },
-  { platoId: 8, ingredienteId: 14, gramosPorPorcion: 200 },
-];
+function mapRelaciones(apis: ApiIngrediente[]): PlatoIngrediente[] {
+  return apis.flatMap((a) =>
+    (a.platoIngredientes ?? []).map((pi) => ({
+      platoId:         pi.plato.id,
+      ingredienteId:   a.id,
+      gramosPorPorcion: Number(pi.gramosPorPorcion),
+    }))
+  );
+}
 
 // ── Form state ───────────────────────────────────────────────────────────────
 
@@ -158,12 +133,30 @@ function buildEditForm(ing: Ingrediente, relaciones: PlatoIngrediente[], platosI
 export function IngredientesGestion() {
   const { platos } = usePlatos();
 
-  const [ingredientes, setIngredientes] = useState(INGREDIENTES_INIT);
-  const [relaciones,   setRelaciones  ] = useState<PlatoIngrediente[]>(RELACIONES_INIT);
+  const [ingredientes, setIngredientes] = useState<Ingrediente[]>([]);
+  const [relaciones,   setRelaciones  ] = useState<PlatoIngrediente[]>([]);
+  const [loading,      setLoading     ] = useState(true);
+  const [saving,       setSaving      ] = useState(false);
+  const [errorMsg,     setErrorMsg    ] = useState('');
   const [filtro,       setFiltro      ] = useState<FiltroStock>('todos');
   const [busqueda,     setBusqueda    ] = useState('');
   const [modal,        setModal       ] = useState<ModalMode>(null);
   const [form,         setForm        ] = useState<FormState>(() => buildEmptyForm(platos.map((p) => p.id)));
+
+  const cargar = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await fetchIngredientes();
+      setIngredientes(data.map(mapApi));
+      setRelaciones(mapRelaciones(data));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { cargar(); }, [cargar]);
 
   // ── Datos derivados ─────────────────────────────────────────────────────
 
@@ -189,52 +182,63 @@ export function IngredientesGestion() {
 
   function openCrear() {
     setForm(buildEmptyForm(platos.map((p) => p.id)));
+    setErrorMsg('');
     setModal({ mode: 'crear' });
   }
 
   function openEditar(ing: Ingrediente) {
     setForm(buildEditForm(ing, relaciones, platos.map((p) => p.id)));
+    setErrorMsg('');
     setModal({ mode: 'editar', id: ing.id });
   }
 
-  function handleGuardar() {
+  async function handleGuardar() {
     const gramosPorUnidad      = parseFloat(form.gramosPorUnidad);
     const stockUnidades        = parseFloat(form.stockUnidades);
     const stockMinimoPorciones = parseInt(form.stockMinimoPorciones);
     if (!form.nombre.trim() || isNaN(gramosPorUnidad) || isNaN(stockUnidades)) return;
 
-    const ingData: Ingrediente = {
-      id: modal?.mode === 'editar' ? modal.id : Date.now(),
-      nombre: form.nombre,
-      unidadCompra: form.unidadCompra,
-      gramosPorUnidad,
-      stockUnidades,
-      stockMinimoPorciones: isNaN(stockMinimoPorciones) ? 10 : stockMinimoPorciones,
-      eliminable: form.eliminable,
-    };
+    setSaving(true);
+    setErrorMsg('');
+    try {
+      const body = {
+        nombre: form.nombre,
+        unidadCompra: form.unidadCompra,
+        gramosPorUnidad,
+        stockUnidades,
+        stockMinimoPorciones: isNaN(stockMinimoPorciones) ? 10 : stockMinimoPorciones,
+        eliminable: form.eliminable,
+      };
 
-    // Actualiza la lista de ingredientes
-    setIngredientes((prev) =>
-      modal?.mode === 'crear'
-        ? [...prev, ingData]
-        : prev.map((i) => (i.id === ingData.id ? ingData : i))
-    );
+      if (modal?.mode === 'crear') {
+        const creado = await createIngrediente(body);
+        setIngredientes((prev) => [...prev, mapApi(creado)]);
+        setRelaciones((prev) => [...prev, ...mapRelaciones([creado])]);
+      } else if (modal?.mode === 'editar') {
+        const actualizado = await updateIngrediente(modal.id, body);
+        setIngredientes((prev) => prev.map((i) => (i.id === modal.id ? mapApi(actualizado) : i)));
+        setRelaciones((prev) => [
+          ...prev.filter((r) => r.ingredienteId !== modal.id),
+          ...mapRelaciones([actualizado]),
+        ]);
+      }
+      setModal(null);
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : 'Error guardando');
+    } finally {
+      setSaving(false);
+    }
+  }
 
-    // Actualiza relaciones plato-ingrediente
-    const nuevasRels: PlatoIngrediente[] = form.relaciones
-      .filter((r) => r.activo && r.gramos.trim() !== '')
-      .map((r) => ({
-        platoId: r.platoId,
-        ingredienteId: ingData.id,
-        gramosPorPorcion: parseFloat(r.gramos) || 0,
-      }));
-
-    setRelaciones((prev) => [
-      ...prev.filter((r) => r.ingredienteId !== ingData.id),
-      ...nuevasRels,
-    ]);
-
-    setModal(null);
+  async function handleEliminar(ing: Ingrediente) {
+    if (!confirm(`¿Eliminar "${ing.nombre}"? Esta acción no se puede deshacer.`)) return;
+    try {
+      await deleteIngrediente(ing.id);
+      setIngredientes((prev) => prev.filter((i) => i.id !== ing.id));
+      setRelaciones((prev) => prev.filter((r) => r.ingredienteId !== ing.id));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'No se pudo eliminar');
+    }
   }
 
   function toggleRelacion(platoId: number) {
@@ -339,6 +343,9 @@ export function IngredientesGestion() {
 
         {/* ── Tabla ── */}
         <div className={styles.tableWrap}>
+          {loading ? (
+            <p style={{ padding: '2rem', textAlign: 'center', color: '#78716c' }}>Cargando ingredientes…</p>
+          ) : (
           <table className={styles.table}>
             <thead>
               <tr>
@@ -445,13 +452,21 @@ export function IngredientesGestion() {
 
                     {/* Acciones */}
                     <td>
-                      <button className={styles.btnEdit} onClick={() => openEditar(ing)}>✏️ Editar</button>
+                      <div style={{ display: 'flex', gap: '0.375rem' }}>
+                        <button className={styles.btnEdit} onClick={() => openEditar(ing)}>✏️ Editar</button>
+                        <button
+                          className={styles.btnEdit}
+                          style={{ background: '#fef2f2', color: '#b91c1c', borderColor: '#fecaca' }}
+                          onClick={() => handleEliminar(ing)}
+                        >🗑</button>
+                      </div>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
+          )}
         </div>
 
         <p className={styles.count}>{lista.length} ingredientes</p>
@@ -611,10 +626,13 @@ export function IngredientesGestion() {
               </div>
             </div>
 
+            {errorMsg && (
+              <p style={{ color: '#b91c1c', fontSize: '0.875rem', margin: '0 0 0.25rem' }}>{errorMsg}</p>
+            )}
             <div className={styles.modalActions}>
-              <button className={styles.btnCancel} onClick={() => setModal(null)}>Cancelar</button>
-              <button className={styles.btnSave} onClick={handleGuardar}>
-                {modal.mode === 'crear' ? 'Crear ingrediente' : 'Guardar cambios'}
+              <button className={styles.btnCancel} onClick={() => setModal(null)} disabled={saving}>Cancelar</button>
+              <button className={styles.btnSave} onClick={handleGuardar} disabled={saving}>
+                {saving ? 'Guardando…' : modal.mode === 'crear' ? 'Crear ingrediente' : 'Guardar cambios'}
               </button>
             </div>
           </div>

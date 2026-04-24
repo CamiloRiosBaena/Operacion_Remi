@@ -1,4 +1,5 @@
 export interface PlatoExtra {
+  id?: number;
   nombre: string;
   precio: number;
 }
@@ -9,6 +10,7 @@ export interface Plato {
   descripcion: string;
   precio: number;
   categoria: string;
+  categoriaId?: number;
   disponible: boolean;
   imageUrl?: string;
   ingredientes: string[];

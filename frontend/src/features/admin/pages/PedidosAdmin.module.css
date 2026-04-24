@@ -64,5 +64,62 @@
 .tipoDomicilio { background: #eff6ff; color: #1d4ed8; }
 
 .estadoBadge { font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.625rem; border-radius: 999px; white-space: nowrap; }
+.tipoLlevar { background: #fff7ed; color: #c2410c; }
+
+.actions { display: flex; align-items: center; gap: 0.375rem; }
+
+.btnAvanzar {
+  font-size: 0.75rem; font-weight: 700; color: #fff; border: none;
+  border-radius: 6px; padding: 0.3rem 0.625rem; cursor: pointer;
+  white-space: nowrap; transition: opacity 0.15s;
+}
+.btnAvanzar:hover:not(:disabled) { opacity: 0.85; }
+.btnAvanzar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btnCancelar {
+  font-size: 0.8125rem; font-weight: 700; color: #b91c1c;
+  background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px;
+  padding: 0.3rem 0.5rem; cursor: pointer; transition: background 0.15s;
+}
+.btnCancelar:hover:not(:disabled) { background: #fee2e2; }
+
+.btnDetalle {
+  font-size: 0.8125rem; color: #0369a1; background: none;
+  border: none; cursor: pointer; padding: 0; text-decoration: underline;
+}
+
+.btnRefresh {
+  font-size: 0.8125rem; font-weight: 600; color: #44403c;
+  background: #f5f5f4; border: 1px solid #e7e5e4; border-radius: 8px;
+  padding: 0.35rem 0.75rem; cursor: pointer; white-space: nowrap;
+  transition: background 0.15s; margin-left: auto;
+}
+.btnRefresh:hover { background: #e7e5e4; }
+
+/* Modal detalle */
+.modalOverlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+.modal {
+  background: #fff; border-radius: 16px; padding: 1.5rem;
+  width: 100%; max-width: 440px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.modalTitle { font-size: 1rem; font-weight: 700; color: #1c1917; margin: 0; }
+
+.detalleList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.detalleItem { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+.detalleNombre { flex: 1; color: #1c1917; font-weight: 500; }
+.detalleCantidad { color: #78716c; }
+.detalleSubtotal { font-weight: 700; color: #d4500a; }
+.detalleTotalRow { display: flex; justify-content: space-between; border-top: 1px solid #e7e5e4; padding-top: 0.5rem; font-weight: 600; }
+.detalleTotal { color: #d4500a; font-size: 1.125rem; font-weight: 800; }
+.detalleDireccion { font-size: 0.875rem; color: #78716c; margin: 0; }
+.btnCerrarModal {
+  padding: 0.625rem; background: #f5f5f4; border: 1px solid #e7e5e4;
+  border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.15s;
+}
+.btnCerrarModal:hover { background: #e7e5e4; }
 
 .count { font-size: 0.8125rem; color: #a8a29e; margin: 0; }

@@ -1,13 +1,9 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../components/AdminLayout';
+import { usePlatos } from '@/features/menu/context/PlatosContext';
+import { fetchDashboardStats } from '../services/admin.service';
 import styles from './AdminDashboard.module.css';
-
-const STATS = [
-  { label: 'Pedidos hoy', value: '6', icon: '📋', color: '#3b82f6' },
-  { label: 'Ingresos hoy', value: '$198K', icon: '💰', color: '#16a34a' },
-  { label: 'Platos activos', value: '7', icon: '🍽️', color: '#d4500a' },
-  { label: 'Usuarios', value: '6', icon: '👥', color: '#7c3aed' },
-];
 
 const NAV_ITEMS = [
   { label: 'Gestión de Menú',  desc: 'Crear, editar y eliminar platos',     icon: '🍴', to: '/admin/menu'          },
@@ -16,11 +12,36 @@ const NAV_ITEMS = [
   { label: 'Domicilios',       desc: 'Asignar y monitorear entregas',        icon: '🛵', to: '/admin/domicilios'     },
   { label: 'Usuarios',         desc: 'Gestionar roles y accesos',            icon: '👤', to: '/admin/usuarios'       },
   { label: 'Estadísticas',     desc: 'Reportes de ventas y métricas',        icon: '📊', to: '/admin/estadisticas'   },
-  { label: 'Configuración',    desc: 'Ajustes generales del sistema',        icon: '⚙️', to: null                   },
 ];
+
+function formatPrecio(n: number) {
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000)     return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString('es-CO')}`;
+}
 
 export function AdminDashboard() {
   const navigate = useNavigate();
+  const { platos } = usePlatos();
+
+  const [stats, setStats]       = useState({ pedidosHoy: 0, ingresosHoy: 0, totalUsuarios: 0, pedidosActivos: 0 });
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardStats()
+      .then(setStats)
+      .catch(console.error)
+      .finally(() => setLoadingStats(false));
+  }, []);
+
+  const platosActivos = platos.filter((p) => p.disponible).length;
+
+  const STATS = [
+    { label: 'Pedidos hoy',     value: loadingStats ? '…' : String(stats.pedidosHoy),      icon: '📋', color: '#3b82f6' },
+    { label: 'Ingresos hoy',    value: loadingStats ? '…' : formatPrecio(stats.ingresosHoy), icon: '💰', color: '#16a34a' },
+    { label: 'Platos activos',  value: String(platosActivos),                                icon: '🍽️', color: '#d4500a' },
+    { label: 'Usuarios',        value: loadingStats ? '…' : String(stats.totalUsuarios),     icon: '👥', color: '#7c3aed' },
+  ];
 
   return (
     <AdminLayout title="Dashboard">
@@ -29,6 +50,9 @@ export function AdminDashboard() {
           <h2 className={styles.welcomeTitle}>Bienvenido al panel</h2>
           <p className={styles.welcomeText}>
             Gestiona el menú, los pedidos, los usuarios y las métricas del restaurante.
+            {stats.pedidosActivos > 0 && (
+              <strong style={{ color: '#d4500a' }}> · {stats.pedidosActivos} pedido(s) activo(s)</strong>
+            )}
           </p>
         </div>
 
@@ -53,20 +77,15 @@ export function AdminDashboard() {
           {NAV_ITEMS.map((item) => (
             <button
               key={item.label}
-              className={`${styles.navCard} ${!item.to ? styles.navCardDisabled : ''}`}
-              onClick={() => item.to && navigate(item.to)}
-              disabled={!item.to}
+              className={styles.navCard}
+              onClick={() => navigate(item.to)}
             >
               <div className={styles.navIcon}>{item.icon}</div>
               <div className={styles.navContent}>
                 <p className={styles.navLabel}>{item.label}</p>
                 <p className={styles.navDesc}>{item.desc}</p>
               </div>
-              {item.to ? (
-                <span className={styles.navArrow}>→</span>
-              ) : (
-                <span className={styles.navTag}>Próximamente</span>
-              )}
+              <span className={styles.navArrow}>→</span>
             </button>
           ))}
         </div>
