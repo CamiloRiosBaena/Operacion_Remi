@@ -39,6 +39,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
   function toggleIngrediente(ing: string) {
     setRemovidos((prev) => {
       const next = new Set(prev);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(ing) ? next.delete(ing) : next.add(ing);
       return next;
     });
