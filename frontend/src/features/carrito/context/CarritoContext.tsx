@@ -80,21 +80,27 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
     saveCart([]);
   }, []);
 
-  const { count, total } = useMemo(
+  const { count, total, ivaTotal, totalConIva } = useMemo(
     () =>
       items.reduce(
-        (acc, i) => ({
-          count: acc.count + i.cantidad,
-          total: acc.total + itemTotal(i),
-        }),
-        { count: 0, total: 0 },
+        (acc, i) => {
+          const base = itemTotal(i);
+          const iva  = Math.round(base * (i.tasaIva ?? 0));
+          return {
+            count:       acc.count + i.cantidad,
+            total:       acc.total + base,
+            ivaTotal:    acc.ivaTotal + iva,
+            totalConIva: acc.totalConIva + base + iva,
+          };
+        },
+        { count: 0, total: 0, ivaTotal: 0, totalConIva: 0 },
       ),
     [items],
   );
 
   return (
     <CarritoContext.Provider
-      value={{ items, count, total, addItem, removeItem, updateCantidad, clearCart }}
+      value={{ items, count, total, ivaTotal, totalConIva, addItem, removeItem, updateCantidad, clearCart }}
     >
       {children}
     </CarritoContext.Provider>

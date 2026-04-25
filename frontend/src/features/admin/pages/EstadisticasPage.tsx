@@ -113,10 +113,15 @@ export function EstadisticasPage() {
     { label: 'Mejor día',       value: mejorDia?.dia ?? '—',                           meta: mejorDia ? `${mejorDia.pedidos} pedidos — ${formatPrecio(mejorDia.ventas)}` : '', icon: '🏆' },
   ];
 
-  // ── Top platos ──────────────────────────────────────────────────────────
+  // ── Pedidos de la semana (base para top platos y tipos) ─────────────────
+  const pedidosSemana = pedidos.filter((p) => {
+    const d = new Date(p.fechaHora);
+    return d >= days7[0] && p.estado !== 'cancelado';
+  });
+
+  // ── Top platos (últimos 7 días) ──────────────────────────────────────────
   const platoCount = new Map<string, { pedidos: number; categoria: string }>();
-  for (const p of pedidos) {
-    if (p.estado === 'cancelado') continue;
+  for (const p of pedidosSemana) {
     for (const d of (p.detalles ?? [])) {
       const key = d.plato.nombre;
       const prev = platoCount.get(key) ?? { pedidos: 0, categoria: '' };
@@ -129,11 +134,7 @@ export function EstadisticasPage() {
     .map(([nombre, info]) => ({ nombre, ...info }));
   const maxPlato = platosTop[0]?.pedidos ?? 1;
 
-  // ── Tipos de pedido (reemplaza métodos de pago) ─────────────────────────
-  const pedidosSemana = pedidos.filter((p) => {
-    const d = new Date(p.fechaHora);
-    return d >= days7[0] && p.estado !== 'cancelado';
-  });
+  // ── Tipos de pedido ──────────────────────────────────────────────────────
   const totalTipos = pedidosSemana.length || 1;
   const tipoData = ['mesa', 'domicilio', 'llevar'].map((tipo) => {
     const count = pedidosSemana.filter((p) => p.tipo === tipo).length;

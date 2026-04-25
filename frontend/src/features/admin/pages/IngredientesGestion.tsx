@@ -3,6 +3,7 @@ import { AdminLayout } from '../components/AdminLayout';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
 import {
   fetchIngredientes, createIngrediente, updateIngrediente, deleteIngrediente,
+  upsertPlatoIngrediente, deletePlatoIngrediente,
   type ApiIngrediente,
 } from '../services/admin.service';
 import styles from './IngredientesGestion.module.css';
@@ -210,18 +211,36 @@ export function IngredientesGestion() {
         eliminable: form.eliminable,
       };
 
+      let ingredienteId: number;
+
       if (modal?.mode === 'crear') {
         const creado = await createIngrediente(body);
+        ingredienteId = creado.id;
         setIngredientes((prev) => [...prev, mapApi(creado)]);
-        setRelaciones((prev) => [...prev, ...mapRelaciones([creado])]);
-      } else if (modal?.mode === 'editar') {
-        const actualizado = await updateIngrediente(modal.id, body);
-        setIngredientes((prev) => prev.map((i) => (i.id === modal.id ? mapApi(actualizado) : i)));
-        setRelaciones((prev) => [
-          ...prev.filter((r) => r.ingredienteId !== modal.id),
-          ...mapRelaciones([actualizado]),
-        ]);
+      } else {
+        ingredienteId = modal!.id;
+        const actualizado = await updateIngrediente(modal!.id, body);
+        setIngredientes((prev) => prev.map((i) => (i.id === modal!.id ? mapApi(actualizado) : i)));
       }
+
+      // Sincronizar relaciones plato-ingrediente
+      const prevRels = relaciones.filter((r) => r.ingredienteId === ingredienteId);
+      const ops = form.relaciones.map(async (rel) => {
+        const gramos = parseFloat(rel.gramos);
+        const eraActivo = prevRels.some((r) => r.platoId === rel.platoId);
+        if (rel.activo && gramos > 0) {
+          await upsertPlatoIngrediente(rel.platoId, { ingredienteId, gramosPorPorcion: gramos });
+        } else if (!rel.activo && eraActivo) {
+          await deletePlatoIngrediente(rel.platoId, ingredienteId);
+        }
+      });
+      await Promise.all(ops);
+
+      // Recargar ingredientes para reflejar relaciones actualizadas
+      const data = await fetchIngredientes();
+      setIngredientes(data.map(mapApi));
+      setRelaciones(mapRelaciones(data));
+
       setModal(null);
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error guardando');

@@ -40,6 +40,7 @@ export function mapApiPlato(ap: ApiPlato): Plato {
     id: ap.id,
     nombre: ap.nombre,
     precio: Number(ap.precio),
+    tasaIva: Number(ap.tasaIva ?? 0.19),
     descripcion: ap.descripcion ?? '',
     categoria: ap.categoria?.nombre ?? '',
     categoriaId: ap.categoria?.id,
@@ -86,6 +87,7 @@ export async function updatePlato(
     descripcion: string;
     imagenUrl: string | null;
     disponible: boolean;
+    tasaIva: number;
     categoriaId: number;
   }>,
 ): Promise<Plato> {
@@ -104,4 +106,18 @@ export async function deletePlatoApi(id: number): Promise<void> {
 
 export async function createCategoria(nombre: string): Promise<ApiCategoria> {
   return apiFetch<ApiCategoria>('/menu/categorias', { method: 'POST', body: { nombre } });
+}
+
+export async function fetchExtras(platoId: number): Promise<PlatoExtra[]> {
+  const data = await apiFetch<ApiExtra[]>(`/menu/platos/${platoId}/extras`);
+  return data.map((e) => ({ id: e.id, nombre: e.nombre, precio: Number(e.precio) }));
+}
+
+export async function createExtra(body: { nombre: string; precio: number; platoId: number }): Promise<PlatoExtra> {
+  const data = await apiFetch<ApiExtra>('/menu/extras', { method: 'POST', body });
+  return { id: data.id, nombre: data.nombre, precio: Number(data.precio) };
+}
+
+export async function deleteExtra(id: number): Promise<void> {
+  return apiFetch(`/menu/extras/${id}`, { method: 'DELETE' });
 }

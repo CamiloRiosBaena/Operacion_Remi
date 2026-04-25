@@ -2,15 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
-import { fetchCategorias, createCategoria, type ApiCategoria } from '@/features/menu/services/menu.service';
+import {
+  fetchCategorias, createCategoria, fetchExtras, createExtra, deleteExtra,
+  type ApiCategoria,
+} from '@/features/menu/services/menu.service';
 import { uploadPlatoImage } from '@/shared/lib/storage';
-import type { Plato } from '@/features/menu/types/plato.types';
+import type { Plato, PlatoExtra } from '@/features/menu/types/plato.types';
 import styles from './MenuGestion.module.css';
 
 interface FormState {
   nombre: string;
   categoriaId: number;
   precio: string;
+  tasaIva: string;
   disponible: boolean;
   imageUrl?: string;
   imagePreview?: string;
@@ -28,12 +32,18 @@ export function MenuGestion() {
   const [categorias, setCategorias]   = useState<ApiCategoria[]>([]);
   const [filtro, setFiltro]           = useState(0); // 0 = Todos
   const [modal, setModal]             = useState<Modal>(null);
-  const [form, setForm]               = useState<FormState>({ nombre: '', categoriaId: 0, precio: '', disponible: true });
+  const [form, setForm]               = useState<FormState>({ nombre: '', categoriaId: 0, precio: '', tasaIva: '19', disponible: true });
   const [deleteId, setDeleteId]       = useState<number | null>(null);
   const [saving, setSaving]           = useState(false);
   const [errorMsg, setErrorMsg]       = useState('');
   const fileInputRef                  = useRef<HTMLInputElement>(null);
   const [uploadingImg, setUploadingImg] = useState(false);
+
+  // ── Extras del plato en edición ──────────────────────────────────────────
+  const [extras, setExtras]           = useState<PlatoExtra[]>([]);
+  const [extraNombre, setExtraNombre] = useState('');
+  const [extraPrecio, setExtraPrecio] = useState('');
+  const [savingExtra, setSavingExtra] = useState(false);
 
   // ── Modal nueva categoría ────────────────────────────────────
   const [catModal, setCatModal]       = useState<CatModal>(null);
@@ -59,7 +69,7 @@ export function MenuGestion() {
       : platos.filter((p) => p.categoriaId === filtro);
 
   function openCrear() {
-    setForm({ nombre: '', categoriaId: categorias[0]?.id ?? 0, precio: '', disponible: true });
+    setForm({ nombre: '', categoriaId: categorias[0]?.id ?? 0, precio: '', tasaIva: '19', disponible: true });
     setErrorMsg('');
     setModal({ mode: 'crear' });
   }
@@ -69,12 +79,44 @@ export function MenuGestion() {
       nombre: plato.nombre,
       categoriaId: plato.categoriaId ?? categorias[0]?.id ?? 0,
       precio: String(plato.precio),
+      tasaIva: String(Math.round(plato.tasaIva * 100)),
       disponible: plato.disponible,
       imageUrl: plato.imageUrl,
       imagePreview: plato.imageUrl,
     });
+    setExtras(plato.extras ?? []);
+    setExtraNombre('');
+    setExtraPrecio('');
     setErrorMsg('');
     setModal({ mode: 'editar', plato });
+    // Recargar desde API por si hay extras nuevos
+    fetchExtras(plato.id).then(setExtras).catch(console.error);
+  }
+
+  async function handleAgregarExtra() {
+    if (!extraNombre.trim() || !extraPrecio || modal?.mode !== 'editar') return;
+    const precio = parseInt(extraPrecio);
+    if (isNaN(precio) || precio < 0) return;
+    setSavingExtra(true);
+    try {
+      const nuevo = await createExtra({ nombre: extraNombre.trim(), precio, platoId: modal.plato.id });
+      setExtras((prev) => [...prev, nuevo]);
+      setExtraNombre('');
+      setExtraPrecio('');
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingExtra(false);
+    }
+  }
+
+  async function handleEliminarExtra(id: number) {
+    try {
+      await deleteExtra(id);
+      setExtras((prev) => prev.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -105,8 +147,9 @@ export function MenuGestion() {
   }
 
   async function handleGuardar() {
-    const precio = parseInt(form.precio);
-    if (!form.nombre.trim() || isNaN(precio) || !form.categoriaId) return;
+    const precio   = parseInt(form.precio);
+    const tasaIva  = parseFloat(form.tasaIva) / 100;
+    if (!form.nombre.trim() || isNaN(precio) || !form.categoriaId || isNaN(tasaIva)) return;
 
     const catNombre = categorias.find((c) => c.id === form.categoriaId)?.nombre ?? '';
     setSaving(true);
@@ -120,6 +163,7 @@ export function MenuGestion() {
           categoria: catNombre,
           categoriaId: form.categoriaId,
           precio,
+          tasaIva,
           disponible: form.disponible,
           imageUrl: form.imageUrl,
         });
@@ -130,6 +174,7 @@ export function MenuGestion() {
           categoria: catNombre,
           categoriaId: form.categoriaId,
           precio,
+          tasaIva,
           disponible: form.disponible,
           imageUrl: form.imageUrl,
           descripcion: '',
@@ -218,7 +263,9 @@ export function MenuGestion() {
                 <tr>
                   <th>Plato</th>
                   <th>Categoría</th>
-                  <th>Precio</th>
+                  <th>Precio base</th>
+                  <th>IVA</th>
+                  <th>Precio final</th>
                   <th>Disponible</th>
                   <th>Acciones</th>
                 </tr>
@@ -239,6 +286,8 @@ export function MenuGestion() {
                     </td>
                     <td><span className={styles.catBadge}>{plato.categoria}</span></td>
                     <td className={styles.precio}>{formatPrecio(plato.precio)}</td>
+                    <td style={{ textAlign: 'center', color: '#78716c' }}>{Math.round(plato.tasaIva * 100)}%</td>
+                    <td className={styles.precio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</td>
                     <td>
                       <button
                         className={`${styles.toggleBtn} ${plato.disponible ? styles.toggleOn : styles.toggleOff}`}
@@ -335,12 +384,97 @@ export function MenuGestion() {
                 </div>
               </div>
 
+              {/* IVA */}
+              <div className={styles.modalRow}>
+                <div className={styles.modalField}>
+                  <label>IVA (%)</label>
+                  <select className={styles.input} value={form.tasaIva}
+                    onChange={(e) => setForm({ ...form, tasaIva: e.target.value })}>
+                    <option value="0">0% — Excluido de IVA</option>
+                    <option value="5">5%</option>
+                    <option value="19">19% — Tarifa general</option>
+                  </select>
+                </div>
+                {form.precio && !isNaN(parseInt(form.precio)) && (
+                  <div className={styles.modalField}>
+                    <label>Precio final al cliente</label>
+                    <input
+                      className={styles.input}
+                      readOnly
+                      value={`$${Math.round(parseInt(form.precio) * (1 + parseFloat(form.tasaIva) / 100)).toLocaleString('es-CO')}`}
+                      style={{ background: '#f5f5f4', cursor: 'default' }}
+                    />
+                  </div>
+                )}
+              </div>
+
               {/* Disponible */}
               <label className={styles.checkLabel}>
                 <input type="checkbox" checked={form.disponible}
                   onChange={(e) => setForm({ ...form, disponible: e.target.checked })} />
                 Disponible en el menú
               </label>
+
+              {/* Extras — solo al editar un plato ya guardado */}
+              {modal?.mode === 'editar' && (
+                <div className={styles.modalField}>
+                  <label>Extras del plato</label>
+                  <p style={{ fontSize: '0.8rem', color: '#78716c', margin: '0.25rem 0 0.5rem' }}>Opciones adicionales que el cliente puede agregar (ej: porción extra, salsa especial).</p>
+
+                  {/* Lista de extras existentes */}
+                  {extras.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem', marginBottom: '0.75rem' }}>
+                      {extras.map((e) => (
+                        <div key={e.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#f5f5f4', borderRadius: '0.375rem', padding: '0.375rem 0.625rem' }}>
+                          <span style={{ flex: 1, fontSize: '0.875rem' }}>{e.nombre}</span>
+                          <span style={{ fontSize: '0.875rem', color: '#78716c' }}>${e.precio.toLocaleString('es-CO')}</span>
+                          <button
+                            type="button"
+                            onClick={() => e.id && handleEliminarExtra(e.id)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b91c1c', fontSize: '1rem', lineHeight: 1 }}
+                            aria-label={`Eliminar ${e.nombre}`}
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Agregar nuevo extra */}
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-end' }}>
+                    <div style={{ flex: 2 }}>
+                      <input
+                        type="text"
+                        className={styles.input}
+                        placeholder="Nombre del extra"
+                        value={extraNombre}
+                        onChange={(e) => setExtraNombre(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAgregarExtra()}
+                        maxLength={100}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="number"
+                        className={styles.input}
+                        placeholder="Precio"
+                        value={extraPrecio}
+                        onChange={(e) => setExtraPrecio(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleAgregarExtra()}
+                        min={0}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className={styles.btnNuevo}
+                      onClick={handleAgregarExtra}
+                      disabled={savingExtra || !extraNombre.trim() || !extraPrecio}
+                      style={{ whiteSpace: 'nowrap', padding: '0.5rem 0.75rem' }}
+                    >
+                      {savingExtra ? '…' : '+ Agregar'}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {errorMsg && <p style={{ color: '#b91c1c', fontSize: '0.875rem', margin: 0 }}>{errorMsg}</p>}
             </div>

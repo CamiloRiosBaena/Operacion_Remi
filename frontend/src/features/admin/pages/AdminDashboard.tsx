@@ -8,6 +8,7 @@ import styles from './AdminDashboard.module.css';
 const NAV_ITEMS = [
   { label: 'Gestión de Menú',  desc: 'Crear, editar y eliminar platos',     icon: '🍴', to: '/admin/menu'          },
   { label: 'Ingredientes',     desc: 'Stock, alertas y platos afectados',    icon: '🧂', to: '/admin/ingredientes'   },
+  { label: 'Mesas y QR',       desc: 'Mesas, estados y códigos QR',          icon: '🪑', to: '/admin/mesas'          },
   { label: 'Pedidos',          desc: 'Ver todos los pedidos en curso',       icon: '📦', to: '/admin/pedidos'        },
   { label: 'Domicilios',       desc: 'Asignar y monitorear entregas',        icon: '🛵', to: '/admin/domicilios'     },
   { label: 'Usuarios',         desc: 'Gestionar roles y accesos',            icon: '👤', to: '/admin/usuarios'       },
