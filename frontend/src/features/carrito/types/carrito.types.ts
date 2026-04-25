@@ -8,6 +8,7 @@ export interface CartItem {
   platoId: number;
   nombre: string;
   precio: number;
+  tasaIva?: number;
   cantidad: number;
   emoji?: string;
   categoria: string;
@@ -21,8 +22,12 @@ export interface CarritoContextValue {
   items: CartItem[];
   /** Número total de unidades en el carrito */
   count: number;
-  /** Total en pesos (incluye precio base + extras) */
+  /** Subtotal sin IVA */
   total: number;
+  /** Monto de IVA acumulado */
+  ivaTotal: number;
+  /** Total final con IVA incluido */
+  totalConIva: number;
   addItem: (item: Omit<CartItem, 'cantidad'>) => void;
   removeItem: (platoId: number) => void;
   updateCantidad: (platoId: number, cantidad: number) => void;

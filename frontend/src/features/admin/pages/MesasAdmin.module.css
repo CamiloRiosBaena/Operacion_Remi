@@ -1,0 +1,268 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Resumen ── */
+.resumen {
+  display: flex;
+  gap: 1rem;
+}
+
+.resumenCard {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+
+.resumenNum {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1c1917;
+  line-height: 1;
+}
+
+.resumenLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: #78716c;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Crear mesa ── */
+.crearWrap {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.crearTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1c1917;
+  margin: 0 0 0.75rem;
+}
+
+.crearRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #1c1917;
+  background: #fafaf9;
+  transition: border-color 0.15s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #d4500a;
+  background: #fff;
+}
+
+.btnCrear {
+  background: #d4500a;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.btnCrear:hover:not(:disabled) {
+  background: #b84208;
+}
+
+.btnCrear:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.errorMsg {
+  color: #b91c1c;
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ── Card header ── */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.mesaNum {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1c1917;
+}
+
+.estadoBadge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.btnDelete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  opacity: 0.5;
+  padding: 0.125rem;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+
+.btnDelete:hover {
+  opacity: 1;
+}
+
+/* ── Estado select ── */
+.estadoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.estadoLabel {
+  font-size: 0.8rem;
+  color: #78716c;
+  white-space: nowrap;
+}
+
+.estadoSelect {
+  flex: 1;
+  border: 1px solid #d6d3d1;
+  border-radius: 0.375rem;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  color: #1c1917;
+  background: #fafaf9;
+  cursor: pointer;
+}
+
+/* ── QR ── */
+.qrSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btnQr {
+  background: #f5f5f4;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.5rem;
+  padding: 0.45rem 0.875rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #57534e;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.btnQr:hover {
+  background: #e7e5e4;
+}
+
+.qrWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 1rem;
+  background: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 0.5rem;
+}
+
+.qrUrl {
+  font-size: 0.7rem;
+  color: #a8a29e;
+  word-break: break-all;
+  text-align: center;
+  max-width: 200px;
+}
+
+.btnDescargar {
+  background: #1c1917;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btnDescargar:hover {
+  background: #292524;
+}
+
+/* ── Misc ── */
+.cargando,
+.vacio {
+  text-align: center;
+  color: #78716c;
+  padding: 3rem 1rem;
+  font-size: 0.9rem;
+}
+
+.count {
+  text-align: center;
+  color: #a8a29e;
+  font-size: 0.82rem;
+  margin: 0;
+}

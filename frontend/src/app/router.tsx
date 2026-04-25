@@ -9,6 +9,7 @@ import { EstadisticasPage } from '@/features/admin/pages/EstadisticasPage';
 import { PedidosAdmin } from '@/features/admin/pages/PedidosAdmin';
 import { DomiciliosAdmin } from '@/features/admin/pages/DomiciliosAdmin';
 import { IngredientesGestion } from '@/features/admin/pages/IngredientesGestion';
+import { MesasAdmin } from '@/features/admin/pages/MesasAdmin';
 import { CocinaDashboard } from '@/features/cocina/pages/CocinaDashboard';
 import { DomiciliosDashboard } from '@/features/domicilios/pages/DomiciliosDashboard';
 import { MenuPage } from '@/features/menu/pages/MenuPage';
@@ -36,6 +37,7 @@ export const router = createBrowserRouter([
   { path: '/admin/usuarios',      element: <AdminRoute><UsuariosGestion /></AdminRoute> },
   { path: '/admin/estadisticas',  element: <AdminRoute><EstadisticasPage /></AdminRoute> },
   { path: '/admin/ingredientes',  element: <AdminRoute><IngredientesGestion /></AdminRoute> },
+  { path: '/admin/mesas',         element: <AdminRoute><MesasAdmin /></AdminRoute> },
 
   // ── Staff ──────────────────────────────────────────────────────
   { path: '/cocina',      element: <ProtectedRoute allowedRoles={['cocinero']}><CocinaDashboard /></ProtectedRoute> },

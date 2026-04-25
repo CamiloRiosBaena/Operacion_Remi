@@ -147,6 +147,47 @@ export function deleteIngrediente(id: number): Promise<void> {
   return apiFetch(`/menu/ingredientes/${id}`, { method: 'DELETE' });
 }
 
+export function upsertPlatoIngrediente(
+  platoId: number,
+  body: { ingredienteId: number; gramosPorPorcion: number },
+): Promise<void> {
+  return apiFetch(`/menu/platos/${platoId}/ingredientes`, { method: 'POST', body });
+}
+
+export function deletePlatoIngrediente(platoId: number, ingredienteId: number): Promise<void> {
+  return apiFetch(`/menu/platos/${platoId}/ingredientes/${ingredienteId}`, { method: 'DELETE' });
+}
+
+// ── Mesas ─────────────────────────────────────────────────────────────────────
+
+export type EstadoMesa = 'libre' | 'ocupada' | 'reservada';
+
+export interface ApiMesa {
+  id: number;
+  numero: number;
+  estado: EstadoMesa;
+  qrUrl: string | null;
+}
+
+export function fetchMesasAdmin(): Promise<ApiMesa[]> {
+  return apiFetch<ApiMesa[]>('/pedidos/mesas/todas');
+}
+
+export function createMesa(numero: number): Promise<ApiMesa> {
+  return apiFetch<ApiMesa>('/pedidos/mesas', { method: 'POST', body: { numero } });
+}
+
+export function updateMesaAdmin(
+  id: number,
+  data: Partial<{ numero: number; estado: EstadoMesa; qrUrl: string }>,
+): Promise<ApiMesa> {
+  return apiFetch<ApiMesa>(`/pedidos/mesas/${id}`, { method: 'PATCH', body: data });
+}
+
+export function deleteMesa(id: number): Promise<void> {
+  return apiFetch(`/pedidos/mesas/${id}`, { method: 'DELETE' });
+}
+
 // ── Stats para dashboard ──────────────────────────────────────────────────────
 
 export async function fetchDashboardStats() {

@@ -53,6 +53,7 @@ export function PersonalizedSection() {
                       platoId: plato.platoId,
                       nombre: plato.nombre,
                       precio: plato.precio,
+                      tasaIva: 0.19,
                       emoji: plato.emoji,
                     })
                   }
@@ -82,6 +83,7 @@ export function PersonalizedSection() {
                       platoId: plato.platoId,
                       nombre: plato.nombre,
                       precio: plato.precio,
+                      tasaIva: 0.19,
                       emoji: plato.emoji,
                     })
                   }
