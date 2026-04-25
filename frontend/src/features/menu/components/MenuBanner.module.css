@@ -17,7 +17,7 @@
 }
 
 @media (min-width: 560px) { .slide { height: 178px; } }
-@media (min-width: 780px) { .slide { height: 196px; } }
+@media (min-width: 780px) { .slide { height: 300px; } }
 
 /* Glow ambiental de fondo */
 .glow {

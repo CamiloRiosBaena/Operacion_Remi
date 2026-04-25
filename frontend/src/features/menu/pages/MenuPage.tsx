@@ -132,17 +132,19 @@ export function MenuPage() {
         </div>
       )}
 
-      {/* ── Main content ── */}
-      <main className={styles.main}>
-
-        {/* Banner solo cuando se ven todos los platos */}
-        {categoriaActiva === 'Todos' && (
+ {/* ── Banner FUERA del main — ancho controlado por ti ── */}
+      {categoriaActiva === 'Todos' && (
+        <div className={styles.ofertaBannerWrapper}>
           <MenuBanner
             platos={platos}
             onPlatoClick={(plato) => setPlatoModal(plato)}
             onCategoriaClick={(cat) => setCategoriaActiva(cat)}
           />
-        )}
+        </div>
+      )}
+
+      {/* ── Main content — solo galería ── */}
+      <main className={styles.main}>
 
         <p className={styles.seccionLabel} style={{ marginTop: categoriaActiva === 'Todos' ? '1rem' : undefined }}>
           {categoriaActiva === 'Todos'
