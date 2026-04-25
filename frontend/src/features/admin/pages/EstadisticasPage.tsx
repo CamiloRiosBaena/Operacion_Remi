@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '../components/AdminLayout';
 import { PlatoImage } from '@/shared/components/PlatoImage';
+import { usePlatos } from '@/features/menu/context/PlatosContext';
 import { fetchPedidos, type ApiPedido } from '../services/admin.service';
 import styles from './EstadisticasPage.module.css';
 
@@ -76,6 +77,13 @@ const TIPO_META: Record<string, { label: string; color: string }> = {
 export function EstadisticasPage() {
   const [pedidos,  setPedidos ] = useState<ApiPedido[]>([]);
   const [loading,  setLoading ] = useState(true);
+  const { platos } = usePlatos();
+
+  const platoMeta = useMemo(() => {
+    const map = new Map<string, { imageUrl?: string; categoria: string }>();
+    for (const p of platos) map.set(p.nombre, { imageUrl: p.imageUrl, categoria: p.categoria });
+    return map;
+  }, [platos]);
 
   useEffect(() => {
     fetchPedidos()
@@ -262,7 +270,12 @@ export function EstadisticasPage() {
                       style={{ color: i === 0 ? '#ca8a04' : i === 1 ? '#a8a29e' : i === 2 ? '#b45309' : '#d4d4d0' }}>
                       {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                     </span>
-                    <PlatoImage nombre={p.nombre} categoria={p.categoria} size="sm" />
+                    <PlatoImage
+                      nombre={p.nombre}
+                      categoria={platoMeta.get(p.nombre)?.categoria ?? p.categoria}
+                      imageUrl={platoMeta.get(p.nombre)?.imageUrl}
+                      size="sm"
+                    />
                     <div className={styles.topInfo}>
                       <div className={styles.topHeader}>
                         <span className={styles.topNombre}>{p.nombre}</span>

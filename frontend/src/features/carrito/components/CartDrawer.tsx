@@ -152,7 +152,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
                     const subtotal = itemTotal(item.precio, extrasActivos, item.cantidad);
                     return (
                       <li key={item.platoId} className={styles.item}>
-                        <PlatoImage nombre={item.nombre} categoria={item.categoria ?? 'Platos fuertes'} size="sm" />
+                        <PlatoImage nombre={item.nombre} categoria={item.categoria ?? 'Platos fuertes'} imageUrl={item.imageUrl} size="sm" />
                         <div className={styles.itemMain}>
                           <div className={styles.itemTop}>
                             <p className={styles.itemNombre}>{item.nombre}</p>

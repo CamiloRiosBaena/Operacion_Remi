@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
@@ -11,10 +11,8 @@ import { RemiLogo } from '@/shared/components/RemiLogo';
 import type { Plato } from '../types/plato.types';
 import styles from './MenuPage.module.css';
 
-// Re-exportamos el tipo para que PlatoModal lo siga importando desde aquí
 export type { Plato };
 
-const CATEGORIAS = ['Todos', 'Entradas', 'Platos fuertes', 'Bebidas', 'Postres'];
 
 function formatPrecio(n: number) {
   return `$${n.toLocaleString('es-CO')}`;
@@ -28,17 +26,36 @@ export function MenuPage() {
 
   const { platos } = usePlatos();
 
-  // Si viene ?mesa=X desde un QR, pre-seleccionar esa mesa en el carrito
+  const secciones = useMemo(() => {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const p of platos) {
+      if (p.categoria && !seen.has(p.categoria)) {
+        seen.add(p.categoria);
+        result.push(p.categoria);
+      }
+    }
+    return result;
+  }, [platos]);
+
+  const categorias = useMemo(() => ['Todos', ...secciones], [secciones]);
+
   const mesaQr = searchParams.get('mesa') ? Number(searchParams.get('mesa')) : undefined;
 
   const [categoriaActiva, setCategoriaActiva] = useState('Todos');
   const [cartOpen, setCartOpen]   = useState(false);
   const [platoModal, setPlatoModal] = useState<Plato | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  const platosFiltrados =
-    categoriaActiva === 'Todos'
-      ? platos
-      : platos.filter((p) => p.categoria === categoriaActiva);
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  useEffect(() => {
+    function onScroll() {
+      setShowBackToTop(window.scrollY > 320);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const esCliente = user?.rol === 'cliente';
   const esAdmin   = user?.rol === 'admin';
@@ -48,6 +65,21 @@ export function MenuPage() {
     logout();
     navigate('/login', { replace: true });
   }
+
+  function scrollToSection(cat: string) {
+    setCategoriaActiva(cat);
+    if (cat === 'Todos') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const el = sectionRefs.current[cat];
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  const platosPorCategoria = secciones.reduce<Record<string, Plato[]>>((acc, cat) => {
+    acc[cat] = platos.filter((p) => p.categoria === cat);
+    return acc;
+  }, {});
 
   return (
     <div className={styles.page}>
@@ -65,7 +97,7 @@ export function MenuPage() {
           <div className={styles.headerRight}>
             {esInvitado && (
               <>
-                <Link to="/login"   className={styles.linkSecondary}>Ingresar</Link>
+                <Link to="/login"    className={styles.linkSecondary}>Ingresar</Link>
                 <Link to="/registro" className={styles.linkPrimary}>Crear cuenta</Link>
               </>
             )}
@@ -80,7 +112,7 @@ export function MenuPage() {
               <span className={styles.clienteChip}>👤 {user.nombre.split(' ')[0]}</span>
             )}
 
-            {(esCliente) && (
+            {esCliente && (
               <button className={styles.logoutBtn} onClick={handleLogout} title="Cerrar sesión">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -101,13 +133,13 @@ export function MenuPage() {
           </div>
         </div>
 
-        {/* Filtros de categoría */}
+        {/* Filtros de categoría — ahora hacen scroll a la sección */}
         <div className={styles.catScroll}>
-          {CATEGORIAS.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat}
               className={`${styles.catChip} ${cat === categoriaActiva ? styles.catChipActive : ''}`}
-              onClick={() => setCategoriaActiva(cat)}
+              onClick={() => scrollToSection(cat)}
             >
               {cat}
             </button>
@@ -134,52 +166,69 @@ export function MenuPage() {
 
       {/* ── Main content ── */}
       <main className={styles.main}>
+        <MenuBanner
+          platos={platos}
+          onPlatoClick={(plato) => setPlatoModal(plato)}
+          onCategoriaClick={(cat) => scrollToSection(cat)}
+        />
 
-        {/* Banner solo cuando se ven todos los platos */}
-        {categoriaActiva === 'Todos' && (
-          <MenuBanner
-            platos={platos}
-            onPlatoClick={(plato) => setPlatoModal(plato)}
-            onCategoriaClick={(cat) => setCategoriaActiva(cat)}
-          />
-        )}
+        {secciones.map((cat) => {
+          const items = platosPorCategoria[cat];
+          if (!items || items.length === 0) return null;
 
-        <p className={styles.seccionLabel} style={{ marginTop: categoriaActiva === 'Todos' ? '1rem' : undefined }}>
-          {categoriaActiva === 'Todos'
-            ? `${platos.filter(p => p.disponible).length} platos disponibles`
-            : `${platosFiltrados.filter(p => p.disponible).length} en ${categoriaActiva}`}
-        </p>
-
-        <div className={styles.gallery}>
-          {platosFiltrados.map((plato) => (
-            <button
-              key={plato.id}
-              className={`${styles.card} ${!plato.disponible ? styles.cardUnavailable : ''}`}
-              onClick={() => plato.disponible && setPlatoModal(plato)}
-              disabled={!plato.disponible}
+          return (
+            <section
+              key={cat}
+              ref={(el) => { sectionRefs.current[cat] = el; }}
+              className={styles.seccion}
             >
-              <div className={styles.cardImg}>
-                <PlatoImage
-                  nombre={plato.nombre}
-                  categoria={plato.categoria}
-                  imageUrl={plato.imageUrl}
-                  size="xl"
-                />
-                {!plato.disponible && (
-                  <div className={styles.unavailableOverlay}>No disponible</div>
-                )}
+              <h2 className={styles.seccionTitulo}>{cat}</h2>
+              <p className={styles.seccionLabel}>
+                {items.filter((p) => p.disponible).length} disponibles
+              </p>
+
+              <div className={styles.gallery}>
+                {items.map((plato) => (
+                  <button
+                    key={plato.id}
+                    className={`${styles.card} ${!plato.disponible ? styles.cardUnavailable : ''}`}
+                    onClick={() => plato.disponible && setPlatoModal(plato)}
+                    disabled={!plato.disponible}
+                  >
+                    <div className={styles.cardImg}>
+                      <PlatoImage
+                        nombre={plato.nombre}
+                        categoria={plato.categoria}
+                        imageUrl={plato.imageUrl}
+                        size="xl"
+                      />
+                      {!plato.disponible && (
+                        <div className={styles.unavailableOverlay}>No disponible</div>
+                      )}
+                    </div>
+                    <div className={styles.cardBody}>
+                      <p className={styles.cardNombre}>{plato.nombre}</p>
+                      <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
+                    </div>
+                    {plato.disponible && (
+                      <div className={styles.cardAddBtn} aria-hidden="true">+</div>
+                    )}
+                  </button>
+                ))}
               </div>
-              <div className={styles.cardBody}>
-                <p className={styles.cardNombre}>{plato.nombre}</p>
-                <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
-              </div>
-              {plato.disponible && (
-                <div className={styles.cardAddBtn} aria-hidden="true">+</div>
-              )}
-            </button>
-          ))}
-        </div>
+            </section>
+          );
+        })}
       </main>
+
+      {/* ── Botón volver arriba ── */}
+      <button
+        className={`${styles.backToTopBtn} ${showBackToTop ? styles.backToTopVisible : ''}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Volver al inicio"
+      >
+        ↑
+      </button>
 
       {/* ── Modals & Drawers ── */}
       {platoModal && (
