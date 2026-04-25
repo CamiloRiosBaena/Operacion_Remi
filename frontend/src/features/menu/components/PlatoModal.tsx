@@ -39,6 +39,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
   function toggleIngrediente(ing: string) {
     setRemovidos((prev) => {
       const next = new Set(prev);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(ing) ? next.delete(ing) : next.add(ing);
       return next;
     });
@@ -68,6 +69,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
       precio: precioConIva,
       tasaIva: 0,
       categoria: plato.categoria,
+      imageUrl: plato.imageUrl,
       ingredientesRemovidos: removidos.size > 0 ? Array.from(removidos) : undefined,
       extras: extrasActivos.length > 0 ? extrasActivos : undefined,
       nota: nota.trim() || undefined,

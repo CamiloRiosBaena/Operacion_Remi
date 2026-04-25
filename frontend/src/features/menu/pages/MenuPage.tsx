@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
@@ -11,10 +11,7 @@ import { RemiLogo } from '@/shared/components/RemiLogo';
 import type { Plato } from '../types/plato.types';
 import styles from './MenuPage.module.css';
 
-// Re-exportamos el tipo para que PlatoModal lo siga importando desde aquí
 export type { Plato };
-
-const CATEGORIAS = ['Todos', 'Entradas', 'Platos fuertes', 'Bebidas', 'Postres'];
 
 function formatPrecio(n: number) {
   return `$${n.toLocaleString('es-CO')}`;
@@ -28,20 +25,220 @@ export function MenuPage() {
 
   const { platos } = usePlatos();
 
-  // Si viene ?mesa=X desde un QR, pre-seleccionar esa mesa en el carrito
+  const secciones = useMemo(() => {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    for (const p of platos) {
+      if (p.categoria && !seen.has(p.categoria)) {
+        seen.add(p.categoria);
+        result.push(p.categoria);
+      }
+    }
+    return result;
+  }, [platos]);
+
+  const categorias = useMemo(() => ['Todos', ...secciones], [secciones]);
+
   const mesaQr = searchParams.get('mesa') ? Number(searchParams.get('mesa')) : undefined;
 
   const [categoriaActiva, setCategoriaActiva] = useState('Todos');
   const [cartOpen, setCartOpen]   = useState(false);
   const [platoModal, setPlatoModal] = useState<Plato | null>(null);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  const platosFiltrados =
-    categoriaActiva === 'Todos'
-      ? platos
-      : platos.filter((p) => p.categoria === categoriaActiva);
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
-  const esCliente = user?.rol === 'cliente';
-  const esAdmin   = user?.rol === 'admin';
+  // ── Scroll listener para botón volver arriba ──
+  useEffect(() => {
+    function onScroll() {
+      setShowBackToTop(window.scrollY > 320);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // ── Efecto de hierbas & especias flotantes ──
+  useEffect(() => {
+    const canvas = document.getElementById('bgCanvas') as HTMLCanvasElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    // ── Hoja de albahaca / laurel ──
+    function drawLeaf(
+      ctx: CanvasRenderingContext2D,
+      x: number, y: number,
+      size: number, angle: number, alpha: number
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.bezierCurveTo( size * 0.65, -size * 0.4,  size * 0.65,  size * 0.4, 0,  size);
+      ctx.bezierCurveTo(-size * 0.65,  size * 0.4, -size * 0.65, -size * 0.4, 0, -size);
+      ctx.fillStyle = '#4a7a2e';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(0,  size);
+      ctx.strokeStyle = 'rgba(120,200,70,0.45)';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── Estrella de anís ──
+    function drawStar(
+      ctx: CanvasRenderingContext2D,
+      x: number, y: number,
+      r: number, angle: number, alpha: number
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.globalAlpha = alpha;
+      const pts = 8;
+      ctx.beginPath();
+      for (let i = 0; i < pts * 2; i++) {
+        const rad = i % 2 === 0 ? r : r * 0.42;
+        const a = (i / (pts * 2)) * Math.PI * 2 - Math.PI / 2;
+        const px = Math.cos(a) * rad;
+        const py = Math.sin(a) * rad;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(196,168,130,0.75)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.2, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(196,168,130,0.5)';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Grano de pimienta ──
+    function drawPepper(
+      ctx: CanvasRenderingContext2D,
+      x: number, y: number,
+      r: number, alpha: number
+    ) {
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = '#6b1a1a';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.28, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Ramita / palito de canela ──
+    function drawTwig(
+      ctx: CanvasRenderingContext2D,
+      x: number, y: number,
+      len: number, angle: number, alpha: number
+    ) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.moveTo(0, -len / 2);
+      ctx.lineTo(0,  len / 2);
+      ctx.strokeStyle = '#8b5e3c';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(180,120,60,0.35)';
+      ctx.lineWidth = 0.8;
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath();
+        ctx.moveTo(-2, i * len * 0.28);
+        ctx.lineTo( 2, i * len * 0.28);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    type ParticleType = 'leaf' | 'star' | 'pepper' | 'twig';
+
+    interface Particle {
+      type: ParticleType;
+      x: number; y: number;
+      size: number;
+      speed: number;
+      drift: number;
+      angle: number;
+      angleSpeed: number;
+      alpha: number;
+    }
+
+    const TYPES: ParticleType[] = ['leaf', 'leaf', 'leaf', 'star', 'pepper', 'pepper', 'twig'];
+
+    function makeParticle(init: boolean): Particle {
+      return {
+        type:       TYPES[Math.floor(Math.random() * TYPES.length)],
+        x:          rand(0, canvas.width),
+        y:          init ? rand(0, canvas.height) : canvas.height + 20,
+        size:       rand(5, 12),
+        speed:      rand(0.25, 0.75),
+        drift:      rand(-0.2, 0.2),
+        angle:      rand(0, Math.PI * 2),
+        angleSpeed: rand(-0.008, 0.008),
+        alpha:      rand(0.12, 0.38),
+      };
+    }
+
+    const particles: Particle[] = Array.from({ length: 48 }, () => makeParticle(true));
+    let raf: number;
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (const p of particles) {
+        p.y     -= p.speed;
+        p.x     += p.drift + Math.sin(p.angle * 0.4) * 0.18;
+        p.angle += p.angleSpeed;
+
+        if (p.y < -20) {
+          Object.assign(p, makeParticle(false));
+        }
+
+        switch (p.type) {
+          case 'leaf':   drawLeaf  (ctx, p.x, p.y, p.size,        p.angle, p.alpha); break;
+          case 'star':   drawStar  (ctx, p.x, p.y, p.size,        p.angle, p.alpha); break;
+          case 'pepper': drawPepper(ctx, p.x, p.y, p.size * 0.45,          p.alpha); break;
+          case 'twig':   drawTwig  (ctx, p.x, p.y, p.size * 2.2,  p.angle, p.alpha); break;
+        }
+      }
+
+      raf = requestAnimationFrame(loop);
+    }
+    loop();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }, []);
+
+  const esCliente  = user?.rol === 'cliente';
+  const esAdmin    = user?.rol === 'admin';
   const esInvitado = !user;
 
   function handleLogout() {
@@ -49,8 +246,27 @@ export function MenuPage() {
     navigate('/login', { replace: true });
   }
 
+  function scrollToSection(cat: string) {
+    setCategoriaActiva(cat);
+    if (cat === 'Todos') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      const el = sectionRefs.current[cat];
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  const platosPorCategoria = secciones.reduce<Record<string, Plato[]>>((acc, cat) => {
+    acc[cat] = platos.filter((p) => p.categoria === cat);
+    return acc;
+  }, {});
+
   return (
     <div className={styles.page}>
+
+      {/* ── Canvas fondo animado (hierbas & especias) ── */}
+      <canvas id="bgCanvas" className={styles.bgCanvas} />
+
       {/* ── Header ── */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
@@ -65,7 +281,7 @@ export function MenuPage() {
           <div className={styles.headerRight}>
             {esInvitado && (
               <>
-                <Link to="/login"   className={styles.linkSecondary}>Ingresar</Link>
+                <Link to="/login"    className={styles.linkSecondary}>Ingresar</Link>
                 <Link to="/registro" className={styles.linkPrimary}>Crear cuenta</Link>
               </>
             )}
@@ -80,7 +296,7 @@ export function MenuPage() {
               <span className={styles.clienteChip}>👤 {user.nombre.split(' ')[0]}</span>
             )}
 
-            {(esCliente) && (
+            {esCliente && (
               <button className={styles.logoutBtn} onClick={handleLogout} title="Cerrar sesión">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -103,11 +319,11 @@ export function MenuPage() {
 
         {/* Filtros de categoría */}
         <div className={styles.catScroll}>
-          {CATEGORIAS.map((cat) => (
+          {categorias.map((cat) => (
             <button
               key={cat}
               className={`${styles.catChip} ${cat === categoriaActiva ? styles.catChipActive : ''}`}
-              onClick={() => setCategoriaActiva(cat)}
+              onClick={() => scrollToSection(cat)}
             >
               {cat}
             </button>
@@ -132,56 +348,71 @@ export function MenuPage() {
         </div>
       )}
 
- {/* ── Banner FUERA del main — ancho controlado por ti ── */}
-      {categoriaActiva === 'Todos' && (
-        <div className={styles.ofertaBannerWrapper}>
-          <MenuBanner
-            platos={platos}
-            onPlatoClick={(plato) => setPlatoModal(plato)}
-            onCategoriaClick={(cat) => setCategoriaActiva(cat)}
-          />
-        </div>
-      )}
-
-      {/* ── Main content — solo galería ── */}
+      {/* ── Main content ── */}
       <main className={styles.main}>
+        <MenuBanner
+          platos={platos}
+          onPlatoClick={(plato) => setPlatoModal(plato)}
+          onCategoriaClick={(cat) => scrollToSection(cat)}
+        />
 
-        <p className={styles.seccionLabel} style={{ marginTop: categoriaActiva === 'Todos' ? '1rem' : undefined }}>
-          {categoriaActiva === 'Todos'
-            ? `${platos.filter(p => p.disponible).length} platos disponibles`
-            : `${platosFiltrados.filter(p => p.disponible).length} en ${categoriaActiva}`}
-        </p>
+        {secciones.map((cat) => {
+          const items = platosPorCategoria[cat];
+          if (!items || items.length === 0) return null;
 
-        <div className={styles.gallery}>
-          {platosFiltrados.map((plato) => (
-            <button
-              key={plato.id}
-              className={`${styles.card} ${!plato.disponible ? styles.cardUnavailable : ''}`}
-              onClick={() => plato.disponible && setPlatoModal(plato)}
-              disabled={!plato.disponible}
+          return (
+            <section
+              key={cat}
+              ref={(el) => { sectionRefs.current[cat] = el; }}
+              className={styles.seccion}
             >
-              <div className={styles.cardImg}>
-                <PlatoImage
-                  nombre={plato.nombre}
-                  categoria={plato.categoria}
-                  imageUrl={plato.imageUrl}
-                  size="xl"
-                />
-                {!plato.disponible && (
-                  <div className={styles.unavailableOverlay}>No disponible</div>
-                )}
+              <h2 className={styles.seccionTitulo}>{cat}</h2>
+              <p className={styles.seccionLabel}>
+                {items.filter((p) => p.disponible).length} disponibles
+              </p>
+
+              <div className={styles.gallery}>
+                {items.map((plato) => (
+                  <button
+                    key={plato.id}
+                    className={`${styles.card} ${!plato.disponible ? styles.cardUnavailable : ''}`}
+                    onClick={() => plato.disponible && setPlatoModal(plato)}
+                    disabled={!plato.disponible}
+                  >
+                    <div className={styles.cardImg}>
+                      <PlatoImage
+                        nombre={plato.nombre}
+                        categoria={plato.categoria}
+                        imageUrl={plato.imageUrl}
+                        size="xl"
+                      />
+                      {!plato.disponible && (
+                        <div className={styles.unavailableOverlay}>No disponible</div>
+                      )}
+                    </div>
+                    <div className={styles.cardBody}>
+                      <p className={styles.cardNombre}>{plato.nombre}</p>
+                      <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
+                    </div>
+                    {plato.disponible && (
+                      <div className={styles.cardAddBtn} aria-hidden="true">+</div>
+                    )}
+                  </button>
+                ))}
               </div>
-              <div className={styles.cardBody}>
-                <p className={styles.cardNombre}>{plato.nombre}</p>
-                <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
-              </div>
-              {plato.disponible && (
-                <div className={styles.cardAddBtn} aria-hidden="true">+</div>
-              )}
-            </button>
-          ))}
-        </div>
+            </section>
+          );
+        })}
       </main>
+
+      {/* ── Botón volver arriba ── */}
+      <button
+        className={`${styles.backToTopBtn} ${showBackToTop ? styles.backToTopVisible : ''}`}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        aria-label="Volver al inicio"
+      >
+        ↑
+      </button>
 
       {/* ── Modals & Drawers ── */}
       {platoModal && (

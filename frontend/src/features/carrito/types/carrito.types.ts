@@ -12,6 +12,7 @@ export interface CartItem {
   cantidad: number;
   emoji?: string;
   categoria: string;
+  imageUrl?: string;
   // Personalizaciones
   ingredientesRemovidos?: string[];
   extras?: CartExtra[];
