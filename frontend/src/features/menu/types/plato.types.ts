@@ -9,6 +9,7 @@ export interface Plato {
   nombre: string;
   descripcion: string;
   precio: number;
+  tasaIva: number;
   categoria: string;
   categoriaId?: number;
   disponible: boolean;

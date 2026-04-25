@@ -57,6 +57,7 @@ export function PlatosProvider({ children }: { children: ReactNode }) {
         descripcion: plato.descripcion,
         imagenUrl: plato.imageUrl,
         disponible: plato.disponible,
+        tasaIva: plato.tasaIva,
         categoriaId: plato.categoriaId!,
       });
       setPlatos((prev) => [...prev, creado]);
@@ -67,6 +68,7 @@ export function PlatosProvider({ children }: { children: ReactNode }) {
         descripcion: plato.descripcion,
         imagenUrl: plato.imageUrl ?? null,
         disponible: plato.disponible,
+        tasaIva: plato.tasaIva,
         categoriaId: plato.categoriaId,
       });
       setPlatos((prev) => prev.map((p) => (p.id === plato.id ? actualizado : p)));

@@ -52,9 +52,10 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
     });
   }
 
-  // Precio total = (precio base + extras) * cantidad
-  const extrasTotal = plato.extras.reduce((s, e) => s + (extrasQty[e.nombre] ?? 0) * e.precio, 0);
-  const precioTotal = (plato.precio + extrasTotal) * cantidad;
+  // Precio final al cliente incluye IVA en el precio base
+  const precioConIva  = Math.round(plato.precio * (1 + plato.tasaIva));
+  const extrasTotal   = plato.extras.reduce((s, e) => s + (extrasQty[e.nombre] ?? 0) * e.precio, 0);
+  const precioTotal   = (precioConIva + extrasTotal) * cantidad;
 
   function handleAgregar() {
     const extrasActivos = plato.extras
@@ -64,7 +65,8 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
     addItem({
       platoId: plato.id,
       nombre: plato.nombre,
-      precio: plato.precio,
+      precio: precioConIva,
+      tasaIva: 0,
       categoria: plato.categoria,
       ingredientesRemovidos: removidos.size > 0 ? Array.from(removidos) : undefined,
       extras: extrasActivos.length > 0 ? extrasActivos : undefined,
@@ -104,7 +106,12 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
           {/* Info básica */}
           <div className={styles.info}>
             <h2 className={styles.nombre}>{plato.nombre}</h2>
-            <p className={styles.precioBase}>{formatPrecio(plato.precio)}</p>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+              <p className={styles.precioBase}>{formatPrecio(precioConIva)}</p>
+              {plato.tasaIva > 0 && (
+                <span style={{ fontSize: '0.75rem', color: '#78716c' }}>IVA {Math.round(plato.tasaIva * 100)}% inc.</span>
+              )}
+            </div>
             <p className={styles.desc}>{plato.descripcion}</p>
           </div>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
 import { CartDrawer } from '@/features/carrito/components/CartDrawer';
@@ -24,8 +24,12 @@ export function MenuPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { count } = useCarrito();
+  const [searchParams] = useSearchParams();
 
   const { platos } = usePlatos();
+
+  // Si viene ?mesa=X desde un QR, pre-seleccionar esa mesa en el carrito
+  const mesaQr = searchParams.get('mesa') ? Number(searchParams.get('mesa')) : undefined;
 
   const [categoriaActiva, setCategoriaActiva] = useState('Todos');
   const [cartOpen, setCartOpen]   = useState(false);
@@ -111,6 +115,23 @@ export function MenuPage() {
         </div>
       </header>
 
+      {/* ── Banner de mesa (cuando viene de un QR) ── */}
+      {mesaQr && (
+        <div style={{
+          background: '#fff7ed',
+          borderBottom: '1px solid #fed7aa',
+          padding: '0.5rem 1rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          fontSize: '0.875rem',
+          color: '#9a3412',
+          fontWeight: 500,
+        }}>
+          🪑 Estás en <strong>Mesa {mesaQr}</strong> — tu pedido se registrará en esta mesa
+        </div>
+      )}
+
       {/* ── Main content ── */}
       <main className={styles.main}>
 
@@ -150,7 +171,7 @@ export function MenuPage() {
               </div>
               <div className={styles.cardBody}>
                 <p className={styles.cardNombre}>{plato.nombre}</p>
-                <p className={styles.cardPrecio}>{formatPrecio(plato.precio)}</p>
+                <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
               </div>
               {plato.disponible && (
                 <div className={styles.cardAddBtn} aria-hidden="true">+</div>
@@ -169,7 +190,7 @@ export function MenuPage() {
         />
       )}
 
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} mesaQr={mesaQr} />
     </div>
   );
 }

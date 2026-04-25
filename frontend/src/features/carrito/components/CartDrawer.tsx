@@ -13,6 +13,7 @@ import styles from './CartDrawer.module.css';
 interface Props {
   open: boolean;
   onClose: () => void;
+  mesaQr?: number;
 }
 
 function formatPrecio(n: number) {
@@ -27,20 +28,28 @@ function itemTotal(precio: number, extras: { precio: number; cantidad: number }[
 // ── Paso de checkout ──────────────────────────────────────────────────────────
 type Step = 'carrito' | 'checkout' | 'confirmado';
 
-export function CartDrawer({ open, onClose }: Props) {
-  const { items, count, total, removeItem, updateCantidad, clearCart } = useCarrito();
+export function CartDrawer({ open, onClose, mesaQr }: Props) {
+  const { items, count, total, ivaTotal, totalConIva, removeItem, updateCantidad, clearCart } = useCarrito();
   const { user } = useAuth();
 
   const [step, setStep]             = useState<Step>('carrito');
-  const [tipo, setTipo]             = useState<TipoPedido>('llevar');
-  const [mesaId, setMesaId]         = useState<number | ''>('');
+  const [tipo, setTipo]             = useState<TipoPedido>(mesaQr ? 'mesa' : 'llevar');
+  const [mesaId, setMesaId]         = useState<number | ''>(mesaQr ?? '');
   const [direccion, setDireccion]   = useState('');
   const [mesas, setMesas]           = useState<Mesa[]>([]);
   const [enviando, setEnviando]     = useState(false);
   const [errorPedido, setErrorPedido] = useState('');
   const [pedidoId, setPedidoId]     = useState<number | null>(null);
 
-  // Cargar mesas cuando se abre el checkout
+  // Si cambia mesaQr (navegación), sincronizar
+  useEffect(() => {
+    if (mesaQr) {
+      setTipo('mesa');
+      setMesaId(mesaQr);
+    }
+  }, [mesaQr]);
+
+  // Cargar mesas cuando se abre el checkout en modo mesa
   useEffect(() => {
     if (step === 'checkout' && tipo === 'mesa' && mesas.length === 0) {
       fetchMesas().then(setMesas).catch(console.error);
@@ -53,14 +62,14 @@ export function CartDrawer({ open, onClose }: Props) {
       setTimeout(() => {
         if (step === 'confirmado') {
           setStep('carrito');
-          setTipo('llevar');
-          setMesaId('');
+          setTipo(mesaQr ? 'mesa' : 'llevar');
+          setMesaId(mesaQr ?? '');
           setDireccion('');
           setPedidoId(null);
         }
       }, 300);
     }
-  }, [open, step]);
+  }, [open, step, mesaQr]);
 
   async function handlePedir() {
     if (tipo === 'mesa' && !mesaId) { setErrorPedido('Selecciona una mesa'); return; }
@@ -185,7 +194,7 @@ export function CartDrawer({ open, onClose }: Props) {
                 <button className={styles.btnPagar} onClick={() => setStep('checkout')}>
                   Proceder al pago →
                 </button>
-                <p className={styles.payNote}>Pago seguro — múltiples métodos</p>
+                <p className={styles.payNote}>Precios incluyen IVA · Pago seguro</p>
               </div>
             )}
           </>
@@ -212,26 +221,32 @@ export function CartDrawer({ open, onClose }: Props) {
                 {/* Tipo de pedido */}
                 <div className={styles.checkoutField}>
                   <label className={styles.checkoutLabel}>¿Cómo recibes tu pedido?</label>
-                  <div className={styles.tipoGrid}>
-                    {([
-                      { valor: 'llevar',   emoji: '🥡', texto: 'Para llevar' },
-                      { valor: 'mesa',     emoji: '🪑', texto: 'En mesa'     },
-                      { valor: 'domicilio',emoji: '🛵', texto: 'Domicilio'   },
-                    ] as { valor: TipoPedido; emoji: string; texto: string }[]).map(({ valor, emoji, texto }) => (
-                      <button
-                        key={valor}
-                        className={`${styles.tipoBtn} ${tipo === valor ? styles.tipoBtnActive : ''}`}
-                        onClick={() => setTipo(valor)}
-                      >
-                        <span className={styles.tipoEmoji}>{emoji}</span>
-                        <span>{texto}</span>
-                      </button>
-                    ))}
-                  </div>
+                  {mesaQr ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '0.5rem', padding: '0.625rem 0.875rem', fontSize: '0.875rem', color: '#9a3412', fontWeight: 500 }}>
+                      🪑 Pedido en mesa — Mesa {mesaQr}
+                    </div>
+                  ) : (
+                    <div className={styles.tipoGrid}>
+                      {([
+                        { valor: 'llevar',   emoji: '🥡', texto: 'Para llevar' },
+                        { valor: 'mesa',     emoji: '🪑', texto: 'En mesa'     },
+                        { valor: 'domicilio',emoji: '🛵', texto: 'Domicilio'   },
+                      ] as { valor: TipoPedido; emoji: string; texto: string }[]).map(({ valor, emoji, texto }) => (
+                        <button
+                          key={valor}
+                          className={`${styles.tipoBtn} ${tipo === valor ? styles.tipoBtnActive : ''}`}
+                          onClick={() => setTipo(valor)}
+                        >
+                          <span className={styles.tipoEmoji}>{emoji}</span>
+                          <span>{texto}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Mesa */}
-                {tipo === 'mesa' && (
+                {/* Mesa — si NO viene de QR, dejar seleccionar; si viene de QR ya está fija */}
+                {tipo === 'mesa' && !mesaQr && (
                   <div className={styles.checkoutField}>
                     <label className={styles.checkoutLabel}>Selecciona tu mesa</label>
                     {mesas.length === 0 ? (
@@ -279,7 +294,7 @@ export function CartDrawer({ open, onClose }: Props) {
                     </div>
                   ))}
                   <div className={`${styles.resumenRow} ${styles.resumenTotal}`}>
-                    <span>Total</span>
+                    <span>Total (IVA inc.)</span>
                     <span>{formatPrecio(total)}</span>
                   </div>
                 </div>
