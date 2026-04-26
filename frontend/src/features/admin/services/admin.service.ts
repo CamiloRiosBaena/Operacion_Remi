@@ -19,6 +19,12 @@ export interface ApiDetalle {
   plato: { id: number; nombre: string; precio: number };
 }
 
+export interface ApiHistorialEstado {
+  id: number;
+  estado: EstadoPedidoApi;
+  fechaHora: string;
+}
+
 export interface ApiPedido {
   id: number;
   tipo: TipoPedidoApi;
@@ -31,6 +37,7 @@ export interface ApiPedido {
   cliente: { id: number; nombre: string; correo: string } | null;
   mesa: { id: number; numero: number } | null;
   detalles: ApiDetalle[];
+  historial?: ApiHistorialEstado[];
 }
 
 export interface ApiStaff {

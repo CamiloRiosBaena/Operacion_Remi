@@ -203,6 +203,24 @@ export class PedidosService {
   }
 
   // ─────────────────────────────────────────
+  // DESPACHO (domicilios listos)
+  // ─────────────────────────────────────────
+
+  findPedidosListoDomicilio(): Promise<Pedido[]> {
+    return this.pedidoRepo.find({
+      where: { estado: EstadoPedido.LISTO, tipo: TipoPedido.DOMICILIO },
+      relations: ['cliente', 'detalles', 'detalles.plato', 'historial'],
+      order: { fechaHora: 'ASC' },
+    });
+  }
+
+  async despacharRuta(pedidoIds: number[], staffId: number): Promise<Pedido[]> {
+    return Promise.all(
+      pedidoIds.map((id) => this.cambiarEstado(id, { estado: EstadoPedido.EN_CAMINO, staffId })),
+    );
+  }
+
+  // ─────────────────────────────────────────
   // CANCELAR
   // ─────────────────────────────────────────
 
