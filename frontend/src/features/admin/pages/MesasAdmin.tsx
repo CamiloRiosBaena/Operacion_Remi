@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AdminLayout } from '../components/AdminLayout';
 import {
@@ -36,11 +37,11 @@ function MesaQR({ mesa }: { mesa: ApiMesa }) {
   }
 
   return (
-    <div className={styles.qrWrap}>
+    <div className={styles.qrInner}>
       <QRCodeCanvas
         id={`qr-mesa-${mesa.id}`}
         value={url}
-        size={180}
+        size={200}
         marginSize={2}
         level="M"
         ref={canvasRef}
@@ -53,15 +54,53 @@ function MesaQR({ mesa }: { mesa: ApiMesa }) {
   );
 }
 
+// ── Modal QR con Portal ───────────────────────────────────────────────────────
+
+function QrModal({ mesa, onClose }: { mesa: ApiMesa; onClose: () => void }) {
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return createPortal(
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.qrPanelHeader}>
+          <div className={styles.qrPanelInfo}>
+            <span className={styles.qrPanelTitle}>
+              Código QR — Mesa {mesa.numero}
+            </span>
+            <span className={styles.qrPanelSub}>
+              Escanea para acceder al menú de esta mesa
+            </span>
+          </div>
+          <button className={styles.btnCerrarQr} onClick={onClose}>
+            ✕ Cerrar
+          </button>
+        </div>
+        <MesaQR mesa={mesa} />
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export function MesasAdmin() {
-  const [mesas,      setMesas     ] = useState<ApiMesa[]>([]);
-  const [loading,    setLoading   ] = useState(true);
-  const [nuevaNum,   setNuevaNum  ] = useState('');
-  const [creando,    setCreando   ] = useState(false);
-  const [errorMsg,   setErrorMsg  ] = useState('');
-  const [qrAbierto,  setQrAbierto ] = useState<number | null>(null);
+  const [mesas,     setMesas    ] = useState<ApiMesa[]>([]);
+  const [loading,   setLoading  ] = useState(true);
+  const [nuevaNum,  setNuevaNum ] = useState('');
+  const [creando,   setCreando  ] = useState(false);
+  const [errorMsg,  setErrorMsg ] = useState('');
+  const [qrAbierto, setQrAbierto] = useState<number | null>(null);
 
   const cargar = useCallback(async () => {
     setLoading(true);
@@ -113,8 +152,9 @@ export function MesasAdmin() {
     }
   }
 
-  const libres   = mesas.filter((m) => m.estado === 'libre').length;
-  const ocupadas = mesas.filter((m) => m.estado === 'ocupada').length;
+  const mesaActiva = qrAbierto !== null ? mesas.find((m) => m.id === qrAbierto) : null;
+  const libres     = mesas.filter((m) => m.estado === 'libre').length;
+  const ocupadas   = mesas.filter((m) => m.estado === 'ocupada').length;
 
   return (
     <AdminLayout title="Mesas">
@@ -126,11 +166,11 @@ export function MesasAdmin() {
             <span className={styles.resumenNum}>{mesas.length}</span>
             <span className={styles.resumenLabel}>Total</span>
           </div>
-          <div className={styles.resumenCard} style={{ '--accent': '#15803d' } as React.CSSProperties}>
+          <div className={styles.resumenCard}>
             <span className={styles.resumenNum} style={{ color: '#15803d' }}>{libres}</span>
             <span className={styles.resumenLabel}>Libres</span>
           </div>
-          <div className={styles.resumenCard} style={{ '--accent': '#b91c1c' } as React.CSSProperties}>
+          <div className={styles.resumenCard}>
             <span className={styles.resumenNum} style={{ color: '#b91c1c' }}>{ocupadas}</span>
             <span className={styles.resumenLabel}>Ocupadas</span>
           </div>
@@ -169,10 +209,8 @@ export function MesasAdmin() {
           <div className={styles.grid}>
             {mesas.map((mesa) => {
               const cfg = ESTADO_CFG[mesa.estado];
-              const qrVisible = qrAbierto === mesa.id;
               return (
                 <div key={mesa.id} className={styles.card}>
-                  {/* Header */}
                   <div className={styles.cardHeader}>
                     <div className={styles.cardTitle}>
                       <span className={styles.mesaNum}>Mesa {mesa.numero}</span>
@@ -192,7 +230,6 @@ export function MesasAdmin() {
                     </button>
                   </div>
 
-                  {/* Estado manual */}
                   <div className={styles.estadoRow}>
                     <span className={styles.estadoLabel}>Estado:</span>
                     <select
@@ -206,24 +243,27 @@ export function MesasAdmin() {
                     </select>
                   </div>
 
-                  {/* QR */}
-                  <div className={styles.qrSection}>
-                    <button
-                      className={styles.btnQr}
-                      onClick={() => setQrAbierto(qrVisible ? null : mesa.id)}
-                    >
-                      {qrVisible ? '▲ Ocultar QR' : '▼ Ver / Descargar QR'}
-                    </button>
-                    {qrVisible && <MesaQR mesa={mesa} />}
-                  </div>
+                  <button
+                    className={styles.btnQr}
+                    onClick={() => setQrAbierto(mesa.id)}
+                  >
+                    ▼ Ver / Descargar QR
+                  </button>
                 </div>
               );
             })}
           </div>
         )}
 
-        <p className={styles.count}>{mesas.length} mesa{mesas.length !== 1 ? 's' : ''} registrada{mesas.length !== 1 ? 's' : ''}</p>
+        <p className={styles.count}>
+          {mesas.length} mesa{mesas.length !== 1 ? 's' : ''} registrada{mesas.length !== 1 ? 's' : ''}
+        </p>
       </div>
+
+      {/* ── Modal QR — montado en document.body via Portal ── */}
+      {mesaActiva && (
+        <QrModal mesa={mesaActiva} onClose={() => setQrAbierto(null)} />
+      )}
     </AdminLayout>
   );
 }

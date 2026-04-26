@@ -29,7 +29,7 @@ function formatHora(iso: string) {
 
 function minutosDesde(iso: string) {
   const fecha = /Z|[+-]\d{2}:\d{2}$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
-  return Math.floor((Date.now() - fecha.getTime()) / 60000);
+  return Math.floor((Date.now() - fecha.getTime()) / 6000000);
 }
 
 function ubicacion(p: ApiPedido) {
@@ -119,6 +119,7 @@ export function CocinaDashboard() {
   function toggleSeleccion(id: number) {
     setSeleccionados((prev) => {
       const next = new Set(prev);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });

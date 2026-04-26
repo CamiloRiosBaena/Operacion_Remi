@@ -1,7 +1,10 @@
+/* ── Hereda tokens del tema principal (globals.css) ── */
+
 .wrapper {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  font-family: var(--font-body);
 }
 
 .topBar {
@@ -14,21 +17,22 @@
 
 .info {
   font-size: 0.9375rem;
-  color: #78716c;
+  color: var(--text-muted);
   margin: 0;
 }
 
 .badge {
   font-size: 0.8125rem;
-  font-weight: 500;
-  padding: 0.3rem 0.75rem;
-  background: #fef2f2;
-  color: #b91c1c;
-  border-radius: 999px;
-  border: 1px solid #fecaca;
+  font-weight: 600;
+  padding: 0.3rem 0.875rem;
+  background: var(--ember-soft);
+  color: var(--ember);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(212, 80, 10, 0.22);
+  letter-spacing: 0.03em;
 }
 
-/* Grid de comandas */
+/* ── Grid de comandas ── */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -37,13 +41,24 @@
 }
 
 .card {
-  background: #fff;
-  border: 1.5px solid #e7e5e4;
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--line-light);
+  border-radius: var(--radius-card);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(212, 80, 10, 0.2);
 }
 
 .cardHeader {
@@ -53,24 +68,30 @@
 }
 
 .pedidoId {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
-  color: #1c1917;
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .mesa {
-  font-size: 0.875rem;
-  background: #fff4ee;
-  color: #d4500a;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-weight: 500;
+  font-size: 0.8rem;
+  background: var(--ember-soft);
+  color: var(--ember);
+  padding: 0.2rem 0.625rem;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid rgba(212, 80, 10, 0.18);
 }
 
 .hora {
   font-size: 0.8125rem;
-  color: #a8a29e;
+  color: var(--dust);
   margin-left: auto;
+  letter-spacing: 0.03em;
 }
 
 .items {
@@ -79,15 +100,16 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: 0.25rem;
 }
 
 .items li {
-  font-size: 0.9375rem;
-  color: #44403c;
-  padding: 0.375rem 0.625rem;
-  background: #fafaf8;
-  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  padding: 0.35rem 0.75rem;
+  background: var(--parchment);
+  border-radius: 8px;
+  border-left: 2.5px solid var(--line);
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -95,7 +117,7 @@
 
 .personTag {
   font-size: 0.78rem;
-  color: #78716c;
+  color: var(--text-muted);
   font-style: italic;
 }
 
@@ -107,26 +129,51 @@
 }
 
 .estado {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.28rem 0.875rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* reutiliza las variantes del módulo de pedidos */
+.estadoPendiente {
+  background: var(--ember-soft);
+  color: var(--ember);
+  border: 1.5px solid rgba(212, 80, 10, 0.28);
+}
+
+.estadoListo {
+  background: rgba(30, 110, 45, 0.08);
+  color: #1e6e2d;
+  border: 1.5px solid rgba(30, 110, 45, 0.22);
+}
+
+.estadoEntregado {
+  background: rgba(92, 48, 24, 0.08);
+  color: var(--bark);
+  border: 1.5px solid var(--line);
 }
 
 .btnAccion {
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #d4500a, #f26419);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ember) 0%, var(--ember-deep) 100%);
+  color: var(--parchment);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s;
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+  box-shadow: 0 3px 12px rgba(212, 80, 10, 0.32);
+  transition: opacity 0.15s, transform 0.15s;
 }
 
 .btnAccion:hover {
   opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 /* ── Layout dos paneles ── */
@@ -151,39 +198,44 @@
 }
 
 .panelTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1c1917;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--text-primary);
   margin: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  letter-spacing: -0.01em;
 }
 
 .despachoCount {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  background: #d4500a;
-  color: #fff;
-  border-radius: 999px;
-  padding: 0.1rem 0.5rem;
+  background: var(--ember);
+  color: var(--parchment);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.625rem;
+  letter-spacing: 0.04em;
+  font-family: var(--font-body);
 }
 
 /* ── Panel despacho ── */
 .despachoVacio {
   font-size: 0.875rem;
-  color: #a8a29e;
+  color: var(--dust);
   margin: 0;
   padding: 1.5rem;
   text-align: center;
-  background: #fafaf8;
-  border: 2px dashed #e7e5e4;
-  border-radius: 12px;
+  background: var(--parchment);
+  border: 2px dashed var(--line-light);
+  border-radius: var(--radius-card);
 }
 
 .despachoHint {
   font-size: 0.8125rem;
-  color: #78716c;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -198,25 +250,29 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.875rem;
-  background: #fff;
-  border: 1.5px solid #e7e5e4;
-  border-radius: 10px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--line-light);
+  border-radius: var(--radius-card);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  min-width: 0;          /* permite que el flex child se comprima */
+  overflow: hidden;      /* evita desbordamiento de la card */
 }
 
 .despachoCardSel {
-  border-color: #d4500a;
-  background: #fff9f6;
+  border-color: var(--ember);
+  background: rgba(212, 80, 10, 0.04);
+  box-shadow: 0 0 0 3px rgba(212, 80, 10, 0.08);
 }
 
 .despachoCardUrgente {
-  border-color: #fca5a5;
-  background: #fef9f9;
+  border-color: rgba(212, 80, 10, 0.4);
+  background: rgba(212, 80, 10, 0.03);
 }
 
 .despachoCardSel.despachoCardUrgente {
-  border-color: #ef4444;
+  border-color: var(--ember);
 }
 
 .check {
@@ -224,7 +280,7 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  accent-color: #d4500a;
+  accent-color: var(--ember);
   cursor: pointer;
 }
 
@@ -233,6 +289,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-width: 0;          /* clave: permite que el texto se trunque en vez de expandirse */
+  overflow: hidden;
 }
 
 .despachoHeader {
@@ -240,38 +298,53 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  min-width: 0;
 }
 
+/* El ID del pedido no debe empujar al timer */
+.despachoHeader > *:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El timer siempre queda a la derecha, sin encogerse */
 .timerBadge {
+  flex-shrink: 0;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #78716c;
-  background: #f5f5f4;
+  color: var(--text-muted);
+  background: var(--parchment);
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-light);
+  white-space: nowrap;
 }
 
 .timerUrgente {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--ember-soft);
+  color: var(--ember);
+  border-color: rgba(212, 80, 10, 0.25);
 }
 
 .despachoCliente {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  color: #1c1917;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .despachoDir {
   font-size: 0.8125rem;
-  color: #78716c;
+  color: var(--text-muted);
   margin: 0;
 }
 
 .despachoItems {
   font-size: 0.78rem;
-  color: #a8a29e;
+  color: var(--dust);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -288,51 +361,68 @@
 .selectDomiciliario {
   width: 100%;
   padding: 0.6rem 0.875rem;
-  border: 1.5px solid #e7e5e4;
-  border-radius: 8px;
+  border: 1.5px solid var(--line-light);
+  border-radius: 10px;
   font-size: 0.875rem;
-  color: #1c1917;
-  background: #fff;
+  color: var(--text-primary);
+  background: var(--card-bg);
+  font-family: var(--font-body);
   outline: none;
   cursor: pointer;
+  transition: border-color 0.15s;
 }
 
-.selectDomiciliario:focus { border-color: #d4500a; }
+.selectDomiciliario:focus {
+  border-color: var(--ember);
+  box-shadow: 0 0 0 3px rgba(212, 80, 10, 0.08);
+}
 
 .btnDespachar {
   width: 100%;
   padding: 0.65rem 1rem;
-  background: linear-gradient(135deg, #d4500a, #f26419);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ember) 0%, var(--ember-deep) 100%);
+  color: var(--parchment);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.9375rem;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s;
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+  box-shadow: 0 3px 14px rgba(212, 80, 10, 0.35);
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 
-.btnDespachar:hover:not(:disabled) { opacity: 0.88; }
-.btnDespachar:disabled { opacity: 0.45; cursor: default; }
+.btnDespachar:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 18px rgba(212, 80, 10, 0.42);
+}
 
-/* Card vacía */
+.btnDespachar:disabled {
+  opacity: 0.4;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ── Card vacía ── */
 .emptyCard {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  padding: 2rem;
-  background: #fafaf8;
-  border: 2px dashed #e7e5e4;
-  border-radius: 14px;
-  color: #a8a29e;
+  gap: 0.75rem;
+  padding: 3rem 2rem;
+  background: var(--parchment);
+  border: 2px dashed var(--line-light);
+  border-radius: var(--radius-card);
+  color: var(--dust);
   font-size: 0.9375rem;
   text-align: center;
 }
 
 .emptyCard span {
-  font-size: 2rem;
+  font-size: 2.5rem;
 }
 
 .emptyCard p {
