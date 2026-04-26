@@ -13,6 +13,8 @@ import { MesasAdmin } from '@/features/admin/pages/MesasAdmin';
 import { CocinaDashboard } from '@/features/cocina/pages/CocinaDashboard';
 import { DomiciliosDashboard } from '@/features/domicilios/pages/DomiciliosDashboard';
 import { MenuPage } from '@/features/menu/pages/MenuPage';
+import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntregaPage';
+import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
 import { RoleRedirect } from './RoleRedirect';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
@@ -28,6 +30,12 @@ export const router = createBrowserRouter([
 
   // Menú público (QR o cliente registrado)
   { path: '/menu', element: <MenuPage /> },
+
+  // Confirmación de entrega pública (domiciliario escanea QR del cliente)
+  { path: '/confirmar-entrega', element: <ConfirmarEntregaPage /> },
+
+  // QR del cliente para mostrar al repartidor
+  { path: '/mi-pedido/:id', element: <MiPedidoPage /> },
 
   // ── Admin ─────────────────────────────────────────────────────
   { path: '/admin',               element: <AdminRoute><AdminDashboard /></AdminRoute> },

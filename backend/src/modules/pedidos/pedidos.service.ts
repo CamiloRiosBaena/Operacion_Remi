@@ -1,14 +1,17 @@
 import {
   BadRequestException,
+  GoneException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 
 import { Pedido, EstadoPedido, TipoPedido } from './entities/pedido.entity';
 import { DetallePedido } from './entities/detalle-pedido.entity';
 import { HistorialEstado } from './entities/historial-estado.entity';
+import { TokenQr } from './entities/token-qr.entity';
 import { Plato } from '../menu/entities/plato.entity';
 import { Mesa } from '../mesas/entities/mesa.entity';
 import { EstadoMesa } from '../mesas/entities/mesa.entity';
@@ -27,6 +30,8 @@ export class PedidosService {
     private readonly detalleRepo: Repository<DetallePedido>,
     @InjectRepository(HistorialEstado)
     private readonly historialRepo: Repository<HistorialEstado>,
+    @InjectRepository(TokenQr)
+    private readonly tokenQrRepo: Repository<TokenQr>,
     @InjectRepository(Plato)
     private readonly platoRepo: Repository<Plato>,
     @InjectRepository(Mesa)
@@ -256,5 +261,61 @@ export class PedidosService {
     const mesa = await this.mesaRepo.findOneBy({ id });
     if (!mesa) throw new NotFoundException(`Mesa ${id} no encontrada`);
     await this.mesaRepo.remove(mesa);
+  }
+
+  // ─────────────────────────────────────────
+  // QR DE ENTREGA
+  // ─────────────────────────────────────────
+
+  async getOrCreateQrToken(pedidoId: number): Promise<{ token: string; expiracion: Date }> {
+    const pedido = await this.pedidoRepo.findOneBy({ id: pedidoId });
+    if (!pedido) throw new NotFoundException(`Pedido ${pedidoId} no encontrado`);
+
+    // Reutilizar token vigente si existe
+    const existing = await this.tokenQrRepo.findOne({
+      where: { pedido: { id: pedidoId } },
+      order: { expiracion: 'DESC' },
+    });
+
+    if (existing && existing.expiracion > new Date()) {
+      return { token: existing.token, expiracion: existing.expiracion };
+    }
+
+    // Crear nuevo token con 24 h de vigencia
+    const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const nuevoToken = this.tokenQrRepo.create({
+      token: randomUUID(),
+      expiracion,
+      pedido,
+    });
+    const saved = await this.tokenQrRepo.save(nuevoToken);
+    return { token: saved.token, expiracion: saved.expiracion };
+  }
+
+  async getPedidoPorToken(token: string): Promise<Pedido> {
+    const tokenQr = await this.tokenQrRepo.findOne({
+      where: { token },
+      relations: ['pedido', 'pedido.cliente', 'pedido.detalles', 'pedido.detalles.plato'],
+    });
+    if (!tokenQr) throw new NotFoundException('QR no válido');
+    if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
+    return tokenQr.pedido;
+  }
+
+  async confirmarEntregaConQr(token: string): Promise<Pedido> {
+    const tokenQr = await this.tokenQrRepo.findOne({
+      where: { token },
+      relations: ['pedido'],
+    });
+    if (!tokenQr) throw new NotFoundException('QR no válido');
+    if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
+
+    const pedido = tokenQr.pedido;
+    if (pedido.estado === EstadoPedido.ENTREGADO) {
+      throw new BadRequestException('El pedido ya fue marcado como entregado');
+    }
+
+    await this.tokenQrRepo.remove(tokenQr);
+    return this.cambiarEstado(pedido.id, { estado: EstadoPedido.ENTREGADO });
   }
 }
