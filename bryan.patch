@@ -1,0 +1,1276 @@
+diff --git a/backend/src/modules/pedidos/pedidos.controller.ts b/backend/src/modules/pedidos/pedidos.controller.ts
+index 106d85b..80d3d66 100644
+--- a/backend/src/modules/pedidos/pedidos.controller.ts
++++ b/backend/src/modules/pedidos/pedidos.controller.ts
+@@ -26,7 +26,6 @@ export class PedidosController {
+   // PEDIDOS
+   // ─────────────────────────────────────────
+ 
+-  /** GET /api/pedidos?estado=pendiente  (estado es opcional) */
+   @Get()
+   findAll(@Query('estado') estado?: EstadoPedido) {
+     return this.pedidosService.findAllPedidos(estado);
+@@ -42,7 +41,6 @@ export class PedidosController {
+     return this.pedidosService.createPedido(dto);
+   }
+ 
+-  /** PATCH /api/pedidos/:id/estado  — cambia estado con auditoría */
+   @Patch(':id/estado')
+   cambiarEstado(
+     @Param('id', ParseIntPipe) id: number,
+@@ -51,7 +49,6 @@ export class PedidosController {
+     return this.pedidosService.cambiarEstado(id, dto);
+   }
+ 
+-  /** PATCH /api/pedidos/:id/cancelar */
+   @Patch(':id/cancelar')
+   cancelar(
+     @Param('id', ParseIntPipe) id: number,
+@@ -60,6 +57,28 @@ export class PedidosController {
+     return this.pedidosService.cancelarPedido(id, staffId);
+   }
+ 
++  // ─────────────────────────────────────────
++  // QR DE ENTREGA
++  // ─────────────────────────────────────────
++
++  /** GET /api/pedidos/:id/qr — genera o reutiliza el token QR del pedido */
++  @Get(':id/qr')
++  getQrToken(@Param('id', ParseIntPipe) id: number) {
++    return this.pedidosService.getOrCreateQrToken(id);
++  }
++
++  /** GET /api/pedidos/verificar-qr/:token — info del pedido por token (sin modificar) */
++  @Get('verificar-qr/:token')
++  getPedidoPorToken(@Param('token') token: string) {
++    return this.pedidosService.getPedidoPorToken(token);
++  }
++
++  /** PATCH /api/pedidos/verificar-qr/:token/confirmar — confirma entrega con QR */
++  @Patch('verificar-qr/:token/confirmar')
++  confirmarEntregaConQr(@Param('token') token: string) {
++    return this.pedidosService.confirmarEntregaConQr(token);
++  }
++
+   // ─────────────────────────────────────────
+   // MESAS
+   // ─────────────────────────────────────────
+diff --git a/backend/src/modules/pedidos/pedidos.service.ts b/backend/src/modules/pedidos/pedidos.service.ts
+index c132073..e140501 100644
+--- a/backend/src/modules/pedidos/pedidos.service.ts
++++ b/backend/src/modules/pedidos/pedidos.service.ts
+@@ -1,14 +1,17 @@
+ import {
+   BadRequestException,
++  GoneException,
+   Injectable,
+   NotFoundException,
+ } from '@nestjs/common';
+ import { InjectRepository } from '@nestjs/typeorm';
+ import { Repository } from 'typeorm';
++import { randomUUID } from 'crypto';
+ 
+ import { Pedido, EstadoPedido, TipoPedido } from './entities/pedido.entity';
+ import { DetallePedido } from './entities/detalle-pedido.entity';
+ import { HistorialEstado } from './entities/historial-estado.entity';
++import { TokenQr } from './entities/token-qr.entity';
+ import { Plato } from '../menu/entities/plato.entity';
+ import { Mesa } from '../mesas/entities/mesa.entity';
+ import { EstadoMesa } from '../mesas/entities/mesa.entity';
+@@ -27,6 +30,8 @@ export class PedidosService {
+     private readonly detalleRepo: Repository<DetallePedido>,
+     @InjectRepository(HistorialEstado)
+     private readonly historialRepo: Repository<HistorialEstado>,
++    @InjectRepository(TokenQr)
++    private readonly tokenQrRepo: Repository<TokenQr>,
+     @InjectRepository(Plato)
+     private readonly platoRepo: Repository<Plato>,
+     @InjectRepository(Mesa)
+@@ -42,13 +47,11 @@ export class PedidosService {
+   // ─────────────────────────────────────────
+ 
+   async createPedido(dto: CreatePedidoDto): Promise<Pedido> {
+-    // Validaciones de tipo
+     if (dto.tipo === TipoPedido.MESA && !dto.mesaId)
+       throw new BadRequestException('Un pedido de mesa requiere mesaId');
+     if (dto.tipo === TipoPedido.DOMICILIO && !dto.direccionEntrega)
+       throw new BadRequestException('Un pedido a domicilio requiere direccionEntrega');
+ 
+-    // Resolver relaciones opcionales
+     let cliente: Cliente | null = null;
+     if (dto.clienteId) {
+       cliente = await this.clienteRepo.findOneBy({ id: dto.clienteId });
+@@ -61,7 +64,6 @@ export class PedidosService {
+       if (!mesa) throw new NotFoundException(`Mesa ${dto.mesaId} no encontrada`);
+     }
+ 
+-    // Calcular totales
+     let totalSinIva = 0;
+     let ivaTotal = 0;
+     const detallesEntidades: DetallePedido[] = [];
+@@ -89,7 +91,6 @@ export class PedidosService {
+       );
+     }
+ 
+-    // Crear el pedido
+     const pedido = this.pedidoRepo.create({
+       tipo: dto.tipo,
+       estado: EstadoPedido.PENDIENTE,
+@@ -104,12 +105,10 @@ export class PedidosService {
+ 
+     const saved = await this.pedidoRepo.save(pedido);
+ 
+-    // Registrar historial de estado inicial
+     await this.historialRepo.save(
+       this.historialRepo.create({ pedido: saved, estado: EstadoPedido.PENDIENTE }),
+     );
+ 
+-    // Ocupar la mesa si aplica
+     if (mesa) {
+       mesa.estado = EstadoMesa.OCUPADA;
+       await this.mesaRepo.save(mesa);
+@@ -159,7 +158,6 @@ export class PedidosService {
+     });
+     if (!pedido) throw new NotFoundException(`Pedido ${id} no encontrado`);
+ 
+-    // No permitir retroceder estados
+     const orden: EstadoPedido[] = [
+       EstadoPedido.PENDIENTE,
+       EstadoPedido.EN_COCINA,
+@@ -176,7 +174,6 @@ export class PedidosService {
+       );
+     }
+ 
+-    // Resolver staff opcional para auditoría
+     let userStaff: UserStaff | null = null;
+     if (dto.staffId) {
+       userStaff = await this.staffRepo.findOneBy({ id: dto.staffId });
+@@ -185,12 +182,10 @@ export class PedidosService {
+     pedido.estado = dto.estado;
+     const saved = await this.pedidoRepo.save(pedido);
+ 
+-    // Auditoría
+     await this.historialRepo.save(
+       this.historialRepo.create({ pedido: saved, estado: dto.estado, userStaff }),
+     );
+ 
+-    // Liberar mesa cuando se entrega o cancela
+     if (
+       pedido.mesa &&
+       (dto.estado === EstadoPedido.ENTREGADO || dto.estado === EstadoPedido.CANCELADO)
+@@ -225,10 +220,7 @@ export class PedidosService {
+   // ─────────────────────────────────────────
+ 
+   async cancelarPedido(id: number, staffId?: number): Promise<Pedido> {
+-    return this.cambiarEstado(id, {
+-      estado: EstadoPedido.CANCELADO,
+-      staffId,
+-    });
++    return this.cambiarEstado(id, { estado: EstadoPedido.CANCELADO, staffId });
+   }
+ 
+   // ─────────────────────────────────────────
+@@ -257,4 +249,56 @@ export class PedidosService {
+     if (!mesa) throw new NotFoundException(`Mesa ${id} no encontrada`);
+     await this.mesaRepo.remove(mesa);
+   }
+-}
+\ No newline at end of file
++
++  // ─────────────────────────────────────────
++  // QR DE ENTREGA
++  // ─────────────────────────────────────────
++
++  async getOrCreateQrToken(pedidoId: number): Promise<{ token: string; expiracion: Date }> {
++    const pedido = await this.pedidoRepo.findOneBy({ id: pedidoId });
++    if (!pedido) throw new NotFoundException(`Pedido ${pedidoId} no encontrado`);
++
++    // Reutilizar token vigente si existe
++    const existing = await this.tokenQrRepo.findOne({
++      where: { pedido: { id: pedidoId } },
++      order: { expiracion: 'DESC' },
++    });
++
++    if (existing && existing.expiracion > new Date()) {
++      return { token: existing.token, expiracion: existing.expiracion };
++    }
++
++    // Crear nuevo token con 24 h de vigencia
++    const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
++    const saved = await this.tokenQrRepo.save(
++      this.tokenQrRepo.create({ token: randomUUID(), expiracion, pedido }),
++    );
++    return { token: saved.token, expiracion: saved.expiracion };
++  }
++
++  async getPedidoPorToken(token: string): Promise<Pedido> {
++    const tokenQr = await this.tokenQrRepo.findOne({
++      where: { token },
++      relations: ['pedido', 'pedido.cliente', 'pedido.detalles', 'pedido.detalles.plato'],
++    });
++    if (!tokenQr) throw new NotFoundException('QR no válido');
++    if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
++    return tokenQr.pedido;
++  }
++
++  async confirmarEntregaConQr(token: string): Promise<Pedido> {
++    const tokenQr = await this.tokenQrRepo.findOne({
++      where: { token },
++      relations: ['pedido'],
++    });
++    if (!tokenQr) throw new NotFoundException('QR no válido');
++    if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
++
++    const pedido = tokenQr.pedido;
++    if (pedido.estado === EstadoPedido.ENTREGADO)
++      throw new BadRequestException('El pedido ya fue marcado como entregado');
++
++    await this.tokenQrRepo.remove(tokenQr);
++    return this.cambiarEstado(pedido.id, { estado: EstadoPedido.ENTREGADO });
++  }
++}
+diff --git a/frontend/src/app/router.tsx b/frontend/src/app/router.tsx
+index 0e4ee39..a1ac153 100644
+--- a/frontend/src/app/router.tsx
++++ b/frontend/src/app/router.tsx
+@@ -13,6 +13,8 @@ import { MesasAdmin } from '@/features/admin/pages/MesasAdmin';
+ import { CocinaDashboard } from '@/features/cocina/pages/CocinaDashboard';
+ import { DomiciliosDashboard } from '@/features/domicilios/pages/DomiciliosDashboard';
+ import { MenuPage } from '@/features/menu/pages/MenuPage';
++import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntregaPage';
++import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
+ import { RoleRedirect } from './RoleRedirect';
+ 
+ function AdminRoute({ children }: { children: React.ReactNode }) {
+@@ -29,6 +31,12 @@ export const router = createBrowserRouter([
+   // Menú público (QR o cliente registrado)
+   { path: '/menu', element: <MenuPage /> },
+ 
++  // Confirmación de entrega — el repartidor escanea el QR del cliente (pública)
++  { path: '/confirmar-entrega', element: <ConfirmarEntregaPage /> },
++
++  // QR del cliente — para mostrar/recuperar el QR de su pedido (pública)
++  { path: '/mi-pedido/:id', element: <MiPedidoPage /> },
++
+   // ── Admin ─────────────────────────────────────────────────────
+   { path: '/admin',               element: <AdminRoute><AdminDashboard /></AdminRoute> },
+   { path: '/admin/menu',          element: <AdminRoute><MenuGestion /></AdminRoute> },
+diff --git a/frontend/src/features/admin/services/admin.service.ts b/frontend/src/features/admin/services/admin.service.ts
+index b509484..4dab55e 100644
+--- a/frontend/src/features/admin/services/admin.service.ts
++++ b/frontend/src/features/admin/services/admin.service.ts
+@@ -1,4 +1,4 @@
+-import { apiFetch } from '@/shared/lib/api';
++import { apiFetch, API_URL } from '@/shared/lib/api';
+ 
+ // ── Tipos de backend ──────────────────────────────────────────────────────────
+ 
+@@ -165,6 +165,28 @@ export function deletePlatoIngrediente(platoId: number, ingredienteId: number):
+   return apiFetch(`/menu/platos/${platoId}/ingredientes/${ingredienteId}`, { method: 'DELETE' });
+ }
+ 
++// ── QR de entrega ─────────────────────────────────────────────────────────────
++
++export interface ApiQrToken {
++  token: string;
++  expiracion: string;
++}
++
++export function fetchQrToken(pedidoId: number): Promise<ApiQrToken> {
++  return apiFetch<ApiQrToken>(`/pedidos/${pedidoId}/qr`);
++}
++
++// Estas dos son públicas (sin auth) — usan fetch directo
++export function infoPedidoPorToken(token: string): Promise<ApiPedido> {
++  return fetch(`${API_URL}/pedidos/verificar-qr/${token}`)
++    .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
++}
++
++export function confirmarEntregaConToken(token: string): Promise<ApiPedido> {
++  return fetch(`${API_URL}/pedidos/verificar-qr/${token}/confirmar`, { method: 'PATCH' })
++    .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
++}
++
+ // ── Mesas ─────────────────────────────────────────────────────────────────────
+ 
+ export type EstadoMesa = 'libre' | 'ocupada' | 'reservada';
+diff --git a/frontend/src/features/carrito/components/CartDrawer.module.css b/frontend/src/features/carrito/components/CartDrawer.module.css
+index cd54897..3df4108 100644
+--- a/frontend/src/features/carrito/components/CartDrawer.module.css
++++ b/frontend/src/features/carrito/components/CartDrawer.module.css
+@@ -452,3 +452,42 @@
+   margin: 0;
+   line-height: 1.6;
+ }
++
++.qrBox {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 0.75rem;
++  padding: 1.25rem;
++  background: #fafaf8;
++  border: 1.5px dashed #d6d3d1;
++  border-radius: 14px;
++  width: 100%;
++}
++
++.qrInstruccion {
++  font-size: 0.875rem;
++  font-weight: 700;
++  color: #1c1917;
++  margin: 0;
++}
++
++.qrHint {
++  font-size: 0.8125rem;
++  color: #78716c;
++  margin: 0;
++  text-align: center;
++}
++
++.qrLink {
++  color: #d4500a;
++  font-weight: 600;
++  text-decoration: none;
++}
++.qrLink:hover { text-decoration: underline; }
++
++.qrCargando {
++  font-size: 0.875rem;
++  color: #a8a29e;
++  margin: 0;
++}
+diff --git a/frontend/src/features/carrito/components/CartDrawer.tsx b/frontend/src/features/carrito/components/CartDrawer.tsx
+index c2421f7..a280e7e 100644
+--- a/frontend/src/features/carrito/components/CartDrawer.tsx
++++ b/frontend/src/features/carrito/components/CartDrawer.tsx
+@@ -1,4 +1,5 @@
+ import { useEffect, useState } from 'react';
++import { QRCodeSVG } from 'qrcode.react';
+ import { useCarrito } from '../context/CarritoContext';
+ import { useAuth } from '@/features/auth/context/AuthContext';
+ import { PlatoImage } from '@/shared/components/PlatoImage';
+@@ -8,6 +9,7 @@ import {
+   type TipoPedido,
+   type Mesa,
+ } from '@/features/pedidos/services/pedidos.service';
++import { fetchQrToken } from '@/features/admin/services/admin.service';
+ import styles from './CartDrawer.module.css';
+ 
+ interface Props {
+@@ -40,6 +42,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
+   const [enviando, setEnviando]     = useState(false);
+   const [errorPedido, setErrorPedido] = useState('');
+   const [pedidoId, setPedidoId]     = useState<number | null>(null);
++  const [qrToken, setQrToken]       = useState<string | null>(null);
+ 
+   // Si cambia mesaQr (navegación), sincronizar
+   useEffect(() => {
+@@ -66,6 +69,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
+           setMesaId(mesaQr ?? '');
+           setDireccion('');
+           setPedidoId(null);
++          setQrToken(null);
+         }
+       }, 300);
+     }
+@@ -101,6 +105,11 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
+       setPedidoId(pedido.id);
+       clearCart();
+       setStep('confirmado');
++      if (tipo === 'domicilio') {
++        fetchQrToken(pedido.id)
++          .then(({ token }) => setQrToken(token))
++          .catch(() => {});
++      }
+     } catch (err) {
+       setErrorPedido(err instanceof Error ? err.message : 'Error al enviar el pedido');
+     } finally {
+@@ -330,10 +339,39 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
+                 <h3 className={styles.confirmadoTitle}>¡Pedido #{pedidoId} recibido!</h3>
+                 <p className={styles.confirmadoText}>
+                   Tu pedido fue enviado a cocina.{' '}
+-                  {tipo === 'domicilio' && 'Pronto un domiciliario saldrá hacia tu dirección.'}
++                  {tipo === 'domicilio' && 'Cuando el repartidor llegue, muéstrale el QR de abajo.'}
+                   {tipo === 'mesa' && 'Lo llevaremos a tu mesa en un momento.'}
+                   {tipo === 'llevar' && 'Pasa a recogerlo cuando esté listo.'}
+                 </p>
++
++                {tipo === 'domicilio' && (
++                  <div className={styles.qrBox}>
++                    <p className={styles.qrInstruccion}>Tu QR de entrega</p>
++                    {qrToken ? (
++                      <>
++                        <QRCodeSVG
++                          value={`${window.location.origin}/confirmar-entrega?token=${qrToken}`}
++                          size={180}
++                          level="M"
++                        />
++                        <p className={styles.qrHint}>
++                          Guarda una captura de pantalla.{' '}
++                          <a
++                            href={`/mi-pedido/${pedidoId}`}
++                            target="_blank"
++                            rel="noreferrer"
++                            className={styles.qrLink}
++                          >
++                            Ver en otra pestaña
++                          </a>
++                        </p>
++                      </>
++                    ) : (
++                      <p className={styles.qrCargando}>Generando QR…</p>
++                    )}
++                  </div>
++                )}
++
+                 <button className={styles.btnPagar} onClick={onClose}>
+                   Cerrar
+                 </button>
+diff --git a/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.module.css b/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.module.css
+new file mode 100644
+index 0000000..8c1cc89
+--- /dev/null
++++ b/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.module.css
+@@ -0,0 +1,121 @@
++.page {
++  min-height: 100dvh;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  background: #fafaf8;
++  padding: 1rem;
++  font-family: system-ui, -apple-system, sans-serif;
++}
++
++.card {
++  background: #fff;
++  border: 1.5px solid #e7e5e4;
++  border-radius: 20px;
++  padding: 2rem 1.75rem;
++  width: 100%;
++  max-width: 400px;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 1.25rem;
++  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
++}
++
++.logo { font-size: 2.5rem; line-height: 1; }
++
++.titulo {
++  font-size: 1.25rem;
++  font-weight: 800;
++  color: #1c1917;
++  margin: 0;
++  text-align: center;
++}
++
++.info { font-size: 0.9375rem; color: #78716c; margin: 0; text-align: center; }
++
++.pedidoInfo {
++  width: 100%;
++  display: flex;
++  flex-direction: column;
++  gap: 0.5rem;
++  padding: 1rem;
++  background: #fafaf8;
++  border-radius: 12px;
++  border: 1px solid #e7e5e4;
++}
++
++.pedidoRow { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
++.pedidoLabel { font-size: 0.8125rem; color: #78716c; font-weight: 500; }
++.pedidoValor { font-size: 0.9375rem; font-weight: 600; color: #1c1917; text-align: right; }
++.total { color: #d4500a; font-size: 1rem; font-weight: 800; }
++
++.items {
++  width: 100%;
++  list-style: none;
++  margin: 0;
++  padding: 0;
++  display: flex;
++  flex-direction: column;
++  gap: 0.375rem;
++}
++
++.item {
++  display: flex;
++  align-items: center;
++  gap: 0.5rem;
++  font-size: 0.875rem;
++  padding: 0.4rem 0.75rem;
++  background: #f5f5f4;
++  border-radius: 8px;
++}
++
++.itemCantidad { font-weight: 700; color: #78716c; min-width: 1.5rem; }
++.itemNombre { flex: 1; color: #1c1917; }
++.itemSubtotal { font-weight: 600; color: #44403c; }
++
++.btnConfirmar {
++  width: 100%;
++  padding: 0.875rem;
++  background: linear-gradient(135deg, #d4500a, #f26419);
++  color: #fff;
++  border: none;
++  border-radius: 12px;
++  font-size: 1rem;
++  font-weight: 700;
++  cursor: pointer;
++  transition: opacity 0.15s;
++}
++.btnConfirmar:hover { opacity: 0.88; }
++.btnConfirmar:disabled { opacity: 0.55; cursor: not-allowed; }
++
++.errorBox {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 0.75rem;
++  padding: 1.5rem;
++  background: #fef2f2;
++  border: 1.5px solid #fecaca;
++  border-radius: 12px;
++  width: 100%;
++  text-align: center;
++}
++.errorIcon { font-size: 2rem; color: #b91c1c; font-weight: 700; }
++.errorMsg { font-size: 0.9375rem; color: #991b1b; margin: 0; font-weight: 500; }
++
++.successBox {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 0.625rem;
++  padding: 1.5rem;
++  background: #f0fdf4;
++  border: 1.5px solid #bbf7d0;
++  border-radius: 12px;
++  width: 100%;
++  text-align: center;
++}
++.successIcon { font-size: 2.5rem; color: #15803d; font-weight: 700; }
++.successMsg { font-size: 1.125rem; font-weight: 800; color: #15803d; margin: 0; }
++.successSub { font-size: 0.875rem; color: #166534; margin: 0; }
+diff --git a/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.tsx b/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.tsx
+new file mode 100644
+index 0000000..dc853d5
+--- /dev/null
++++ b/frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.tsx
+@@ -0,0 +1,109 @@
++import { useEffect, useState } from 'react';
++import { useSearchParams } from 'react-router-dom';
++import { infoPedidoPorToken, confirmarEntregaConToken, type ApiPedido } from '@/features/admin/services/admin.service';
++import styles from './ConfirmarEntregaPage.module.css';
++
++function formatPrecio(n: number) {
++  return `$${Number(n).toLocaleString('es-CO')}`;
++}
++
++type Estado = 'cargando' | 'listo' | 'confirmando' | 'confirmado' | 'error';
++
++export function ConfirmarEntregaPage() {
++  const [params] = useSearchParams();
++  const token = params.get('token') ?? '';
++
++  const [pedido, setPedido]   = useState<ApiPedido | null>(null);
++  const [estado, setEstado]   = useState<Estado>('cargando');
++  const [mensaje, setMensaje] = useState('');
++
++  useEffect(() => {
++    if (!token) { setEstado('error'); setMensaje('QR inválido: no se encontró el token.'); return; }
++    infoPedidoPorToken(token)
++      .then((p) => { setPedido(p); setEstado('listo'); })
++      .catch((e: Error) => { setEstado('error'); setMensaje(e.message); });
++  }, [token]);
++
++  async function handleConfirmar() {
++    if (!token) return;
++    setEstado('confirmando');
++    try {
++      await confirmarEntregaConToken(token);
++      setEstado('confirmado');
++    } catch (e: unknown) {
++      setEstado('error');
++      setMensaje(e instanceof Error ? e.message : 'Error al confirmar la entrega');
++    }
++  }
++
++  return (
++    <div className={styles.page}>
++      <div className={styles.card}>
++        <div className={styles.logo}>🛵</div>
++        <h1 className={styles.titulo}>Confirmar entrega</h1>
++
++        {estado === 'cargando' && <p className={styles.info}>Cargando información del pedido…</p>}
++
++        {estado === 'error' && (
++          <div className={styles.errorBox}>
++            <span className={styles.errorIcon}>✕</span>
++            <p className={styles.errorMsg}>{mensaje || 'QR no válido o expirado.'}</p>
++          </div>
++        )}
++
++        {(estado === 'listo' || estado === 'confirmando') && pedido && (
++          <>
++            <div className={styles.pedidoInfo}>
++              <div className={styles.pedidoRow}>
++                <span className={styles.pedidoLabel}>Pedido</span>
++                <span className={styles.pedidoValor}>#{pedido.id}</span>
++              </div>
++              {pedido.cliente && (
++                <div className={styles.pedidoRow}>
++                  <span className={styles.pedidoLabel}>Cliente</span>
++                  <span className={styles.pedidoValor}>{pedido.cliente.nombre}</span>
++                </div>
++              )}
++              {pedido.direccionEntrega && (
++                <div className={styles.pedidoRow}>
++                  <span className={styles.pedidoLabel}>Dirección</span>
++                  <span className={styles.pedidoValor}>{pedido.direccionEntrega}</span>
++                </div>
++              )}
++              <div className={styles.pedidoRow}>
++                <span className={styles.pedidoLabel}>Total</span>
++                <span className={`${styles.pedidoValor} ${styles.total}`}>{formatPrecio(pedido.total)}</span>
++              </div>
++            </div>
++
++            <ul className={styles.items}>
++              {(pedido.detalles ?? []).map((d) => (
++                <li key={d.id} className={styles.item}>
++                  <span className={styles.itemCantidad}>{d.cantidad}×</span>
++                  <span className={styles.itemNombre}>{d.plato.nombre}</span>
++                  <span className={styles.itemSubtotal}>{formatPrecio(d.subtotal)}</span>
++                </li>
++              ))}
++            </ul>
++
++            <button
++              className={styles.btnConfirmar}
++              onClick={handleConfirmar}
++              disabled={estado === 'confirmando'}
++            >
++              {estado === 'confirmando' ? 'Confirmando…' : '✓ Confirmar entrega'}
++            </button>
++          </>
++        )}
++
++        {estado === 'confirmado' && (
++          <div className={styles.successBox}>
++            <span className={styles.successIcon}>✓</span>
++            <p className={styles.successMsg}>¡Entrega confirmada!</p>
++            <p className={styles.successSub}>El pedido fue marcado como entregado.</p>
++          </div>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/frontend/src/features/domicilios/components/QrScannerModal.module.css b/frontend/src/features/domicilios/components/QrScannerModal.module.css
+new file mode 100644
+index 0000000..414ce8c
+--- /dev/null
++++ b/frontend/src/features/domicilios/components/QrScannerModal.module.css
+@@ -0,0 +1,102 @@
++.overlay {
++  position: fixed;
++  inset: 0;
++  background: rgba(0,0,0,0.55);
++  z-index: 300;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  padding: 1rem;
++}
++
++.modal {
++  background: #fff;
++  border-radius: 18px;
++  width: 100%;
++  max-width: 380px;
++  display: flex;
++  flex-direction: column;
++  gap: 1rem;
++  padding: 1.25rem;
++  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
++}
++
++.header {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++}
++
++.titulo {
++  font-size: 1rem;
++  font-weight: 700;
++  color: #1c1917;
++  margin: 0;
++}
++
++.btnCerrar {
++  background: #f5f5f4;
++  border: 1px solid #e7e5e4;
++  border-radius: 8px;
++  width: 2rem;
++  height: 2rem;
++  font-size: 0.875rem;
++  cursor: pointer;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  color: #44403c;
++}
++
++.visor {
++  width: 100%;
++  border-radius: 12px;
++  overflow: hidden;
++  background: #000;
++  min-height: 280px;
++}
++
++.visor video { width: 100% !important; border-radius: 12px; }
++
++.hint { font-size: 0.875rem; color: #78716c; text-align: center; margin: 0; }
++
++/* Preview pedido */
++.preview { display: flex; flex-direction: column; gap: 0.75rem; }
++.previewTitulo { font-size: 1.0625rem; font-weight: 800; color: #1c1917; margin: 0; }
++
++.infoRow { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.875rem; }
++.infoLabel { color: #78716c; }
++.infoValor { font-weight: 600; color: #1c1917; text-align: right; }
++
++.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
++.item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; padding: 0.35rem 0.625rem; background: #fafaf8; border-radius: 7px; }
++.itemCant { font-weight: 700; color: #78716c; min-width: 1.5rem; }
++.itemNombre { flex: 1; color: #1c1917; }
++.itemSub { font-weight: 600; color: #44403c; }
++
++.totalRow { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9375rem; border-top: 1px solid #e7e5e4; padding-top: 0.5rem; }
++.total { color: #d4500a; font-weight: 800; font-size: 1rem; }
++
++.btnConfirmar {
++  padding: 0.75rem;
++  background: linear-gradient(135deg, #d4500a, #f26419);
++  color: #fff;
++  border: none;
++  border-radius: 10px;
++  font-size: 0.9375rem;
++  font-weight: 700;
++  cursor: pointer;
++  transition: opacity 0.15s;
++}
++.btnConfirmar:hover { opacity: 0.88; }
++
++/* Éxito */
++.exito { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1rem; background: #f0fdf4; border-radius: 12px; }
++.exitoIcon { font-size: 2.5rem; color: #15803d; font-weight: 700; }
++.exitoMsg { font-size: 1.0625rem; font-weight: 800; color: #15803d; margin: 0; }
++.btnCerrar2 { padding: 0.5rem 1.5rem; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 8px; font-weight: 600; color: #15803d; cursor: pointer; }
++
++/* Error */
++.errorBox { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1rem; background: #fef2f2; border-radius: 12px; }
++.errorMsg { font-size: 0.9375rem; color: #991b1b; margin: 0; text-align: center; font-weight: 500; }
++.btnReintentar { padding: 0.5rem 1.25rem; background: #fff; border: 1.5px solid #fecaca; border-radius: 8px; color: #b91c1c; font-weight: 600; cursor: pointer; }
+diff --git a/frontend/src/features/domicilios/components/QrScannerModal.tsx b/frontend/src/features/domicilios/components/QrScannerModal.tsx
+new file mode 100644
+index 0000000..fa564b0
+--- /dev/null
++++ b/frontend/src/features/domicilios/components/QrScannerModal.tsx
+@@ -0,0 +1,186 @@
++import { useLayoutEffect, useState } from 'react';
++import { Html5Qrcode } from 'html5-qrcode';
++import { infoPedidoPorToken, confirmarEntregaConToken, type ApiPedido } from '@/features/admin/services/admin.service';
++import styles from './QrScannerModal.module.css';
++
++interface Props {
++  onClose: () => void;
++  onConfirmado: (pedidoId: number) => void;
++}
++
++function formatPrecio(n: number) {
++  return `$${Number(n).toLocaleString('es-CO')}`;
++}
++
++type Fase = 'escaneando' | 'preview' | 'confirmando' | 'exito' | 'error';
++
++const SCANNER_ID = 'qr-reader';
++
++function extraerToken(texto: string): string | null {
++  try {
++    const url = new URL(texto);
++    return url.searchParams.get('token');
++  } catch {
++    return texto.trim() || null;
++  }
++}
++
++async function iniciarEscaner(
++  onExito: (texto: string) => void,
++  onError: (msg: string) => void,
++): Promise<Html5Qrcode> {
++  const scanner = new Html5Qrcode(SCANNER_ID);
++  const config  = { fps: 10, qrbox: { width: 220, height: 220 } };
++  const onDecode = (texto: string) => { onExito(texto); };
++
++  // Intentar cámara trasera (móvil); si falla, usar cámara frontal/webcam (desktop)
++  try {
++    await scanner.start({ facingMode: 'environment' }, config, onDecode, () => {});
++  } catch {
++    try {
++      await scanner.start({ facingMode: 'user' }, config, onDecode, () => {});
++    } catch {
++      onError('No se pudo acceder a la cámara. Verifica los permisos del navegador.');
++    }
++  }
++  return scanner;
++}
++
++export function QrScannerModal({ onClose, onConfirmado }: Props) {
++  const [fase, setFase]       = useState<Fase>('escaneando');
++  const [pedido, setPedido]   = useState<ApiPedido | null>(null);
++  const [token, setToken]     = useState('');
++  const [errorMsg, setErrorMsg] = useState('');
++  // Incrementar scanKey limpia el div y reinicia el efecto
++  const [scanKey, setScanKey] = useState(0);
++
++  useLayoutEffect(() => {
++    if (fase !== 'escaneando') return;
++
++    let scanner: Html5Qrcode | null = null;
++    let detenido = false;
++
++    // Garantiza que stop() se llame solo una vez
++    const detener = () => {
++      if (detenido) return;
++      detenido = true;
++      scanner?.stop().catch(() => {});
++    };
++
++    iniciarEscaner(
++      async (texto) => {
++        detener();
++        const tok = extraerToken(texto);
++        if (!tok) { setFase('error'); setErrorMsg('El QR escaneado no es válido.'); return; }
++        setToken(tok);
++        try {
++          const p = await infoPedidoPorToken(tok);
++          setPedido(p);
++          setFase('preview');
++        } catch (e: unknown) {
++          setFase('error');
++          setErrorMsg(e instanceof Error ? e.message : 'QR no válido o expirado.');
++        }
++      },
++      (msg) => { setFase('error'); setErrorMsg(msg); },
++    ).then((s) => {
++      scanner = s;
++      // Si el cleanup corrió antes de que la promesa resolviera, parar ya
++      if (detenido) scanner.stop().catch(() => {});
++    });
++
++    return () => { detener(); };
++  // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, [scanKey]);
++
++  async function handleConfirmar() {
++    if (!token || !pedido) return;
++    setFase('confirmando');
++    try {
++      await confirmarEntregaConToken(token);
++      setFase('exito');
++      onConfirmado(pedido.id);
++    } catch (e: unknown) {
++      setFase('error');
++      setErrorMsg(e instanceof Error ? e.message : 'Error al confirmar la entrega.');
++    }
++  }
++
++  function reintentar() {
++    setPedido(null);
++    setToken('');
++    setErrorMsg('');
++    setFase('escaneando');
++    setScanKey((k) => k + 1);
++  }
++
++  return (
++    <div className={styles.overlay} onClick={onClose}>
++      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
++        <div className={styles.header}>
++          <h2 className={styles.titulo}>Escanear QR del cliente</h2>
++          <button className={styles.btnCerrar} onClick={onClose}>✕</button>
++        </div>
++
++        {fase === 'escaneando' && (
++          <>
++            {/* key={scanKey} desmonta y remonta el div limpiando el HTML de html5-qrcode */}
++            <div key={scanKey} id={SCANNER_ID} className={styles.visor} />
++            <p className={styles.hint}>Apunta la cámara al QR del cliente</p>
++          </>
++        )}
++
++        {fase === 'preview' && pedido && (
++          <div className={styles.preview}>
++            <p className={styles.previewTitulo}>Pedido #{pedido.id}</p>
++            {pedido.cliente && (
++              <div className={styles.infoRow}>
++                <span className={styles.infoLabel}>Cliente</span>
++                <span className={styles.infoValor}>{pedido.cliente.nombre}</span>
++              </div>
++            )}
++            {pedido.direccionEntrega && (
++              <div className={styles.infoRow}>
++                <span className={styles.infoLabel}>Dirección</span>
++                <span className={styles.infoValor}>{pedido.direccionEntrega}</span>
++              </div>
++            )}
++            <ul className={styles.items}>
++              {(pedido.detalles ?? []).map((d) => (
++                <li key={d.id} className={styles.item}>
++                  <span className={styles.itemCant}>{d.cantidad}×</span>
++                  <span className={styles.itemNombre}>{d.plato.nombre}</span>
++                  <span className={styles.itemSub}>{formatPrecio(d.subtotal)}</span>
++                </li>
++              ))}
++            </ul>
++            <div className={styles.totalRow}>
++              <span>Total</span>
++              <span className={styles.total}>{formatPrecio(pedido.total)}</span>
++            </div>
++            <button className={styles.btnConfirmar} onClick={handleConfirmar}>
++              ✓ Confirmar entrega
++            </button>
++          </div>
++        )}
++
++        {fase === 'confirmando' && <p className={styles.hint}>Confirmando entrega…</p>}
++
++        {fase === 'exito' && (
++          <div className={styles.exito}>
++            <span className={styles.exitoIcon}>✓</span>
++            <p className={styles.exitoMsg}>¡Entrega confirmada!</p>
++            <button className={styles.btnCerrar2} onClick={onClose}>Cerrar</button>
++          </div>
++        )}
++
++        {fase === 'error' && (
++          <div className={styles.errorBox}>
++            <p className={styles.errorMsg}>{errorMsg}</p>
++            <button className={styles.btnReintentar} onClick={reintentar}>Reintentar</button>
++          </div>
++        )}
++      </div>
++    </div>
++  );
++}
+diff --git a/frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx b/frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx
+index d6544bf..cac2233 100644
+--- a/frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx
++++ b/frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx
+@@ -1,6 +1,7 @@
+ import { useCallback, useEffect, useRef, useState } from 'react';
+ import { AppShell } from '@/shared/components/AppShell';
+-import { fetchPedidosDomiciliario, marcarEntregado } from '../services/domicilios.service';
++import { fetchPedidosDomiciliario } from '../services/domicilios.service';
++import { QrScannerModal } from '../components/QrScannerModal';
+ import type { ApiPedido } from '@/features/admin/services/admin.service';
+ import styles from './DomiciliosDashboard.module.css';
+ 
+@@ -13,10 +14,10 @@ function formatPrecio(n: number) {
+ }
+ 
+ export function DomiciliosDashboard() {
+-  const [pedidos,      setPedidos     ] = useState<ApiPedido[]>([]);
+-  const [loading,      setLoading     ] = useState(true);
+-  const [connected,    setConnected   ] = useState(false);
+-  const [confirmando,  setConfirmando ] = useState<number | null>(null);
++  const [pedidos,        setPedidos       ] = useState<ApiPedido[]>([]);
++  const [loading,        setLoading       ] = useState(true);
++  const [connected,      setConnected     ] = useState(false);
++  const [scannerAbierto, setScannerAbierto] = useState(false);
+   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+ 
+   const cargar = useCallback(async () => {
+@@ -37,18 +38,6 @@ export function DomiciliosDashboard() {
+     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+   }, [cargar]);
+ 
+-  async function handleEntregado(pedido: ApiPedido) {
+-    setConfirmando(pedido.id);
+-    try {
+-      await marcarEntregado(pedido.id);
+-      setPedidos((prev) => prev.filter((p) => p.id !== pedido.id));
+-    } catch (err) {
+-      console.error(err);
+-    } finally {
+-      setConfirmando(null);
+-    }
+-  }
+-
+   return (
+     <AppShell title="Mis Entregas">
+       <div className={styles.wrapper}>
+@@ -60,14 +49,23 @@ export function DomiciliosDashboard() {
+               ? `${pedidos.length} entrega${pedidos.length !== 1 ? 's' : ''} asignada${pedidos.length !== 1 ? 's' : ''} · se actualiza cada 5 s`
+               : 'Error al conectar con el servidor'}
+           </p>
+-          <span
+-            className={styles.counter}
+-            style={connected
+-              ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
+-              : undefined}
+-          >
+-            {connected ? '🟢 Conectado' : '🔴 Sin conexión'}
+-          </span>
++          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
++            <button
++              className={styles.btnQR}
++              onClick={() => setScannerAbierto(true)}
++              title="Escanear QR del cliente"
++            >
++              📷 Escanear QR
++            </button>
++            <span
++              className={styles.counter}
++              style={connected
++                ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
++                : undefined}
++            >
++              {connected ? '🟢 Conectado' : '🔴 Sin conexión'}
++            </span>
++          </div>
+         </div>
+ 
+         <div className={styles.list}>
+@@ -78,57 +76,57 @@ export function DomiciliosDashboard() {
+             </div>
+           )}
+ 
+-          {pedidos.map((pedido) => {
+-            const enAccion = confirmando === pedido.id;
+-            return (
+-              <div key={pedido.id} className={styles.card}>
+-                <div className={styles.cardTop}>
+-                  <div className={styles.cardId}>
+-                    <span className={styles.pedidoId}>#{pedido.id}</span>
+-                    <span className={styles.hora}>{formatHora(pedido.fechaHora)}</span>
+-                  </div>
+-                  <span
+-                    className={styles.estado}
+-                    style={{ background: '#d9770618', color: '#d97706' }}
+-                  >
+-                    En camino
+-                  </span>
++          {pedidos.map((pedido) => (
++            <div key={pedido.id} className={styles.card}>
++              <div className={styles.cardTop}>
++                <div className={styles.cardId}>
++                  <span className={styles.pedidoId}>#{pedido.id}</span>
++                  <span className={styles.hora}>{formatHora(pedido.fechaHora)}</span>
+                 </div>
++                <span className={styles.estado} style={{ background: '#d9770618', color: '#d97706' }}>
++                  En camino
++                </span>
++              </div>
+ 
+-                <div className={styles.clienteInfo}>
+-                  {pedido.cliente && (
+-                    <span className={styles.clienteNombre}>👤 {pedido.cliente.nombre}</span>
+-                  )}
+-                  {pedido.direccionEntrega && (
+-                    <span className={styles.clienteDir}>📍 {pedido.direccionEntrega}</span>
+-                  )}
+-                </div>
++              <div className={styles.clienteInfo}>
++                {pedido.cliente && (
++                  <span className={styles.clienteNombre}>👤 {pedido.cliente.nombre}</span>
++                )}
++                {pedido.direccionEntrega && (
++                  <span className={styles.clienteDir}>📍 {pedido.direccionEntrega}</span>
++                )}
++              </div>
+ 
+-                <ul className={styles.items}>
+-                  {(pedido.detalles ?? []).map((d) => (
+-                    <li key={d.id}>
+-                      <strong>{d.cantidad}×</strong> {d.plato.nombre}
+-                    </li>
+-                  ))}
+-                </ul>
++              <ul className={styles.items}>
++                {(pedido.detalles ?? []).map((d) => (
++                  <li key={d.id}>
++                    <strong>{d.cantidad}×</strong> {d.plato.nombre}
++                  </li>
++                ))}
++              </ul>
+ 
+-                <div className={styles.actions}>
+-                  <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#d4500a' }}>
+-                    {formatPrecio(pedido.total)}
+-                  </span>
+-                  <button
+-                    className={styles.btnEstado}
+-                    onClick={() => handleEntregado(pedido)}
+-                    disabled={enAccion}
+-                  >
+-                    {enAccion ? '…' : '✓ Confirmar entrega'}
+-                  </button>
+-                </div>
++              <div className={styles.actions}>
++                <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#d4500a' }}>
++                  {formatPrecio(pedido.total)}
++                </span>
++                <button className={styles.btnQR} onClick={() => setScannerAbierto(true)}>
++                  📷 Escanear QR
++                </button>
+               </div>
+-            );
+-          })}
++            </div>
++          ))}
+         </div>
+       </div>
++
++      {scannerAbierto && (
++        <QrScannerModal
++          onClose={() => setScannerAbierto(false)}
++          onConfirmado={(id) => {
++            setPedidos((prev) => prev.filter((p) => p.id !== id));
++            setScannerAbierto(false);
++          }}
++        />
++      )}
+     </AppShell>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/frontend/src/features/pedido/MiPedidoPage.module.css b/frontend/src/features/pedido/MiPedidoPage.module.css
+new file mode 100644
+index 0000000..1756882
+--- /dev/null
++++ b/frontend/src/features/pedido/MiPedidoPage.module.css
+@@ -0,0 +1,53 @@
++.page {
++  min-height: 100dvh;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  background: #fafaf8;
++  padding: 1rem;
++  font-family: system-ui, -apple-system, sans-serif;
++}
++
++.card {
++  background: #fff;
++  border: 1.5px solid #e7e5e4;
++  border-radius: 20px;
++  padding: 2rem 1.75rem;
++  width: 100%;
++  max-width: 360px;
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 1.5rem;
++  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
++}
++
++.logoRow { display: flex; align-items: center; gap: 1rem; width: 100%; }
++.logo { font-size: 2rem; line-height: 1; }
++.titulo { font-size: 1.125rem; font-weight: 800; color: #1c1917; margin: 0; }
++.sub { font-size: 0.8125rem; color: #78716c; margin: 0.125rem 0 0; }
++.info { font-size: 0.9375rem; color: #78716c; margin: 0; }
++
++.qrBox {
++  display: flex;
++  flex-direction: column;
++  align-items: center;
++  gap: 0.75rem;
++  padding: 1.5rem;
++  background: #fafaf8;
++  border: 1.5px dashed #d6d3d1;
++  border-radius: 16px;
++  width: 100%;
++}
++
++.qrHint { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
++
++.errorBox {
++  padding: 1rem;
++  background: #fef2f2;
++  border: 1.5px solid #fecaca;
++  border-radius: 12px;
++  width: 100%;
++  text-align: center;
++}
++.errorMsg { font-size: 0.9375rem; color: #991b1b; margin: 0; font-weight: 500; }
+diff --git a/frontend/src/features/pedido/MiPedidoPage.tsx b/frontend/src/features/pedido/MiPedidoPage.tsx
+new file mode 100644
+index 0000000..51144d7
+--- /dev/null
++++ b/frontend/src/features/pedido/MiPedidoPage.tsx
+@@ -0,0 +1,56 @@
++import { useEffect, useState } from 'react';
++import { useParams } from 'react-router-dom';
++import { QRCodeSVG } from 'qrcode.react';
++import { fetchQrToken } from '@/features/admin/services/admin.service';
++import styles from './MiPedidoPage.module.css';
++
++type Estado = 'cargando' | 'listo' | 'error';
++
++export function MiPedidoPage() {
++  const { id } = useParams<{ id: string }>();
++  const pedidoId = Number(id);
++
++  const [qrToken, setQrToken] = useState<string | null>(null);
++  const [estado, setEstado]   = useState<Estado>('cargando');
++  const [error, setError]     = useState('');
++
++  useEffect(() => {
++    if (!pedidoId) { setEstado('error'); setError('ID de pedido inválido.'); return; }
++    fetchQrToken(pedidoId)
++      .then(({ token }) => { setQrToken(token); setEstado('listo'); })
++      .catch((e: Error) => { setEstado('error'); setError(e.message); });
++  }, [pedidoId]);
++
++  return (
++    <div className={styles.page}>
++      <div className={styles.card}>
++        <div className={styles.logoRow}>
++          <span className={styles.logo}>🛵</span>
++          <div>
++            <h1 className={styles.titulo}>Mi pedido #{pedidoId}</h1>
++            <p className={styles.sub}>Muéstrale este QR al repartidor cuando llegue</p>
++          </div>
++        </div>
++
++        {estado === 'cargando' && <p className={styles.info}>Cargando QR…</p>}
++
++        {estado === 'error' && (
++          <div className={styles.errorBox}>
++            <p className={styles.errorMsg}>{error || 'No se pudo obtener el QR.'}</p>
++          </div>
++        )}
++
++        {estado === 'listo' && qrToken && (
++          <div className={styles.qrBox}>
++            <QRCodeSVG
++              value={`${window.location.origin}/confirmar-entrega?token=${qrToken}`}
++              size={220}
++              level="M"
++            />
++            <p className={styles.qrHint}>Válido por 24 horas</p>
++          </div>
++        )}
++      </div>
++    </div>
++  );
++}
