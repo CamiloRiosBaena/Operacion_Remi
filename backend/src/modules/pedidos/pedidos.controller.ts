@@ -26,7 +26,6 @@ export class PedidosController {
   // PEDIDOS
   // ─────────────────────────────────────────
 
-  /** GET /api/pedidos?estado=pendiente  (estado es opcional) */
   @Get()
   findAll(@Query('estado') estado?: EstadoPedido) {
     return this.pedidosService.findAllPedidos(estado);
@@ -42,7 +41,6 @@ export class PedidosController {
     return this.pedidosService.createPedido(dto);
   }
 
-  /** PATCH /api/pedidos/:id/estado  — cambia estado con auditoría */
   @Patch(':id/estado')
   cambiarEstado(
     @Param('id', ParseIntPipe) id: number,
@@ -51,7 +49,6 @@ export class PedidosController {
     return this.pedidosService.cambiarEstado(id, dto);
   }
 
-  /** PATCH /api/pedidos/:id/cancelar */
   @Patch(':id/cancelar')
   cancelar(
     @Param('id', ParseIntPipe) id: number,
