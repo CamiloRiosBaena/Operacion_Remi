@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { PlatoImage } from '@/shared/components/PlatoImage';
@@ -8,6 +9,7 @@ import {
   type TipoPedido,
   type Mesa,
 } from '@/features/pedidos/services/pedidos.service';
+import { fetchQrToken } from '@/features/admin/services/admin.service';
 import styles from './CartDrawer.module.css';
 
 interface Props {
@@ -40,6 +42,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
   const [enviando, setEnviando]     = useState(false);
   const [errorPedido, setErrorPedido] = useState('');
   const [pedidoId, setPedidoId]     = useState<number | null>(null);
+  const [qrToken, setQrToken]       = useState<string | null>(null);
 
   // Si cambia mesaQr (navegación), sincronizar
   useEffect(() => {
@@ -66,6 +69,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
           setMesaId(mesaQr ?? '');
           setDireccion('');
           setPedidoId(null);
+          setQrToken(null);
         }
       }, 300);
     }
@@ -101,6 +105,11 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
       setPedidoId(pedido.id);
       clearCart();
       setStep('confirmado');
+      if (tipo === 'domicilio') {
+        fetchQrToken(pedido.id)
+          .then(({ token }) => setQrToken(token))
+          .catch(() => {/* no bloquea la confirmación */});
+      }
     } catch (err) {
       setErrorPedido(err instanceof Error ? err.message : 'Error al enviar el pedido');
     } finally {
@@ -330,10 +339,39 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
                 <h3 className={styles.confirmadoTitle}>¡Pedido #{pedidoId} recibido!</h3>
                 <p className={styles.confirmadoText}>
                   Tu pedido fue enviado a cocina.{' '}
-                  {tipo === 'domicilio' && 'Pronto un domiciliario saldrá hacia tu dirección.'}
+                  {tipo === 'domicilio' && 'Cuando el repartidor llegue, muéstrale el QR de abajo.'}
                   {tipo === 'mesa' && 'Lo llevaremos a tu mesa en un momento.'}
                   {tipo === 'llevar' && 'Pasa a recogerlo cuando esté listo.'}
                 </p>
+
+                {tipo === 'domicilio' && (
+                  <div className={styles.qrBox}>
+                    <p className={styles.qrInstruccion}>Tu QR de entrega</p>
+                    {qrToken ? (
+                      <>
+                        <QRCodeSVG
+                          value={`${window.location.origin}/confirmar-entrega?token=${qrToken}`}
+                          size={180}
+                          level="M"
+                        />
+                        <p className={styles.qrHint}>
+                          Guarda una captura de pantalla.{' '}
+                          <a
+                            href={`/mi-pedido/${pedidoId}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={styles.qrLink}
+                          >
+                            Ver en otra pestaña
+                          </a>
+                        </p>
+                      </>
+                    ) : (
+                      <p className={styles.qrCargando}>Generando QR…</p>
+                    )}
+                  </div>
+                )}
+
                 <button className={styles.btnPagar} onClick={onClose}>
                   Cerrar
                 </button>

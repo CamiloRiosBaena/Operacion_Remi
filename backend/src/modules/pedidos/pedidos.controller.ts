@@ -61,6 +61,28 @@ export class PedidosController {
   }
 
   // ─────────────────────────────────────────
+  // QR DE ENTREGA
+  // ─────────────────────────────────────────
+
+  /** GET /api/pedidos/:id/qr — genera o reutiliza el token QR del pedido */
+  @Get(':id/qr')
+  getQrToken(@Param('id', ParseIntPipe) id: number) {
+    return this.pedidosService.getOrCreateQrToken(id);
+  }
+
+  /** GET /api/pedidos/verificar-qr/:token — info del pedido por token (sin modificar) */
+  @Get('verificar-qr/:token')
+  getPedidoPorToken(@Param('token') token: string) {
+    return this.pedidosService.getPedidoPorToken(token);
+  }
+
+  /** PATCH /api/pedidos/verificar-qr/:token/confirmar — confirma entrega con QR */
+  @Patch('verificar-qr/:token/confirmar')
+  confirmarEntregaConQr(@Param('token') token: string) {
+    return this.pedidosService.confirmarEntregaConQr(token);
+  }
+
+  // ─────────────────────────────────────────
   // MESAS
   // ─────────────────────────────────────────
 

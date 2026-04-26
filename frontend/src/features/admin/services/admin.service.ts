@@ -1,4 +1,4 @@
-import { apiFetch } from '@/shared/lib/api';
+import { apiFetch, API_URL } from '@/shared/lib/api';
 
 // ── Tipos de backend ──────────────────────────────────────────────────────────
 
@@ -163,6 +163,27 @@ export function upsertPlatoIngrediente(
 
 export function deletePlatoIngrediente(platoId: number, ingredienteId: number): Promise<void> {
   return apiFetch(`/menu/platos/${platoId}/ingredientes/${ingredienteId}`, { method: 'DELETE' });
+}
+
+// ── QR de entrega ─────────────────────────────────────────────────────────────
+
+export interface ApiQrToken {
+  token: string;
+  expiracion: string;
+}
+
+export function fetchQrToken(pedidoId: number): Promise<ApiQrToken> {
+  return apiFetch<ApiQrToken>(`/pedidos/${pedidoId}/qr`);
+}
+
+export function infoPedidoPorToken(token: string): Promise<ApiPedido> {
+  return fetch(`${API_URL}/pedidos/verificar-qr/${token}`)
+    .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
+}
+
+export function confirmarEntregaConToken(token: string): Promise<ApiPedido> {
+  return fetch(`${API_URL}/pedidos/verificar-qr/${token}/confirmar`, { method: 'PATCH' })
+    .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
 }
 
 // ── Mesas ─────────────────────────────────────────────────────────────────────
