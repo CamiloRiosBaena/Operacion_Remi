@@ -47,13 +47,11 @@ export class PedidosService {
   // ─────────────────────────────────────────
 
   async createPedido(dto: CreatePedidoDto): Promise<Pedido> {
-    // Validaciones de tipo
     if (dto.tipo === TipoPedido.MESA && !dto.mesaId)
       throw new BadRequestException('Un pedido de mesa requiere mesaId');
     if (dto.tipo === TipoPedido.DOMICILIO && !dto.direccionEntrega)
       throw new BadRequestException('Un pedido a domicilio requiere direccionEntrega');
 
-    // Resolver relaciones opcionales
     let cliente: Cliente | null = null;
     if (dto.clienteId) {
       cliente = await this.clienteRepo.findOneBy({ id: dto.clienteId });
@@ -66,7 +64,6 @@ export class PedidosService {
       if (!mesa) throw new NotFoundException(`Mesa ${dto.mesaId} no encontrada`);
     }
 
-    // Calcular totales
     let totalSinIva = 0;
     let ivaTotal = 0;
     const detallesEntidades: DetallePedido[] = [];
@@ -94,7 +91,6 @@ export class PedidosService {
       );
     }
 
-    // Crear el pedido
     const pedido = this.pedidoRepo.create({
       tipo: dto.tipo,
       estado: EstadoPedido.PENDIENTE,
@@ -109,12 +105,10 @@ export class PedidosService {
 
     const saved = await this.pedidoRepo.save(pedido);
 
-    // Registrar historial de estado inicial
     await this.historialRepo.save(
       this.historialRepo.create({ pedido: saved, estado: EstadoPedido.PENDIENTE }),
     );
 
-    // Ocupar la mesa si aplica
     if (mesa) {
       mesa.estado = EstadoMesa.OCUPADA;
       await this.mesaRepo.save(mesa);
@@ -164,7 +158,6 @@ export class PedidosService {
     });
     if (!pedido) throw new NotFoundException(`Pedido ${id} no encontrado`);
 
-    // No permitir retroceder estados
     const orden: EstadoPedido[] = [
       EstadoPedido.PENDIENTE,
       EstadoPedido.EN_COCINA,
@@ -181,7 +174,6 @@ export class PedidosService {
       );
     }
 
-    // Resolver staff opcional para auditoría
     let userStaff: UserStaff | null = null;
     if (dto.staffId) {
       userStaff = await this.staffRepo.findOneBy({ id: dto.staffId });
@@ -190,12 +182,10 @@ export class PedidosService {
     pedido.estado = dto.estado;
     const saved = await this.pedidoRepo.save(pedido);
 
-    // Auditoría
     await this.historialRepo.save(
       this.historialRepo.create({ pedido: saved, estado: dto.estado, userStaff }),
     );
 
-    // Liberar mesa cuando se entrega o cancela
     if (
       pedido.mesa &&
       (dto.estado === EstadoPedido.ENTREGADO || dto.estado === EstadoPedido.CANCELADO)
@@ -230,10 +220,7 @@ export class PedidosService {
   // ─────────────────────────────────────────
 
   async cancelarPedido(id: number, staffId?: number): Promise<Pedido> {
-    return this.cambiarEstado(id, {
-      estado: EstadoPedido.CANCELADO,
-      staffId,
-    });
+    return this.cambiarEstado(id, { estado: EstadoPedido.CANCELADO, staffId });
   }
 
   // ─────────────────────────────────────────
@@ -283,12 +270,9 @@ export class PedidosService {
 
     // Crear nuevo token con 24 h de vigencia
     const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const nuevoToken = this.tokenQrRepo.create({
-      token: randomUUID(),
-      expiracion,
-      pedido,
-    });
-    const saved = await this.tokenQrRepo.save(nuevoToken);
+    const saved = await this.tokenQrRepo.save(
+      this.tokenQrRepo.create({ token: randomUUID(), expiracion, pedido }),
+    );
     return { token: saved.token, expiracion: saved.expiracion };
   }
 
@@ -311,9 +295,8 @@ export class PedidosService {
     if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
 
     const pedido = tokenQr.pedido;
-    if (pedido.estado === EstadoPedido.ENTREGADO) {
+    if (pedido.estado === EstadoPedido.ENTREGADO)
       throw new BadRequestException('El pedido ya fue marcado como entregado');
-    }
 
     await this.tokenQrRepo.remove(tokenQr);
     return this.cambiarEstado(pedido.id, { estado: EstadoPedido.ENTREGADO });

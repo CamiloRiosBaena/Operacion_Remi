@@ -108,7 +108,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
       if (tipo === 'domicilio') {
         fetchQrToken(pedido.id)
           .then(({ token }) => setQrToken(token))
-          .catch(() => {/* no bloquea la confirmación */});
+          .catch(() => {});
       }
     } catch (err) {
       setErrorPedido(err instanceof Error ? err.message : 'Error al enviar el pedido');

@@ -176,6 +176,7 @@ export function fetchQrToken(pedidoId: number): Promise<ApiQrToken> {
   return apiFetch<ApiQrToken>(`/pedidos/${pedidoId}/qr`);
 }
 
+// Estas dos son públicas (sin auth) — usan fetch directo
 export function infoPedidoPorToken(token: string): Promise<ApiPedido> {
   return fetch(`${API_URL}/pedidos/verificar-qr/${token}`)
     .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
