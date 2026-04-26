@@ -7,6 +7,7 @@ import { MenuModule } from './modules/menu/menu.module';
 import { PedidosModule } from './modules/pedidos/pedidos.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CocinaModule } from './modules/cocina/cocina.module';
+import { DomiciliosModule } from './modules/domicilios/domicilios.module';
 import { MesasModule } from './modules/mesas/mesas.module';
 
 // Entidades
@@ -61,6 +62,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
     PedidosModule,
     AuthModule,
     CocinaModule,
+    DomiciliosModule,
     MesasModule,
   ],
   controllers: [AppController],

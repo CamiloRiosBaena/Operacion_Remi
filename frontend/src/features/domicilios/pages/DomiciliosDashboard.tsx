@@ -1,91 +1,132 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppShell } from '@/shared/components/AppShell';
+import { fetchPedidosDomiciliario, marcarEntregado } from '../services/domicilios.service';
+import type { ApiPedido } from '@/features/admin/services/admin.service';
 import styles from './DomiciliosDashboard.module.css';
 
-const MOCK_ENTREGAS = [
-  {
-    id: 'P-010',
-    cliente: 'María López',
-    direccion: 'Calle 45 # 12-30, Apto 201',
-    items: ['Pollo asado x1', 'Arroz x1', 'Gaseosa x2'],
-    estado: 'asignado' as const,
-    hora: '13:10',
-  },
-  {
-    id: 'P-011',
-    cliente: 'Carlos Ruiz',
-    direccion: 'Carrera 8 # 22-15',
-    items: ['Hamburguesa x2', 'Papas x2'],
-    estado: 'en_camino' as const,
-    hora: '12:55',
-  },
-];
+function formatHora(iso: string) {
+  return new Date(iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+}
 
-const ESTADO_LABEL = {
-  asignado: 'Asignado',
-  en_camino: 'En camino',
-  entregado: 'Entregado',
-};
-
-const ESTADO_COLOR = {
-  asignado: '#3b82f6',
-  en_camino: '#d97706',
-  entregado: '#16a34a',
-};
+function formatPrecio(n: number) {
+  return `$${Number(n).toLocaleString('es-CO')}`;
+}
 
 export function DomiciliosDashboard() {
+  const [pedidos,      setPedidos     ] = useState<ApiPedido[]>([]);
+  const [loading,      setLoading     ] = useState(true);
+  const [connected,    setConnected   ] = useState(false);
+  const [confirmando,  setConfirmando ] = useState<number | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const cargar = useCallback(async () => {
+    try {
+      const data = await fetchPedidosDomiciliario();
+      setPedidos(data);
+      setConnected(true);
+    } catch {
+      setConnected(false);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    cargar();
+    intervalRef.current = setInterval(cargar, 5000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [cargar]);
+
+  async function handleEntregado(pedido: ApiPedido) {
+    setConfirmando(pedido.id);
+    try {
+      await marcarEntregado(pedido.id);
+      setPedidos((prev) => prev.filter((p) => p.id !== pedido.id));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setConfirmando(null);
+    }
+  }
+
   return (
     <AppShell title="Mis Entregas">
       <div className={styles.wrapper}>
         <div className={styles.topBar}>
-          <p className={styles.info}>Tus pedidos asignados para hoy.</p>
-          <span className={styles.counter}>{MOCK_ENTREGAS.length} pedidos</span>
+          <p className={styles.info}>
+            {loading
+              ? 'Conectando…'
+              : connected
+              ? `${pedidos.length} entrega${pedidos.length !== 1 ? 's' : ''} asignada${pedidos.length !== 1 ? 's' : ''} · se actualiza cada 5 s`
+              : 'Error al conectar con el servidor'}
+          </p>
+          <span
+            className={styles.counter}
+            style={connected
+              ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
+              : undefined}
+          >
+            {connected ? '🟢 Conectado' : '🔴 Sin conexión'}
+          </span>
         </div>
 
         <div className={styles.list}>
-          {MOCK_ENTREGAS.map((entrega) => (
-            <div key={entrega.id} className={styles.card}>
-              <div className={styles.cardTop}>
-                <div className={styles.cardId}>
-                  <span className={styles.pedidoId}>{entrega.id}</span>
-                  <span className={styles.hora}>{entrega.hora}</span>
-                </div>
-                <span
-                  className={styles.estado}
-                  style={{
-                    background: `${ESTADO_COLOR[entrega.estado]}18`,
-                    color: ESTADO_COLOR[entrega.estado],
-                  }}
-                >
-                  {ESTADO_LABEL[entrega.estado]}
-                </span>
-              </div>
-
-              <div className={styles.clienteInfo}>
-                <span className={styles.clienteNombre}>👤 {entrega.cliente}</span>
-                <span className={styles.clienteDir}>📍 {entrega.direccion}</span>
-              </div>
-
-              <ul className={styles.items}>
-                {entrega.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-
-              <div className={styles.actions}>
-                <button className={styles.btnQR}>📷 Escanear QR</button>
-                <button className={styles.btnEstado}>
-                  {entrega.estado === 'asignado' ? 'Salir a entregar' : 'Confirmar entrega'}
-                </button>
-              </div>
-            </div>
-          ))}
-
-          {MOCK_ENTREGAS.length === 0 && (
+          {!loading && pedidos.length === 0 && (
             <div className={styles.empty}>
               <span>🛵</span>
               <p>No tienes entregas asignadas por ahora.</p>
             </div>
           )}
+
+          {pedidos.map((pedido) => {
+            const enAccion = confirmando === pedido.id;
+            return (
+              <div key={pedido.id} className={styles.card}>
+                <div className={styles.cardTop}>
+                  <div className={styles.cardId}>
+                    <span className={styles.pedidoId}>#{pedido.id}</span>
+                    <span className={styles.hora}>{formatHora(pedido.fechaHora)}</span>
+                  </div>
+                  <span
+                    className={styles.estado}
+                    style={{ background: '#d9770618', color: '#d97706' }}
+                  >
+                    En camino
+                  </span>
+                </div>
+
+                <div className={styles.clienteInfo}>
+                  {pedido.cliente && (
+                    <span className={styles.clienteNombre}>👤 {pedido.cliente.nombre}</span>
+                  )}
+                  {pedido.direccionEntrega && (
+                    <span className={styles.clienteDir}>📍 {pedido.direccionEntrega}</span>
+                  )}
+                </div>
+
+                <ul className={styles.items}>
+                  {(pedido.detalles ?? []).map((d) => (
+                    <li key={d.id}>
+                      <strong>{d.cantidad}×</strong> {d.plato.nombre}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className={styles.actions}>
+                  <span style={{ fontSize: '0.875rem', fontWeight: 700, color: '#d4500a' }}>
+                    {formatPrecio(pedido.total)}
+                  </span>
+                  <button
+                    className={styles.btnEstado}
+                    onClick={() => handleEntregado(pedido)}
+                    disabled={enAccion}
+                  >
+                    {enAccion ? '…' : '✓ Confirmar entrega'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </AppShell>
