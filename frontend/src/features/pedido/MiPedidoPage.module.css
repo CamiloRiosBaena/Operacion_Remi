@@ -1,0 +1,53 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafaf8;
+  padding: 1rem;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.card {
+  background: #fff;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 20px;
+  padding: 2rem 1.75rem;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+.logoRow { display: flex; align-items: center; gap: 1rem; width: 100%; }
+.logo { font-size: 2rem; line-height: 1; }
+.titulo { font-size: 1.125rem; font-weight: 800; color: #1c1917; margin: 0; }
+.sub { font-size: 0.8125rem; color: #78716c; margin: 0.125rem 0 0; }
+.info { font-size: 0.9375rem; color: #78716c; margin: 0; }
+
+.qrBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: #fafaf8;
+  border: 1.5px dashed #d6d3d1;
+  border-radius: 16px;
+  width: 100%;
+}
+
+.qrHint { font-size: 0.8125rem; color: #a8a29e; margin: 0; }
+
+.errorBox {
+  padding: 1rem;
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 12px;
+  width: 100%;
+  text-align: center;
+}
+.errorMsg { font-size: 0.9375rem; color: #991b1b; margin: 0; font-weight: 500; }

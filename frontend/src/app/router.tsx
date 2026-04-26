@@ -31,10 +31,10 @@ export const router = createBrowserRouter([
   // Menú público (QR o cliente registrado)
   { path: '/menu', element: <MenuPage /> },
 
-  // Confirmación de entrega pública (domiciliario escanea QR del cliente)
+  // Confirmación de entrega — el repartidor escanea el QR del cliente (pública)
   { path: '/confirmar-entrega', element: <ConfirmarEntregaPage /> },
 
-  // QR del cliente para mostrar al repartidor
+  // QR del cliente — para mostrar/recuperar el QR de su pedido (pública)
   { path: '/mi-pedido/:id', element: <MiPedidoPage /> },
 
   // ── Admin ─────────────────────────────────────────────────────
