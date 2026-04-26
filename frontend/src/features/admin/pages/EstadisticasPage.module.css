@@ -14,8 +14,9 @@
 
 .subHeadText {
   font-size: 0.875rem;
-  color: #a8a29e;
+  color: var(--dust);
   margin: 0;
+  font-weight: 300;
 }
 
 .clientLink {
@@ -24,15 +25,16 @@
   gap: 0.4rem;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: #d4500a;
+  color: var(--ember);
   text-decoration: none;
   padding: 0.375rem 0.875rem;
-  border: 1.5px solid #d4500a;
-  border-radius: 999px;
+  border: 1.5px solid var(--ember);
+  border-radius: var(--radius-pill);
   transition: background 0.15s, color 0.15s;
+  font-family: var(--font-body);
 }
 .clientLink:hover {
-  background: #d4500a;
+  background: var(--ember);
   color: #fff;
 }
 
@@ -48,33 +50,36 @@
 
 .kpiCard {
   position: relative;
-  background: #fff;
-  border-radius: 14px;
+  background: var(--card-bg);
+  border-radius: var(--radius-card);
   padding: 1.25rem 1.25rem 1.125rem;
-  border: 1px solid #e7e5e4;
+  border: 1px solid var(--line-light);
   overflow: hidden;
-  transition: box-shadow 0.2s;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
 }
-.kpiCard:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.kpiCard:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+  border-color: var(--line);
+}
 
-/* Left accent bar via CSS var */
 .kpiCard::before {
   content: '';
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 4px;
-  background: var(--accent, #d4500a);
+  background: var(--accent, var(--ember));
   border-radius: 4px 0 0 4px;
 }
 
-/* Faint glow behind the icon area */
 .kpiCard::after {
   content: '';
   position: absolute;
   top: -20px; right: -20px;
   width: 80px; height: 80px;
   border-radius: 50%;
-  background: var(--accent, #d4500a);
+  background: var(--accent, var(--ember));
   opacity: 0.06;
 }
 
@@ -88,16 +93,17 @@
 .kpiLabel {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #78716c;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 0.3rem;
 }
 
 .kpiValue {
+  font-family: var(--font-display);
   font-size: 2rem;
-  font-weight: 800;
-  color: #1c1917;
+  font-weight: 700;
+  color: var(--text-primary);
   margin: 0 0 0.3rem;
   letter-spacing: -1.5px;
   line-height: 1;
@@ -105,16 +111,18 @@
 
 .kpiMeta {
   font-size: 0.75rem;
-  color: #78716c;
+  color: var(--text-muted);
   margin: 0;
+  font-weight: 300;
 }
 
 /* ── Area chart card ── */
 .areaCard {
-  background: #fff;
-  border: 1px solid #e7e5e4;
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--line-light);
+  border-radius: var(--radius-card);
   padding: 1.5rem;
+  box-shadow: var(--shadow-card);
 }
 
 .areaHeader {
@@ -126,35 +134,35 @@
 }
 
 .areaTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1c1917;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--text-primary);
   margin: 0 0 0.2rem;
+  letter-spacing: 0.01em;
 }
 
 .areaSub {
   font-size: 0.75rem;
-  color: #a8a29e;
+  color: var(--dust);
   margin: 0;
+  font-weight: 300;
 }
 
 .areaBadge {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: #d4500a;
-  background: #fff7f3;
-  border: 1.5px solid #fcd4bc;
-  border-radius: 999px;
+  color: var(--ember);
+  background: var(--ember-soft);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-pill);
   padding: 0.25rem 0.75rem;
   white-space: nowrap;
 }
 
-/* Chart container */
-.svgWrap {
-  position: relative;
-}
+.svgWrap { position: relative; }
 
-/* Y grid */
 .yGrid {
   position: absolute;
   inset: 0 0 32px 40px;
@@ -164,7 +172,7 @@
 .yLine {
   position: absolute;
   left: 0; right: 0;
-  border-top: 1px dashed #f0ede9;
+  border-top: 1px dashed var(--line-light);
   display: flex;
   align-items: flex-end;
 }
@@ -173,14 +181,12 @@
   position: absolute;
   left: -40px;
   font-size: 0.625rem;
-  color: #d4c8c0;
+  color: var(--dust);
   white-space: nowrap;
   transform: translateY(50%);
 }
 
-.chartArea {
-  position: relative;
-}
+.chartArea { position: relative; }
 
 .areaSvg {
   display: block;
@@ -188,19 +194,17 @@
   height: 160px;
 }
 
-/* Dots posicionados como CSS para que no se distorsionen con el SVG */
 .dot {
   position: absolute;
   width: 10px;
   height: 10px;
-  background: #d4500a;
+  background: var(--ember);
   border-radius: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 0 4px rgba(212,80,10,0.18);
   pointer-events: none;
 }
 
-/* X axis */
 .xAxis {
   display: flex;
   justify-content: space-between;
@@ -218,12 +222,12 @@
 .xLabel {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #44403c;
+  color: var(--bark);
 }
 
 .xPedidos {
   font-size: 0.625rem;
-  color: #a8a29e;
+  color: var(--dust);
 }
 
 /* ── Bottom grid ── */
@@ -236,44 +240,39 @@
 @media (max-width: 700px) { .bottomGrid { grid-template-columns: 1fr; } }
 
 .card {
-  background: #fff;
-  border: 1px solid #e7e5e4;
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--line-light);
+  border-radius: var(--radius-card);
   padding: 1.5rem;
+  box-shadow: var(--shadow-card);
 }
 
 .cardTitle {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #1c1917;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--text-primary);
   margin: 0 0 1.25rem;
+  letter-spacing: 0.01em;
 }
 
 /* ── Top platos ── */
-.topList {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+.topList { display: flex; flex-direction: column; gap: 1rem; }
 
-.topItem {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+.topItem { display: flex; align-items: center; gap: 0.75rem; }
 
 .topRank {
+  font-family: var(--font-display);
   font-size: 1.1rem;
   width: 26px;
   flex-shrink: 0;
   text-align: center;
   font-weight: 700;
+  color: var(--bark);
 }
 
-.topInfo {
-  flex: 1;
-  min-width: 0;
-}
+.topInfo { flex: 1; min-width: 0; }
 
 .topHeader {
   display: flex;
@@ -286,7 +285,7 @@
 .topNombre {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1c1917;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -295,22 +294,22 @@
 .topCount {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #d4500a;
+  color: var(--ember);
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .topTrack {
   height: 5px;
-  background: #f5f5f4;
-  border-radius: 999px;
+  background: var(--sand);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 
 .topFill {
   height: 100%;
-  background: linear-gradient(to right, #d4500a, #f97316);
-  border-radius: 999px;
+  background: linear-gradient(to right, var(--ember), var(--ember-glow));
+  border-radius: var(--radius-pill);
 }
 
 /* ── Donut chart ── */
@@ -321,62 +320,43 @@
   gap: 1.25rem;
 }
 
-.donutSvg {
-  width: min(200px, 75%);
-  height: auto;
-}
+.donutSvg { width: min(200px, 75%); height: auto; }
 
 .donutCenter {
   font-size: 10px;
   font-weight: 700;
-  fill: #1c1917;
-  font-family: inherit;
+  fill: var(--text-primary);
+  font-family: var(--font-display);
 }
 
 .donutSub {
   font-size: 7.5px;
-  fill: #a8a29e;
-  font-family: inherit;
+  fill: var(--dust);
+  font-family: var(--font-body);
 }
 
 .donutLegend {
   list-style: none;
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem 1.25rem;
   width: 100%;
 }
 
-.legendItem {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+.legendItem { display: flex; align-items: center; gap: 0.5rem; }
 
-.legendDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.legendDot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-.legendLabel {
-  font-size: 0.8125rem;
-  color: #44403c;
-  flex: 1;
-}
+.legendLabel { font-size: 0.8125rem; color: var(--bark); flex: 1; font-weight: 300; }
 
-.legendPct {
-  font-size: 0.875rem;
-  font-weight: 700;
-}
+.legendPct { font-size: 0.875rem; font-weight: 700; color: var(--text-primary); }
 
 /* ── Note ── */
 .note {
   font-size: 0.75rem;
-  color: #c4bfba;
+  color: var(--dust);
   margin: 0;
   text-align: center;
+  font-weight: 300;
 }

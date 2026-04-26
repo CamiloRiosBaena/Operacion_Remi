@@ -1,8 +1,13 @@
+/* ── Tokens heredados del tema principal ── */
 .wrapper {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 720px;
+  max-width: 1600px;   /* era 720px — lo amplías igual que .main en el tema */
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 1.75rem 2rem;
+  font-family: var(--font-body);
 }
 
 .topBar {
@@ -14,34 +19,50 @@
 
 .info {
   font-size: 0.9375rem;
-  color: #78716c;
+  color: var(--text-muted);
   margin: 0;
 }
 
 .counter {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  background: #fff4ee;
-  color: #d4500a;
-  border-radius: 999px;
-  border: 1px solid #fed7aa;
+  padding: 0.3rem 0.875rem;
+  background: var(--ember-soft);
+  color: var(--ember);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(212, 80, 10, 0.22);
+  letter-spacing: 0.03em;
 }
 
 .list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1rem;
 }
 
+@media (min-width: 600px)  { .list { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px)  { .list { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1280px) { .list { grid-template-columns: repeat(4, 1fr); } }
+
 .card {
-  background: #fff;
-  border: 1.5px solid #e7e5e4;
-  border-radius: 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--line-light);
+  border-radius: var(--radius-card);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(212, 80, 10, 0.2);
 }
 
 .cardTop {
@@ -58,38 +79,67 @@
 }
 
 .pedidoId {
+  font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
-  color: #1c1917;
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .hora {
   font-size: 0.8125rem;
-  color: #a8a29e;
+  color: var(--dust);
+  letter-spacing: 0.03em;
 }
 
 .estado {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
+  padding: 0.3rem 0.875rem;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* variantes de estado — añade las que necesites */
+.estadoPendiente {
+  background: var(--ember-soft);
+  color: var(--ember);
+  border: 1px solid rgba(212, 80, 10, 0.22);
+}
+
+.estadoListo {
+  background: rgba(30, 100, 40, 0.08);
+  color: #2d6a38;
+  border: 1px solid rgba(30, 100, 40, 0.18);
+}
+
+.estadoEntregado {
+  background: rgba(92, 48, 24, 0.08);
+  color: var(--bark);
+  border: 1px solid var(--line);
 }
 
 .clienteInfo {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(247, 240, 230, 0.6);
+  border-radius: 10px;
+  border: 1px solid var(--line-light);
 }
 
 .clienteNombre {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #1c1917;
+  color: var(--text-primary);
 }
 
 .clienteDir {
   font-size: 0.875rem;
-  color: #78716c;
+  color: var(--text-muted);
 }
 
 .items {
@@ -103,10 +153,11 @@
 
 .items li {
   font-size: 0.875rem;
-  color: #44403c;
-  padding: 0.3rem 0.625rem;
-  background: #fafaf8;
-  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.3rem 0.75rem;
+  background: var(--parchment);
+  border-radius: 8px;
+  border-left: 2px solid var(--line);
 }
 
 .actions {
@@ -117,36 +168,42 @@
 
 .btnQR {
   padding: 0.5rem 1rem;
-  background: #f5f5f4;
-  color: #44403c;
-  border: 1.5px solid #e7e5e4;
-  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--line-light);
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
-  transition: border-color 0.15s;
+  font-family: var(--font-body);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
 
 .btnQR:hover {
-  border-color: #d4500a;
-  color: #d4500a;
+  border-color: var(--ember);
+  color: var(--ember);
+  background: var(--ember-soft);
 }
 
 .btnEstado {
   flex: 1;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #d4500a, #f26419);
-  color: #fff;
+  background: linear-gradient(135deg, var(--ember) 0%, var(--ember-deep) 100%);
+  color: var(--parchment);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+  box-shadow: 0 3px 12px rgba(212, 80, 10, 0.35);
+  transition: opacity 0.15s, transform 0.15s;
 }
 
 .btnEstado:hover {
   opacity: 0.88;
+  transform: translateY(-1px);
 }
 
 .empty {
@@ -156,7 +213,7 @@
   gap: 0.75rem;
   padding: 3rem 2rem;
   text-align: center;
-  color: #a8a29e;
+  color: var(--dust);
   font-size: 0.9375rem;
 }
 
