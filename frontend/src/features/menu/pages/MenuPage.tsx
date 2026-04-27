@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
@@ -6,8 +6,10 @@ import { CartDrawer } from '@/features/carrito/components/CartDrawer';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import { PlatoModal } from '../components/PlatoModal';
 import { MenuBanner } from '../components/MenuBanner';
+import { OrderTracker } from '../components/OrderTracker';
 import { usePlatos } from '../context/PlatosContext';
 import { RemiLogo } from '@/shared/components/RemiLogo';
+import { getActivePedido, clearActivePedido } from '@/shared/lib/guestSession';
 import type { Plato } from '../types/plato.types';
 import styles from './MenuPage.module.css';
 
@@ -45,6 +47,30 @@ export function MenuPage() {
   const [cartOpen, setCartOpen]   = useState(false);
   const [platoModal, setPlatoModal] = useState<Plato | null>(null);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const resolvePedidoId = useCallback(() => {
+    const pedido = getActivePedido();
+    if (!pedido) return null;
+    // Pedido de cliente: solo visible si el usuario actual es el dueño
+    if (pedido.clienteId && pedido.clienteId !== user?.id) return null;
+    return pedido.id;
+  }, [user?.id]);
+
+  const [activePedidoId, setActivePedidoId] = useState<number | null>(resolvePedidoId);
+
+  // Re-evaluar cuando cambia la sesión (login / logout)
+  useEffect(() => {
+    setActivePedidoId(resolvePedidoId());
+  }, [resolvePedidoId]);
+
+  // Refresca el pedido activo cuando el CartDrawer crea uno nuevo
+  const handlePedidoCreado = useCallback(() => {
+    setActivePedidoId(resolvePedidoId());
+  }, [resolvePedidoId]);
+
+  const handleTrackerClose = useCallback(() => {
+    clearActivePedido();
+    setActivePedidoId(null);
+  }, []);
 
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -356,6 +382,12 @@ export function MenuPage() {
           onCategoriaClick={(cat) => scrollToSection(cat)}
         />
 
+        {/* ── Tracker de pedido activo (debajo del banner) ── */}
+        <OrderTracker
+          pedidoId={activePedidoId}
+          onClose={handleTrackerClose}
+        />
+
         {secciones.map((cat) => {
           const items = platosPorCategoria[cat];
           if (!items || items.length === 0) return null;
@@ -423,7 +455,12 @@ export function MenuPage() {
         />
       )}
 
-      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} mesaQr={mesaQr} />
+      <CartDrawer
+        open={cartOpen}
+        onClose={() => setCartOpen(false)}
+        mesaQr={mesaQr}
+        onPedidoCreado={handlePedidoCreado}
+      />
     </div>
   );
 }

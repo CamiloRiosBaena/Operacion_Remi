@@ -4,18 +4,23 @@ import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import {
-  createPedido,
   fetchMesas,
+  fetchQrTokenPublico,
   type TipoPedido,
   type Mesa,
 } from '@/features/pedidos/services/pedidos.service';
-import { fetchQrToken } from '@/features/admin/services/admin.service';
+import { generarPago, pagarEfectivo, type ConfirmarPagoResponse } from '@/features/pago/services/pagos.service';
+import { initGuestSession, setActivePedido } from '@/shared/lib/guestSession';
+import { usePushNotifications } from '@/shared/hooks/usePushNotifications';
 import styles from './CartDrawer.module.css';
+
+const API_URL = import.meta.env.VITE_API_URL as string;
 
 interface Props {
   open: boolean;
   onClose: () => void;
   mesaQr?: number;
+  onPedidoCreado?: () => void; // reservado para uso futuro
 }
 
 function formatPrecio(n: number) {
@@ -28,21 +33,38 @@ function itemTotal(precio: number, extras: { precio: number; cantidad: number }[
 }
 
 // ── Paso de checkout ──────────────────────────────────────────────────────────
-type Step = 'carrito' | 'checkout' | 'confirmado';
+type Step = 'carrito' | 'checkout' | 'pago' | 'confirmado';
 
-export function CartDrawer({ open, onClose, mesaQr }: Props) {
-  const { items, count, total, ivaTotal, totalConIva, removeItem, updateCantidad, clearCart } = useCarrito();
+export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
+  const { items, count, total, removeItem, updateCantidad, clearCart } = useCarrito();
   const { user } = useAuth();
+  const { permission, requestPush, swReady } = usePushNotifications();
 
-  const [step, setStep]             = useState<Step>('carrito');
-  const [tipo, setTipo]             = useState<TipoPedido>(mesaQr ? 'mesa' : 'llevar');
-  const [mesaId, setMesaId]         = useState<number | ''>(mesaQr ?? '');
-  const [direccion, setDireccion]   = useState('');
-  const [mesas, setMesas]           = useState<Mesa[]>([]);
-  const [enviando, setEnviando]     = useState(false);
-  const [errorPedido, setErrorPedido] = useState('');
-  const [pedidoId, setPedidoId]     = useState<number | null>(null);
-  const [qrToken, setQrToken]       = useState<string | null>(null);
+  const [step, setStep]               = useState<Step>('carrito');
+  const [tipo, setTipo]               = useState<TipoPedido>(mesaQr ? 'mesa' : 'llevar');
+  const [mesaId, setMesaId]           = useState<number | ''>(mesaQr ?? '');
+  const [direccion, setDireccion]     = useState('');
+  const [mesas, setMesas]             = useState<Mesa[]>([]);
+  const [errorPedido, setErrorPedido]       = useState('');
+  const [pushSolicitado, setPushSolicitado] = useState(false);
+
+  // ── Estado del paso de pago ──
+  const [cargandoPago, setCargandoPago]           = useState(false);
+  const [cargandoEfectivo, setCargandoEfectivo]   = useState(false);
+  const [errorPago, setErrorPago]                 = useState('');
+  const [pedidoConfirmado, setPedidoConfirmado]   = useState<ConfirmarPagoResponse | null>(null);
+  const [qrToken, setQrToken]                     = useState<string | null>(null);
+
+  // Cargar QR cuando el pedido queda confirmado (efectivo)
+  useEffect(() => {
+    if (pedidoConfirmado) {
+      fetchQrTokenPublico(pedidoConfirmado.pedidoId)
+        .then(({ token }) => setQrToken(token))
+        .catch(console.error);
+    } else {
+      setQrToken(null);
+    }
+  }, [pedidoConfirmado]);
 
   // Si cambia mesaQr (navegación), sincronizar
   useEffect(() => {
@@ -59,63 +81,105 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
     }
   }, [step, tipo, mesas.length]);
 
-  // Reset al cerrar
+  // Reset al cerrar: vuelve al carrito si se cierra desde checkout o pago
   useEffect(() => {
     if (!open) {
       setTimeout(() => {
-        if (step === 'confirmado') {
+        if (step !== 'carrito') {
           setStep('carrito');
           setTipo(mesaQr ? 'mesa' : 'llevar');
           setMesaId(mesaQr ?? '');
           setDireccion('');
-          setPedidoId(null);
-          setQrToken(null);
+          setErrorPedido('');
+          setErrorPago('');
+          setCargandoPago(false);
+          setCargandoEfectivo(false);
+          setPedidoConfirmado(null);
         }
       }, 300);
     }
   }, [open, step, mesaQr]);
 
-  async function handlePedir() {
+  async function handleSolicitarPush() {
+    setPushSolicitado(true);
+    await requestPush();
+  }
+
+  // ── Ir al paso de pago: valida el checkout y avanza ──
+  function handleIrAPago() {
     if (tipo === 'mesa' && !mesaId) { setErrorPedido('Selecciona una mesa'); return; }
     if (tipo === 'domicilio' && !direccion.trim()) { setErrorPedido('Ingresa la dirección de entrega'); return; }
-
-    setEnviando(true);
     setErrorPedido('');
-    try {
-      const detalles = items.map((item) => ({
-        platoId: item.platoId,
-        cantidad: item.cantidad,
-        personalizacion: (item.ingredientesRemovidos?.length || item.extras?.length || item.nota)
-          ? JSON.stringify({
-              removidos: item.ingredientesRemovidos ?? [],
-              extras: item.extras ?? [],
-              nota: item.nota ?? '',
-            })
-          : undefined,
-      }));
-
-      const pedido = await createPedido({
-        tipo,
-        clienteId: user ? Number(user.id) : undefined,
-        mesaId: tipo === 'mesa' && mesaId ? Number(mesaId) : undefined,
-        direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
-        detalles,
-      });
-
-      setPedidoId(pedido.id);
-      clearCart();
-      setStep('confirmado');
-      if (tipo === 'domicilio') {
-        fetchQrToken(pedido.id)
-          .then(({ token }) => setQrToken(token))
-          .catch(() => {});
-      }
-    } catch (err) {
-      setErrorPedido(err instanceof Error ? err.message : 'Error al enviar el pedido');
-    } finally {
-      setEnviando(false);
-    }
+    setErrorPago('');
+    setStep('pago');
   }
+
+// ── Genera la sesión, llama al backend y redirige al checkout de Mercado Pago ──
+async function handleLanzarPago() {
+  setCargandoPago(true);
+  setErrorPago('');
+  try {
+    const tokenSesion = await initGuestSession(API_URL).catch(() => null);
+
+    const detalles = items.map((item) => ({
+      platoId: item.platoId,
+      cantidad: item.cantidad,
+      personalizacion: (item.ingredientesRemovidos?.length || item.extras?.length || item.nota)
+        ? JSON.stringify({ removidos: item.ingredientesRemovidos ?? [], extras: item.extras ?? [], nota: item.nota ?? '' })
+        : undefined,
+    }));
+
+    const data = await generarPago({
+      tipo,
+      clienteId:        user ? Number(user.id) : undefined,
+      mesaId:           tipo === 'mesa' && mesaId ? Number(mesaId) : undefined,
+      direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
+      tokenSesion:      tokenSesion ?? undefined,
+      detalles,
+    });
+
+    window.open(data.checkoutUrl, '_blank', 'noopener,noreferrer');
+    onClose();
+  } catch (err) {
+    setErrorPago(err instanceof Error ? err.message : 'Error al preparar el pago');
+  } finally {
+    setCargandoPago(false);
+  }
+}
+
+async function handlePagarEfectivo() {
+  setCargandoEfectivo(true);
+  setErrorPago('');
+  try {
+    const tokenSesion = await initGuestSession(API_URL).catch(() => null);
+
+    const detalles = items.map((item) => ({
+      platoId: item.platoId,
+      cantidad: item.cantidad,
+      personalizacion: (item.ingredientesRemovidos?.length || item.extras?.length || item.nota)
+        ? JSON.stringify({ removidos: item.ingredientesRemovidos ?? [], extras: item.extras ?? [], nota: item.nota ?? '' })
+        : undefined,
+    }));
+
+    const data = await pagarEfectivo({
+      tipo,
+      clienteId:        user ? Number(user.id) : undefined,
+      mesaId:           tipo === 'mesa' && mesaId ? Number(mesaId) : undefined,
+      direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
+      tokenSesion:      tokenSesion ?? undefined,
+      detalles,
+    });
+
+    clearCart();
+    setActivePedido({ id: data.pedidoId, tipo: data.tipo, estado: data.estado, clienteId: user?.id });
+    setPedidoConfirmado(data);
+    setStep('confirmado');
+  } catch (err) {
+    setErrorPago(err instanceof Error ? err.message : 'Error al registrar el pedido');
+  } finally {
+    setCargandoEfectivo(false);
+  }
+}
 
   return (
     <>
@@ -237,9 +301,8 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
                   ) : (
                     <div className={styles.tipoGrid}>
                       {([
-                        { valor: 'llevar',   emoji: '🥡', texto: 'Para llevar' },
-                        { valor: 'mesa',     emoji: '🪑', texto: 'En mesa'     },
-                        { valor: 'domicilio',emoji: '🛵', texto: 'Domicilio'   },
+                        { valor: 'llevar',    emoji: '🥡', texto: 'Para llevar' },
+                        { valor: 'domicilio', emoji: '🛵', texto: 'Domicilio'   },
                       ] as { valor: TipoPedido; emoji: string; texto: string }[]).map(({ valor, emoji, texto }) => (
                         <button
                           key={valor}
@@ -254,29 +317,7 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
                   )}
                 </div>
 
-                {/* Mesa — si NO viene de QR, dejar seleccionar; si viene de QR ya está fija */}
-                {tipo === 'mesa' && !mesaQr && (
-                  <div className={styles.checkoutField}>
-                    <label className={styles.checkoutLabel}>Selecciona tu mesa</label>
-                    {mesas.length === 0 ? (
-                      <p className={styles.checkoutHint}>Cargando mesas…</p>
-                    ) : (
-                      <div className={styles.mesaGrid}>
-                        {mesas.map((m) => (
-                          <button
-                            key={m.id}
-                            className={`${styles.mesaBtn} ${mesaId === m.id ? styles.mesaBtnActive : ''} ${m.estado === 'ocupada' ? styles.mesaOcupada : ''}`}
-                            onClick={() => setMesaId(m.id)}
-                            disabled={m.estado === 'ocupada'}
-                          >
-                            Mesa {m.numero}
-                            {m.estado === 'ocupada' && <span className={styles.mesaTag}>ocupada</span>}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+                {/* Mesa — solo disponible via QR; si viene de QR, la mesa ya está fija */}
 
                 {/* Domicilio */}
                 {tipo === 'domicilio' && (
@@ -315,70 +356,164 @@ export function CartDrawer({ open, onClose, mesaQr }: Props) {
             </div>
 
             <div className={styles.footer}>
-              <button className={styles.btnPagar} onClick={handlePedir} disabled={enviando}>
-                {enviando ? 'Enviando pedido…' : `Confirmar pedido — ${formatPrecio(total)}`}
+              <button className={styles.btnPagar} onClick={handleIrAPago}>
+                Ir a pagar — {formatPrecio(total)}
               </button>
             </div>
           </>
         )}
 
-        {/* ── PASO: CONFIRMADO ── */}
-        {step === 'confirmado' && (
+        {/* ── PASO: PAGO ── */}
+        {step === 'pago' && (
           <>
             <div className={styles.header}>
-              <h2 className={styles.title}>Pedido enviado</h2>
+              <button className={styles.btnBack} onClick={() => setStep('checkout')}>
+                ← Volver
+              </button>
+              <h2 className={styles.title}>Pago seguro</h2>
               <button className={styles.btnClose} onClick={onClose} aria-label="Cerrar">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                 </svg>
               </button>
             </div>
+
             <div className={styles.body}>
-              <div className={styles.confirmado}>
-                <div className={styles.confirmadoEmoji}>✅</div>
-                <h3 className={styles.confirmadoTitle}>¡Pedido #{pedidoId} recibido!</h3>
-                <p className={styles.confirmadoText}>
-                  Tu pedido fue enviado a cocina.{' '}
-                  {tipo === 'domicilio' && 'Cuando el repartidor llegue, muéstrale el QR de abajo.'}
-                  {tipo === 'mesa' && 'Lo llevaremos a tu mesa en un momento.'}
-                  {tipo === 'llevar' && 'Pasa a recogerlo cuando esté listo.'}
-                </p>
+              <div className={styles.pagoStep}>
 
-                {tipo === 'domicilio' && (
-                  <div className={styles.qrBox}>
-                    <p className={styles.qrInstruccion}>Tu QR de entrega</p>
-                    {qrToken ? (
-                      <>
-                        <QRCodeSVG
-                          value={`${window.location.origin}/confirmar-entrega?token=${qrToken}`}
-                          size={180}
-                          level="M"
-                        />
-                        <p className={styles.qrHint}>
-                          Guarda una captura de pantalla.{' '}
-                          <a
-                            href={`/mi-pedido/${pedidoId}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className={styles.qrLink}
-                          >
-                            Ver en otra pestaña
-                          </a>
-                        </p>
-                      </>
-                    ) : (
-                      <p className={styles.qrCargando}>Generando QR…</p>
-                    )}
+                {/* Resumen del total */}
+                <div className={styles.pagoTotal}>
+                  <span className={styles.pagoTotalLabel}>Total a pagar</span>
+                  <span className={styles.pagoTotalVal}>{formatPrecio(total)}</span>
+                </div>
+
+                {/* Métodos aceptados */}
+                <div className={styles.pagoMetodos}>
+                  <p className={styles.pagoMetodosTitle}>Métodos aceptados</p>
+                  <div className={styles.pagoMetodosGrid}>
+                    {[
+                      { emoji: '💳', label: 'Tarjeta' },
+                      { emoji: '📱', label: 'Nequi' },
+                      { emoji: '🏦', label: 'PSE' },
+                      { emoji: '📲', label: 'Daviplata' },
+                    ].map(({ emoji, label }) => (
+                      <div key={label} className={styles.metodoBadge}>
+                        <span>{emoji}</span>
+                        <span>{label}</span>
+                      </div>
+                    ))}
                   </div>
-                )}
+                </div>
 
-                <button className={styles.btnPagar} onClick={onClose}>
-                  Cerrar
-                </button>
+                {/* Wompi badge */}
+                <div className={styles.wompiBadge}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                  <span>Pago procesado de forma segura por <strong>Mercado Pago</strong></span>
+                </div>
+
+                {errorPago && <p className={styles.pedidoError}>⚠ {errorPago}</p>}
               </div>
+            </div>
+
+            <div className={styles.footer}>
+              <button
+                className={styles.btnPagar}
+                onClick={handleLanzarPago}
+                disabled={cargandoPago || cargandoEfectivo}
+              >
+                {cargandoPago
+                  ? 'Redirigiendo a Mercado Pago…'
+                  : `Pagar con Mercado Pago — ${formatPrecio(total)}`}
+              </button>
+              <div className={styles.dividerOr}>
+                <span>o</span>
+              </div>
+              <button
+                className={styles.btnEfectivo}
+                onClick={handlePagarEfectivo}
+                disabled={cargandoPago || cargandoEfectivo}
+              >
+                {cargandoEfectivo ? 'Registrando pedido…' : '💵 Pagar en caja (efectivo)'}
+              </button>
+              <p className={styles.payNote}>Serás redirigido al checkout seguro de Mercado Pago</p>
             </div>
           </>
         )}
+
+        {/* ── PASO: CONFIRMADO (efectivo) ── */}
+        {step === 'confirmado' && pedidoConfirmado && (
+          <>
+            <div className={styles.header}>
+              <h2 className={styles.title}>Pedido registrado</h2>
+              <button className={styles.btnClose} onClick={onClose} aria-label="Cerrar">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            <div className={styles.body}>
+              <div className={styles.confirmadoStep}>
+                <div className={styles.confirmadoIcon}>
+                  <svg viewBox="0 0 52 52" fill="none" width="56" height="56">
+                    <circle cx="26" cy="26" r="26" fill="#22c55e" />
+                    <path d="M14 26l8 8 16-16" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h3 className={styles.confirmadoTitle}>¡Pedido enviado a cocina!</h3>
+                <p className={styles.confirmadoSub}>Paga en caja al retirar tu pedido.</p>
+
+                <div className={styles.confirmadoBox}>
+                  <div className={styles.confirmadoRow}>
+                    <span>Pedido</span>
+                    <span>#{pedidoConfirmado.pedidoId}</span>
+                  </div>
+                  <div className={styles.confirmadoRow}>
+                    <span>Total</span>
+                    <span>{formatPrecio(pedidoConfirmado.total)}</span>
+                  </div>
+                  <div className={styles.confirmadoRow}>
+                    <span>Tipo</span>
+                    <span>
+                      {pedidoConfirmado.tipo === 'mesa'       ? '🪑 En mesa'
+                       : pedidoConfirmado.tipo === 'domicilio' ? '🛵 Domicilio'
+                       : '🥡 Para llevar'}
+                    </span>
+                  </div>
+                  <div className={styles.confirmadoRow}>
+                    <span>Referencia</span>
+                    <span className={styles.confirmadoRef}>{pedidoConfirmado.referencia}</span>
+                  </div>
+                </div>
+
+                {qrToken && (
+                  <div className={styles.confirmadoQr}>
+                    <p className={styles.confirmadoQrLabel}>
+                      Muestra este QR cuando te entreguen el pedido
+                    </p>
+                    <div className={styles.confirmadoQrBox}>
+                      <QRCodeSVG
+                        value={`${window.location.origin}/confirmar-entrega?token=${qrToken}`}
+                        size={180}
+                        level="M"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.footer}>
+              <button className={styles.btnPagar} onClick={onClose}>
+                Cerrar
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* La confirmación tras el pago con MP ocurre en /pago-resultado (PagoResultadoPage) */}
       </aside>
     </>
   );

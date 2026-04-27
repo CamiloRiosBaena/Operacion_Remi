@@ -43,6 +43,10 @@ export class Pedido {
   @Column({ type: 'varchar', length: 100, nullable: true })
   direccionEntrega: string | null;
 
+  /** Token de sesión invitado que creó este pedido. Usado para enviar push notifications. */
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  tokenSesion: string | null;
+
   @CreateDateColumn()
   fechaHora: Date;
 

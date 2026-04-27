@@ -31,6 +31,12 @@ export class PedidosController {
     return this.pedidosService.findAllPedidos(estado);
   }
 
+  /** GET /api/pedidos/:id/tracking — datos públicos de seguimiento (sin auth) */
+  @Get(':id/tracking')
+  getTracking(@Param('id', ParseIntPipe) id: number) {
+    return this.pedidosService.getTrackingPublico(id);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.pedidosService.findOnePedido(id);

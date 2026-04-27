@@ -389,6 +389,55 @@
 
 .btnCerrarModal:hover { opacity: 0.85; }
 
+/* ── QR pendiente (texto indicativo) ── */
+.qrPendiente {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  white-space: nowrap;
+}
+
+/* ── Botón QR entrega ── */
+.btnQrEntrega {
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.btnQrEntrega:hover:not(:disabled) { opacity: 0.85; }
+.btnQrEntrega:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Contenido modal QR ── */
+.qrModalContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.qrModalSub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qrWrapper {
+  padding: 1rem;
+  background: #fff;
+  border: 1.5px solid var(--line-light);
+  border-radius: 12px;
+}
+
 /* ── Misc ── */
 .count {
   text-align: center;

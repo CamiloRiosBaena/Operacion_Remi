@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
+import { QRScannerModal } from '../components/QRScannerModal';
 import {
   fetchPedidos,
   cambiarEstadoPedido,
@@ -63,6 +64,7 @@ export function PedidosAdmin() {
   const [filtroTipo, setFiltroTipo]     = useState<TipoPedidoApi | 'todos'>('todos');
   const [accionando, setAccionando]     = useState<number | null>(null);
   const [detalle, setDetalle]           = useState<ApiPedido | null>(null);
+  const [scanPedido, setScanPedido]     = useState<ApiPedido | null>(null);
 
   const cargar = useCallback(() => {
     setLoading(true);
@@ -96,6 +98,13 @@ export function PedidosAdmin() {
     } finally {
       setAccionando(null);
     }
+  }
+
+  function handleConfirmadoQr(pedidoId: number) {
+    setPedidos((prev) =>
+      prev.map((x) => x.id === pedidoId ? { ...x, estado: 'entregado' as EstadoPedidoApi } : x),
+    );
+    setScanPedido(null);
   }
 
   async function handleCancelar(p: ApiPedido) {
@@ -220,7 +229,7 @@ export function PedidosAdmin() {
                       </td>
                       <td>
                         <div className={styles.actions}>
-                          {siguiente && (
+                          {siguiente && !(p.estado === 'listo' && (p.tipo === 'mesa' || p.tipo === 'llevar')) && (
                             <button
                               className={styles.btnAvanzar}
                               onClick={() => avanzarEstado(p)}
@@ -228,6 +237,14 @@ export function PedidosAdmin() {
                               style={{ background: ESTADO_COLOR[siguiente] }}
                             >
                               {enAccion ? '…' : `→ ${ESTADO_LABEL[siguiente]}`}
+                            </button>
+                          )}
+                          {p.estado === 'listo' && (p.tipo === 'mesa' || p.tipo === 'llevar') && (
+                            <button
+                              className={styles.btnQrEntrega}
+                              onClick={() => setScanPedido(p)}
+                            >
+                              📷 Escanear QR
                             </button>
                           )}
                           {p.estado !== 'cancelado' && p.estado !== 'entregado' && (
@@ -246,6 +263,15 @@ export function PedidosAdmin() {
         </div>
         <p className={styles.count}>{pedidosFiltrados.length} pedido(s)</p>
       </div>
+
+      {/* Modal escáner QR */}
+      {scanPedido && (
+        <QRScannerModal
+          pedidoId={scanPedido.id}
+          onConfirmado={handleConfirmadoQr}
+          onClose={() => setScanPedido(null)}
+        />
+      )}
 
       {/* Modal detalle */}
       {detalle && (

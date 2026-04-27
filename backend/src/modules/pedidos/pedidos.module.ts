@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PedidosController } from './pedidos.controller';
 import { PedidosService } from './pedidos.service';
+import { AuthModule } from '../auth/auth.module';
 import { Pedido } from './entities/pedido.entity';
 import { DetallePedido } from './entities/detalle-pedido.entity';
 import { Pago } from './entities/pago.entity';
@@ -18,6 +19,7 @@ import { UserStaff } from '../auth/entities/user-staff.entity';
       Pedido, DetallePedido, Pago, HistorialEstado, TokenQr,
       Plato, Mesa, Cliente, UserStaff,
     ]),
+    AuthModule,
   ],
   controllers: [PedidosController],
   providers: [PedidosService],

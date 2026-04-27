@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { fetchQrToken } from '@/features/admin/services/admin.service';
+import { fetchQrTokenPublico } from '@/features/pedidos/services/pedidos.service';
 import styles from './MiPedidoPage.module.css';
 
 type Estado = 'cargando' | 'listo' | 'error';
@@ -16,7 +16,7 @@ export function MiPedidoPage() {
 
   useEffect(() => {
     if (!pedidoId) { setEstado('error'); setError('ID de pedido inválido.'); return; }
-    fetchQrToken(pedidoId)
+    fetchQrTokenPublico(pedidoId)
       .then(({ token }) => { setQrToken(token); setEstado('listo'); })
       .catch((e: Error) => { setEstado('error'); setError(e.message); });
   }, [pedidoId]);
@@ -25,10 +25,10 @@ export function MiPedidoPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.logoRow}>
-          <span className={styles.logo}>🛵</span>
+          <span className={styles.logo}>📦</span>
           <div>
             <h1 className={styles.titulo}>Mi pedido #{pedidoId}</h1>
-            <p className={styles.sub}>Muéstrale este QR al repartidor cuando llegue</p>
+            <p className={styles.sub}>Muestra este QR cuando te entreguen el pedido</p>
           </div>
         </div>
 

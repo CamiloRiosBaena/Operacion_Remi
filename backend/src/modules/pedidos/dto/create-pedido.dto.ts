@@ -47,6 +47,11 @@ export class CreatePedidoDto {
   @Length(1, 100)
   direccionEntrega?: string;
 
+  /** Token de sesión invitado (para vincular el pedido y poder enviar notificaciones) */
+  @IsString()
+  @IsOptional()
+  tokenSesion?: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateDetalleDto)
