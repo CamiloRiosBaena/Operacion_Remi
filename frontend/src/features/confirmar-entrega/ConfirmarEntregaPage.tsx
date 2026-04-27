@@ -36,11 +36,16 @@ export function ConfirmarEntregaPage() {
     }
   }
 
+  const tipoEmoji = pedido?.tipo === 'mesa' ? '🪑' : pedido?.tipo === 'llevar' ? '🥡' : '🛵';
+  const tipoLabel = pedido?.tipo === 'mesa' ? 'en mesa' : pedido?.tipo === 'llevar' ? 'para llevar' : 'a domicilio';
+
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}>🛵</div>
-        <h1 className={styles.titulo}>Confirmar entrega</h1>
+        <div className={styles.logo}>{estado === 'cargando' ? '📦' : tipoEmoji}</div>
+        <h1 className={styles.titulo}>
+          {pedido ? `Confirmar entrega ${tipoLabel}` : 'Confirmar entrega'}
+        </h1>
 
         {estado === 'cargando' && <p className={styles.info}>Cargando información del pedido…</p>}
 

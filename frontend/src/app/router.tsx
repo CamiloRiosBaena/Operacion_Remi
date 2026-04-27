@@ -15,6 +15,7 @@ import { DomiciliosDashboard } from '@/features/domicilios/pages/DomiciliosDashb
 import { MenuPage } from '@/features/menu/pages/MenuPage';
 import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntregaPage';
 import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
+import { PagoResultadoPage } from '@/features/pago/pages/PagoResultadoPage';
 import { RoleRedirect } from './RoleRedirect';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
@@ -36,6 +37,8 @@ export const router = createBrowserRouter([
 
   // QR del cliente — para mostrar/recuperar el QR de su pedido (pública)
   { path: '/mi-pedido/:id', element: <MiPedidoPage /> },
+
+  { path: '/pago-resultado', element: <PagoResultadoPage /> },
 
   // ── Admin ─────────────────────────────────────────────────────
   { path: '/admin',               element: <AdminRoute><AdminDashboard /></AdminRoute> },

@@ -15,10 +15,11 @@ export class SesionCliente {
   @Column({ length: 20 })
   plataforma: string; // 'web' | 'android' | 'ios'
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  /** JSON stringificado de PushSubscription (endpoint + keys). text por el tamaño del endpoint. */
+  @Column({ type: 'text', nullable: true })
   pushToken: string | null;
 
-  @ManyToOne(() => Cliente, (c) => c.sesiones, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Cliente, (c) => c.sesiones, { nullable: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'id_cliente' })
-  cliente: Cliente;
+  cliente: Cliente | null;
 }

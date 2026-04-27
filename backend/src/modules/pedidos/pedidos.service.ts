@@ -17,9 +17,19 @@ import { Mesa } from '../mesas/entities/mesa.entity';
 import { EstadoMesa } from '../mesas/entities/mesa.entity';
 import { Cliente } from '../auth/entities/cliente.entity';
 import { UserStaff } from '../auth/entities/user-staff.entity';
+import { NotificacionesService } from '../auth/notificaciones.service';
 
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { CambiarEstadoDto } from './dto/cambiar-estado.dto';
+
+const MENSAJES_ESTADO: Record<EstadoPedido, { titulo: string; cuerpo: string }> = {
+  [EstadoPedido.PENDIENTE]:  { titulo: '¡Pedido recibido!', cuerpo: 'Tu pedido está en espera de confirmación.' },
+  [EstadoPedido.EN_COCINA]:  { titulo: '¡En cocina!', cuerpo: 'Los cocineros ya están preparando tu pedido 🍳' },
+  [EstadoPedido.LISTO]:      { titulo: '¡Pedido listo!', cuerpo: 'Tu pedido está listo para recoger o entrega.' },
+  [EstadoPedido.EN_CAMINO]:  { titulo: '¡En camino!', cuerpo: 'Tu domicilio está en camino 🛵' },
+  [EstadoPedido.ENTREGADO]:  { titulo: '¡Entregado!', cuerpo: '¡Buen provecho! Gracias por tu pedido 🎉' },
+  [EstadoPedido.CANCELADO]:  { titulo: 'Pedido cancelado', cuerpo: 'Tu pedido fue cancelado. Contáctanos si tienes dudas.' },
+};
 
 @Injectable()
 export class PedidosService {
@@ -40,6 +50,7 @@ export class PedidosService {
     private readonly clienteRepo: Repository<Cliente>,
     @InjectRepository(UserStaff)
     private readonly staffRepo: Repository<UserStaff>,
+    private readonly notiService: NotificacionesService,
   ) {}
 
   // ─────────────────────────────────────────
@@ -97,6 +108,7 @@ export class PedidosService {
       cliente,
       mesa,
       direccionEntrega: dto.direccionEntrega ?? null,
+      tokenSesion: dto.tokenSesion ?? null,
       totalSinIva,
       ivaTotal,
       total: totalSinIva + ivaTotal,
@@ -194,7 +206,52 @@ export class PedidosService {
       await this.mesaRepo.save(pedido.mesa);
     }
 
+    // Enviar push notification si el pedido tiene sesión de invitado
+    if (pedido.tokenSesion) {
+      const msg = MENSAJES_ESTADO[dto.estado];
+      if (msg) {
+        this.notiService
+          .enviarPush(pedido.tokenSesion, msg.titulo, msg.cuerpo, `/menu`)
+          .catch(() => { /* fire-and-forget, no interrumpir flujo */ });
+      }
+    }
+
     return this.findOnePedido(saved.id);
+  }
+
+  // ─────────────────────────────────────────
+  // TRACKING PÚBLICO
+  // ─────────────────────────────────────────
+
+  async getTrackingPublico(id: number) {
+    const pedido = await this.pedidoRepo.findOne({
+      where: { id },
+      relations: ['detalles', 'detalles.plato', 'historial'],
+      select: {
+        id: true,
+        estado: true,
+        tipo: true,
+        total: true,
+        fechaHora: true,
+      },
+    });
+    if (!pedido) throw new NotFoundException(`Pedido ${id} no encontrado`);
+
+    return {
+      id: pedido.id,
+      estado: pedido.estado,
+      tipo: pedido.tipo,
+      total: pedido.total,
+      fechaHora: pedido.fechaHora,
+      items: pedido.detalles?.map((d) => ({
+        nombre: d.plato?.nombre ?? 'Plato',
+        cantidad: d.cantidad,
+      })) ?? [],
+      historial: pedido.historial?.map((h) => ({
+        estado: h.estado,
+        fechaHora: h.fechaHora,
+      })) ?? [],
+    };
   }
 
   // ─────────────────────────────────────────

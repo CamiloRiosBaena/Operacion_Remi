@@ -14,16 +14,44 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
+import { NotificacionesService } from './notificaciones.service';
 import { SupabaseGuard } from './supabase.guard';
 import { CreateStaffDto } from './dto/create-staff.dto';
 import { UpdateStaffDto } from './dto/update-staff.dto';
 import { EstadoCliente } from './entities/cliente.entity';
 import { RegistroClienteDto } from './dto/registro-cliente.dto';
+import { CrearSesionDto } from './dto/crear-sesion.dto';
+import { PushSuscripcionDto } from './dto/push-suscripcion.dto';
 import type { User } from '@supabase/supabase-js';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly notiService: NotificacionesService,
+  ) {}
+
+  // ─────────────────────────────────────────
+  // SESIONES DE INVITADO (público)
+  // ─────────────────────────────────────────
+
+  /** POST /api/auth/sesiones — crea una sesión anónima para clientes sin cuenta */
+  @Post('sesiones')
+  crearSesion(@Body() dto: CrearSesionDto) {
+    return this.notiService.crearSesion(dto.plataforma ?? 'web');
+  }
+
+  /** GET /api/auth/vapid-key — devuelve la clave pública VAPID para suscripción push */
+  @Get('vapid-key')
+  getVapidKey() {
+    return { publicKey: this.notiService.getVapidPublicKey() };
+  }
+
+  /** PATCH /api/auth/sesiones/push — registra la suscripción push de la sesión */
+  @Patch('sesiones/push')
+  registrarPush(@Body() dto: PushSuscripcionDto) {
+    return this.notiService.registrarPushToken(dto.tokenSesion, dto.suscripcion);
+  }
 
   // ─────────────────────────────────────────
   // REGISTRO DE CLIENTES (público — sin confirmación de email)

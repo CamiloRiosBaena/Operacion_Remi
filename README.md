@@ -98,13 +98,15 @@ frontend/src/
 │   │
 │   ├── admin/
 │   │   ├── components/
-│   │   │   └── AdminLayout.tsx   # Shell con sidebar — usado en todas las páginas admin
+│   │   │   ├── AdminLayout.tsx      # Shell con sidebar — usado en todas las páginas admin
+│   │   │   └── QRScannerModal.tsx   # Escáner QR con webcam para confirmar entregas
 │   │   └── pages/
 │   │       ├── AdminDashboard.tsx
 │   │       ├── MenuGestion.tsx
 │   │       ├── IngredientesGestion.tsx
-│   │       ├── PedidosAdmin.tsx
+│   │       ├── PedidosAdmin.tsx     # Botón "📷 Escanear QR" para pedidos mesa/llevar en Listo
 │   │       ├── DomiciliosAdmin.tsx
+│   │       ├── MesasAdmin.tsx
 │   │       ├── UsuariosGestion.tsx
 │   │       └── EstadisticasPage.tsx
 │   │
@@ -124,14 +126,26 @@ frontend/src/
 │   │   └── types/
 │   │       └── carrito.types.ts     # CartItem, CartExtra, CarritoContextValue
 │   │
-│   └── pedido/                      # Flujo de confirmación / seguimiento
+│   ├── pedido/
+│   │   └── MiPedidoPage.tsx         # /mi-pedido/:id — QR de entrega del cliente
+│   │
+│   ├── confirmar-entrega/
+│   │   └── ConfirmarEntregaPage.tsx  # /confirmar-entrega?token=... — destino del QR escaneado
+│   │
+│   └── pago/
+│       └── pages/
+│           └── PagoResultadoPage.tsx # /pago-resultado — resultado del pago MP + QR de entrega
 │
 └── shared/
     ├── components/
     │   ├── ProtectedRoute.tsx   # Redirige si el rol no está permitido
     │   ├── AppShell.tsx         # Header genérico para staff
     │   └── PlatoImage.tsx       # Imagen de plato con fallback SVG por categoría
-    └── (hooks/, utils/ si hacen falta)
+    ├── hooks/
+    │   └── usePushNotifications.ts
+    └── lib/
+        ├── guestSession.ts      # Pedido activo en localStorage (con clienteId para seguridad)
+        └── api.ts               # apiFetch con token Supabase
 ```
 
 ### Cómo agregar una nueva feature al frontend
@@ -240,14 +254,57 @@ Luego:
 
 ---
 
+## Flujo de pedido y confirmación de entrega
+
+### Tipos de pedido
+
+| Tipo | Cómo se inicia | Cómo se confirma entrega |
+|---|---|---|
+| **Mesa** | Escaneando el QR de la mesa (URL con `?mesa=N`) | QR del cliente escaneado por el admin |
+| **Para llevar** | Selección manual en el carrito | QR del cliente escaneado por el admin |
+| **Domicilio** | Selección manual en el carrito | QR del cliente escaneado por el domiciliario |
+
+> **Importante:** La opción "en mesa" no está disponible en el selector manual del carrito. El cliente llega a ese modo únicamente escaneando el QR físico de la mesa.
+
+### QR de entrega — flujo completo
+
+1. El cliente hace su pedido (efectivo o Mercado Pago).
+2. Inmediatamente recibe un **código QR en pantalla**:
+   - Pago en efectivo → aparece en el paso de confirmación del carrito.
+   - Pago con MP → aparece en la página de resultado (nueva pestaña).
+3. Si cierra la página puede volver a su QR desde el **OrderTracker** en el menú → botón "📱 Ver mi QR de entrega" → `/mi-pedido/:id`.
+4. Cuando el pedido está **Listo**:
+   - El admin abre el escáner en el panel de pedidos (botón **📷 Escanear QR**).
+   - La cámara del PC detecta el QR del cliente automáticamente.
+   - Se muestra un preview del pedido para verificar antes de confirmar.
+   - Al confirmar, el pedido pasa a **Entregado** sin intervención manual.
+   - Para domicilios, el domiciliario usa su propio escáner en `/domicilios`.
+
+### Seguridad del pedido activo (localStorage)
+
+El pedido activo se guarda en `localStorage` con un campo `clienteId` opcional (ID de Supabase):
+
+- **Pedido de invitado** (`clienteId` ausente): visible en cualquier sesión del mismo dispositivo.
+- **Pedido de cliente logueado** (`clienteId` presente): solo visible cuando ese mismo usuario está autenticado. Si cierra sesión el tracker desaparece; al volver a entrar reaparece automáticamente.
+
+---
+
+## Pasarela de pago
+
+El checkout de **Mercado Pago** se abre en una **nueva pestaña** (`window.open`). La pestaña original con el menú permanece abierta. El resultado del pago se procesa en `/pago-resultado`.
+
+El botón de pago en efectivo está disponible pero es solo para demos/presentaciones (MP en sandbox falla ocasionalmente). En producción todos los pagos son por MP.
+
+---
+
 ## Roles del sistema
 
 | Rol | Ruta principal | Descripción |
 |---|---|---|
-| `admin` | `/admin` | Gestión completa del sistema |
+| `admin` | `/admin` | Gestión completa + escáner QR de entrega para mesa/llevar |
 | `cocinero` | `/cocina` | Vista KDS de comandas |
-| `domiciliario` | `/domicilios` | Gestión de entregas |
-| `cliente` | `/menu` | Hacer pedidos vía QR |
+| `domiciliario` | `/domicilios` | Gestión de entregas + escáner QR de entrega |
+| `cliente` | `/menu` | Hacer pedidos vía QR o directamente |
 
 ---
 

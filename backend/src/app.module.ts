@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CocinaModule } from './modules/cocina/cocina.module';
 import { DomiciliosModule } from './modules/domicilios/domicilios.module';
 import { MesasModule } from './modules/mesas/mesas.module';
+import { PagosModule } from './modules/pagos/pagos.module';
 
 // Entidades
 import { Categoria } from './modules/menu/entities/categoria.entity';
@@ -64,6 +65,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
     CocinaModule,
     DomiciliosModule,
     MesasModule,
+    PagosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

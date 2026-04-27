@@ -1,0 +1,178 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  padding: 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+.card {
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2.5rem 2rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid #f3f4f6;
+  border-top-color: #D4500A;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Iconos ── */
+.iconWrap {
+  margin-bottom: 0.25rem;
+}
+
+.iconCheck,
+.iconX {
+  width: 64px;
+  height: 64px;
+  animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.iconEmoji {
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Títulos ── */
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0;
+}
+
+.sub {
+  font-size: 1rem;
+  color: #57534e;
+  margin: 0;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Info box ── */
+.infoBox {
+  width: 100%;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.875rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  text-align: left;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.infoLabel {
+  font-size: 0.82rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.infoVal {
+  font-size: 0.88rem;
+  color: #1c1917;
+  font-weight: 700;
+}
+
+.infoRef {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #9a3412;
+  word-break: break-all;
+  text-align: right;
+}
+
+/* ── Botones ── */
+.btnPrimary {
+  display: inline-block;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  background: #D4500A;
+  color: #fff;
+  border-radius: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+}
+
+.btnPrimary:hover {
+  background: #b84208;
+}
+
+.btnSecondary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+}
+
+.btnSecondary:hover {
+  background: #e5e7eb;
+}
+
+.qrSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+}
+
+.qrLabel {
+  font-size: 0.875rem;
+  color: #78716c;
+  text-align: center;
+  margin: 0;
+}
+
+.qrBox {
+  padding: 0.875rem;
+  background: #fff;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 14px;
+}
