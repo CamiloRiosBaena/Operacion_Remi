@@ -10,7 +10,10 @@ Sistema de autoservicio digital para restaurante. El cliente accede desde su cel
 |---|---|
 | Frontend | React 19 + Vite + TypeScript |
 | Backend | NestJS 11 + TypeORM |
-| Base de datos | PostgreSQL (Neon en la nube) |
+| Base de datos | PostgreSQL (Supabase) |
+| Auth | Supabase Auth + JWT |
+| Storage | Supabase Storage (bucket `platos`) |
+| IA / Chatbot | Groq API — `llama-3.3-70b-versatile` |
 | Estilos | CSS Modules |
 
 ---
@@ -19,7 +22,7 @@ Sistema de autoservicio digital para restaurante. El cliente accede desde su cel
 
 - **Node.js** v20 o superior
 - **npm** v10 o superior
-- Credenciales de la base de datos (pedírselas al líder del equipo)
+- Credenciales de Supabase y Groq (pedírselas al líder del equipo)
 
 ---
 
@@ -53,7 +56,7 @@ npm run start:dev
 
 La API queda en `http://localhost:3000`.
 
-> Las credenciales de la base de datos **nunca van en el repositorio**. El archivo `.env` ya está en `.gitignore`. Pídele los valores al líder del equipo por WhatsApp o Discord.
+> Las credenciales **nunca van en el repositorio**. El archivo `.env` ya está en `.gitignore`. Pídele los valores al líder del equipo.
 
 ---
 
@@ -91,10 +94,20 @@ frontend/src/
 │   │
 │   ├── menu/
 │   │   ├── pages/
-│   │   │   └── MenuPage.tsx      # Vista del cliente (galería de platos)
-│   │   └── components/
-│   │       ├── PlatoModal.tsx    # Modal de detalle + personalización
-│   │       └── PersonalizedSection.tsx
+│   │   │   └── MenuPage.tsx      # Vista del cliente (galería de platos + banner)
+│   │   ├── components/
+│   │   │   ├── PlatoModal.tsx    # Modal de detalle + personalización
+│   │   │   ├── MenuBanner.tsx    # Carrusel de banners promocionales (autoplay)
+│   │   │   └── PersonalizedSection.tsx
+│   │   ├── context/
+│   │   │   ├── PlatosContext.tsx  # Platos globales (usado en admin y menú)
+│   │   │   └── PromosContext.tsx  # Promos activas desde GET /menu/promos
+│   │   ├── services/
+│   │   │   ├── menu.service.ts
+│   │   │   └── promo.service.ts  # CRUD de banners promocionales
+│   │   └── types/
+│   │       ├── plato.types.ts
+│   │       └── promo.types.ts    # Interfaz Promo con imageUrl opcional
 │   │
 │   ├── admin/
 │   │   ├── components/
@@ -102,13 +115,22 @@ frontend/src/
 │   │   │   └── QRScannerModal.tsx   # Escáner QR con webcam para confirmar entregas
 │   │   └── pages/
 │   │       ├── AdminDashboard.tsx
-│   │       ├── MenuGestion.tsx
+│   │       ├── MenuGestion.tsx      # CRUD de platos e ingredientes
 │   │       ├── IngredientesGestion.tsx
+│   │       ├── PromosAdmin.tsx      # CRUD de banners promocionales con upload de imagen
 │   │       ├── PedidosAdmin.tsx     # Botón "📷 Escanear QR" para pedidos mesa/llevar en Listo
 │   │       ├── DomiciliosAdmin.tsx
 │   │       ├── MesasAdmin.tsx
 │   │       ├── UsuariosGestion.tsx
 │   │       └── EstadisticasPage.tsx
+│   │
+│   ├── asistente/
+│   │   ├── components/
+│   │   │   └── ChatWidget.tsx       # Botón flotante + panel de chat con Remi
+│   │   ├── hooks/
+│   │   │   └── useChatbot.ts        # Lógica de envío, historial y acciones de carrito
+│   │   └── services/
+│   │       └── asistente.service.ts # POST /asistente/chat vía apiFetch
 │   │
 │   ├── cocina/
 │   │   └── pages/
@@ -142,10 +164,13 @@ frontend/src/
     │   ├── AppShell.tsx         # Header genérico para staff
     │   └── PlatoImage.tsx       # Imagen de plato con fallback SVG por categoría
     ├── hooks/
+    │   ├── useModalClose.ts     # Evita cierre de modal al arrastrar texto (mousedown + click)
     │   └── usePushNotifications.ts
     └── lib/
-        ├── guestSession.ts      # Pedido activo en localStorage (con clienteId para seguridad)
-        └── api.ts               # apiFetch con token Supabase
+        ├── api.ts               # apiFetch con token Supabase
+        ├── storage.ts           # uploadPlatoImage → Supabase Storage bucket "platos"
+        ├── supabase.ts          # Cliente Supabase (anon key)
+        └── guestSession.ts      # Pedido activo en localStorage (con clienteId para seguridad)
 ```
 
 ### Cómo agregar una nueva feature al frontend
@@ -186,24 +211,35 @@ backend/src/
 └── modules/
     ├── auth/
     │   ├── auth.module.ts
-    │   ├── auth.controller.ts    # POST /auth/login, POST /auth/registro
-    │   ├── auth.service.ts       # Lógica de login, generación de JWT
-    │   ├── guards/               # JwtAuthGuard, RolesGuard
-    │   ├── decorators/           # @Roles(), @CurrentUser()
+    │   ├── auth.controller.ts        # POST /auth/login, POST /auth/registro
+    │   ├── auth.service.ts           # Lógica de login + tokens Supabase
+    │   ├── supabase-admin.service.ts # Cliente Supabase Admin (service role key)
+    │   ├── guards/
+    │   │   └── supabase.guard.ts     # SupabaseGuard — valida JWT de Supabase
     │   └── entities/
-    │       ├── user-staff.entity.ts   # Tabla: user_staff
-    │       ├── cliente.entity.ts      # Tabla: clientes
+    │       ├── user-staff.entity.ts  # Tabla: user_staff
+    │       ├── cliente.entity.ts     # Tabla: clientes
     │       └── sesion-cliente.entity.ts
     │
     ├── menu/
     │   ├── menu.module.ts
-    │   ├── menu.controller.ts    # GET /menu, GET /menu/:id
+    │   ├── menu.controller.ts    # CRUD de platos, categorías, ingredientes y promos
     │   ├── menu.service.ts
+    │   ├── dto/
+    │   │   └── promo.dto.ts      # CreatePromoDto, UpdatePromoDto
     │   └── entities/
     │       ├── categoria.entity.ts    # Tabla: categorias
     │       ├── plato.entity.ts        # Tabla: platos
     │       ├── ingrediente.entity.ts  # Tabla: ingredientes
-    │       └── extra.entity.ts        # Tabla: extras
+    │       ├── extra.entity.ts        # Tabla: extras
+    │       └── promo.entity.ts        # Tabla: promos_banner (banners del carrusel)
+    │
+    ├── asistente/
+    │   ├── asistente.module.ts
+    │   ├── asistente.controller.ts   # POST /asistente/chat (requiere auth)
+    │   ├── asistente.service.ts      # Groq tool-calling loop (llama-3.3-70b-versatile)
+    │   └── dto/
+    │       └── chat.dto.ts           # ChatMessageDto, ChatRequestDto, CartActionDto
     │
     ├── pedidos/
     │   ├── pedidos.module.ts
@@ -240,6 +276,7 @@ Luego:
 1. Crea la entidad en `modules/nombre/entities/nombre.entity.ts`
 2. Regístrala en `TypeOrmModule.forRootAsync` → array `entities` en `app.module.ts`
 3. Importa `TypeOrmModule.forFeature([NombreEntity])` en el módulo nuevo
+4. Si el módulo necesita proteger rutas con `SupabaseGuard`, importa `AuthModule`
 
 ### Convenciones de endpoints
 
@@ -251,6 +288,33 @@ Luego:
 | Editar | PATCH | `/recurso/:id` |
 | Eliminar | DELETE | `/recurso/:id` |
 | Cambiar estado | PATCH | `/recurso/:id/estado` |
+
+---
+
+## Features principales
+
+### 🤖 Asistente virtual "Remi"
+
+Un chatbot de ventas flotante accesible desde el menú (solo usuarios autenticados). Usa **Groq** con el modelo `llama-3.3-70b-versatile` y function calling para agregar platos al carrito directamente desde la conversación.
+
+- El asistente conoce el menú completo en tiempo real (IDs, precios, extras, descripciones).
+- Valida que los platos existan antes de agregarlos.
+- Los precios se aplican con IVA ya incluido, consistente con el modal de platos.
+- Solo responde en español, tono cálido y conciso.
+
+### 📢 Banners promocionales
+
+Carrusel en la parte superior del menú, completamente administrable desde el panel admin (`/admin/promos`):
+
+- Gradiente de dos colores personalizables + color de acento.
+- Imagen opcional subida a Supabase Storage.
+- El botón CTA puede apuntar a un plato específico o a una categoría del menú.
+- Autoplay con pausa al pasar el cursor, barra de progreso animada y dots de navegación.
+- Orden configurable, activación/desactivación individual.
+
+### 🖼️ Subida de imágenes
+
+Las imágenes de platos y banners se almacenan en **Supabase Storage** (bucket `platos`). La función `uploadPlatoImage(file)` en `shared/lib/storage.ts` gestiona la subida y devuelve la URL pública.
 
 ---
 
@@ -289,11 +353,21 @@ El pedido activo se guarda en `localStorage` con un campo `clienteId` opcional (
 
 ---
 
+## Convención de precios e IVA
+
+Los precios se almacenan **sin IVA** en la base de datos (`platos.precio`). El IVA se aplica al mostrar el precio al cliente y al agregar al carrito:
+
+```
+precioConIva = Math.round(precio * (1 + tasaIva))
+```
+
+El ítem en el carrito guarda `precio = precioConIva` y `tasaIva = 0` para evitar aplicar el IVA dos veces. El asistente IA sigue la misma convención.
+
+---
+
 ## Pasarela de pago
 
 El checkout de **Mercado Pago** se abre en una **nueva pestaña** (`window.open`). La pestaña original con el menú permanece abierta. El resultado del pago se procesa en `/pago-resultado`.
-
-El botón de pago en efectivo está disponible pero es solo para demos/presentaciones (MP en sandbox falla ocasionalmente). En producción todos los pagos son por MP.
 
 ---
 
@@ -330,19 +404,32 @@ npm run typeorm migration:run
 Copia `.env.example` como `.env` y rellena los valores. Nunca commitees `.env`.
 
 ```env
-DB_HOST=        # Host de PostgreSQL (Neon u otro)
+# Base de datos
+DB_HOST=
 DB_PORT=5432
 DB_NAME=operacion_remi
 DB_USER=
 DB_PASSWORD=
-DB_SSL=true     # true para Neon/cloud, false para local
+DB_SSL=true        # true para Supabase/Neon, false para local
 
+# Servidor
 PORT=3000
 NODE_ENV=development
 
-JWT_SECRET=     # Cadena larga y aleatoria
+# Auth (legacy JWT — se mantiene por compatibilidad con staff)
+JWT_SECRET=        # Cadena larga y aleatoria
 JWT_EXPIRES_IN=7d
+
+# Supabase
+SUPABASE_URL=      # https://<proyecto>.supabase.co
+SUPABASE_ANON_KEY= # Clave anon pública
+SUPABASE_SERVICE_ROLE_KEY= # Clave secreta (solo backend, nunca en frontend)
+
+# Groq (chatbot IA)
+GROQ_API_KEY=      # Obtener en console.groq.com
 ```
+
+> El frontend también necesita `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en un archivo `frontend/.env`.
 
 ---
 

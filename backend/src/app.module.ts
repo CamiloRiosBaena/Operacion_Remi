@@ -10,6 +10,7 @@ import { CocinaModule } from './modules/cocina/cocina.module';
 import { DomiciliosModule } from './modules/domicilios/domicilios.module';
 import { MesasModule } from './modules/mesas/mesas.module';
 import { PagosModule } from './modules/pagos/pagos.module';
+import { AsistenteModule } from './modules/asistente/asistente.module';
 
 // Entidades
 import { Categoria } from './modules/menu/entities/categoria.entity';
@@ -26,6 +27,7 @@ import { DetallePedido } from './modules/pedidos/entities/detalle-pedido.entity'
 import { Pago } from './modules/pedidos/entities/pago.entity';
 import { HistorialEstado } from './modules/pedidos/entities/historial-estado.entity';
 import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
+import { Promo } from './modules/menu/entities/promo.entity';
 
 @Module({
   imports: [
@@ -49,7 +51,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
           : false,
         extra: { family: 4 },
         entities: [
-          Categoria, Plato, Ingrediente, PlatoIngrediente, Extra,
+          Categoria, Plato, Ingrediente, PlatoIngrediente, Extra, Promo,
           UserStaff, Cliente, SesionCliente,
           Mesa,
           Pedido, DetallePedido, Pago, HistorialEstado, TokenQr,
@@ -66,6 +68,7 @@ import { TokenQr } from './modules/pedidos/entities/token-qr.entity';
     DomiciliosModule,
     MesasModule,
     PagosModule,
+    AsistenteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

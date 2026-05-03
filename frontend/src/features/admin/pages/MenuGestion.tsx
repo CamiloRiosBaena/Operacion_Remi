@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
 import {
@@ -34,7 +35,11 @@ export function MenuGestion() {
   const [modal, setModal]             = useState<Modal>(null);
   const [form, setForm]               = useState<FormState>({ nombre: '', categoriaId: 0, precio: '', tasaIva: '19', disponible: true });
   const [deleteId, setDeleteId]       = useState<number | null>(null);
+  const [deleteError, setDeleteError] = useState('');
   const [saving, setSaving]           = useState(false);
+  const { backdropProps: formBdProps }   = useModalClose(() => setModal(null));
+  const { backdropProps: catBdProps }    = useModalClose(() => setCatModal(null));
+  const { backdropProps: deleteBdProps } = useModalClose(() => { setDeleteId(null); setDeleteError(''); });
   const [errorMsg, setErrorMsg]       = useState('');
   const fileInputRef                  = useRef<HTMLInputElement>(null);
   const [uploadingImg, setUploadingImg] = useState(false);
@@ -214,11 +219,12 @@ export function MenuGestion() {
 
   async function confirmDelete() {
     if (deleteId === null) return;
+    setDeleteError('');
     try {
       await deletePlato(deleteId);
       setDeleteId(null);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setDeleteError(err.message ?? 'No se pudo eliminar el plato');
     }
   }
 
@@ -314,8 +320,8 @@ export function MenuGestion() {
 
       {/* ── Modal crear / editar ── */}
       {modal && (
-        <div className={styles.modalOverlay} onClick={() => setModal(null)}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalOverlay} {...formBdProps}>
+          <div className={styles.modal}>
             <h3 className={styles.modalTitle}>
               {modal.mode === 'crear' ? '➕ Nuevo plato' : '✏️ Editar plato'}
             </h3>
@@ -491,8 +497,8 @@ export function MenuGestion() {
 
       {/* ── Modal nueva categoría ── */}
       {catModal && (
-        <div className={styles.modalOverlay} onClick={() => setCatModal(null)}>
-          <div className={`${styles.modal} ${styles.modalSmall}`} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalOverlay} {...catBdProps}>
+          <div className={`${styles.modal} ${styles.modalSmall}`}>
             <h3 className={styles.modalTitle}>🏷️ Nueva categoría</h3>
             <div className={styles.modalForm}>
               <div className={styles.modalField}>
@@ -522,14 +528,19 @@ export function MenuGestion() {
 
       {/* ── Modal eliminar ── */}
       {deleteId !== null && (
-        <div className={styles.modalOverlay} onClick={() => setDeleteId(null)}>
-          <div className={`${styles.modal} ${styles.modalSmall}`} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalOverlay} {...deleteBdProps}>
+          <div className={`${styles.modal} ${styles.modalSmall}`}>
             <h3 className={styles.modalTitle}>🗑️ Eliminar plato</h3>
             <p className={styles.modalText}>
               ¿Seguro que quieres eliminar <strong>{platos.find((p) => p.id === deleteId)?.nombre}</strong>? Esta acción no se puede deshacer.
             </p>
+            {deleteError && (
+              <p style={{ color: '#b91c1c', fontSize: '0.85rem', margin: '0.5rem 0 0', background: '#fef2f2', padding: '0.5rem 0.75rem', borderRadius: '8px' }}>
+                {deleteError}
+              </p>
+            )}
             <div className={styles.modalActions}>
-              <button className={styles.btnCancel} onClick={() => setDeleteId(null)}>Cancelar</button>
+              <button className={styles.btnCancel} onClick={() => { setDeleteId(null); setDeleteError(''); }}>Cancelar</button>
               <button className={`${styles.btnSave} ${styles.btnDanger}`} onClick={confirmDelete}>Eliminar</button>
             </div>
           </div>

@@ -449,7 +449,7 @@
 .backToTopBtn {
   position: fixed;
   bottom: 1.5rem;
-  right: 1.25rem;
+  right: 5.5rem; /* desplazado a la izquierda para no solapar el chat widget */
   z-index: 40;
   width: 44px;
   height: 44px;

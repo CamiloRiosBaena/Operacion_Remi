@@ -1,70 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { PlatoImage } from '@/shared/components/PlatoImage';
+import { usePromos } from '../context/PromosContext';
 import type { Plato } from '../types/plato.types';
 import styles from './MenuBanner.module.css';
-
-// ── Definición de slides ─────────────────────────────────────────────────────
-
-interface Slide {
-  id: number;
-  tipo: 'oferta' | 'destacado' | 'novedad' | 'promo';
-  tag: string;
-  titulo: string;
-  subtitulo: string;
-  cta: string;
-  ctaAccion: 'plato' | 'categoria';
-  ctaValor: string | number; // platoId o nombre de categoría
-  from: string;  // color inicio del gradiente
-  to: string;    // color fin
-  acento: string;
-}
-
-const SLIDES: Slide[] = [
-  {
-    id: 1,
-    tipo: 'oferta',
-    tag: '🔥 Oferta del día',
-    titulo: 'Bandeja Paisa',
-    subtitulo: '15% de descuento — solo hasta las 3 pm',
-    cta: 'Pedir ahora',
-    ctaAccion: 'plato', ctaValor: 1,
-    from: '#5c1205', to: '#a82a06',
-    acento: '#ff7a45',
-  },
-  {
-    id: 2,
-    tipo: 'destacado',
-    tag: '⭐ Lo mejor de la casa',
-    titulo: 'Ajiaco Bogotano',
-    subtitulo: 'Receta tradicional con pollo criollo y guascas del campo',
-    cta: 'Ver plato',
-    ctaAccion: 'plato', ctaValor: 2,
-    from: '#0f2e1a', to: '#1a5c2e',
-    acento: '#4ade80',
-  },
-  {
-    id: 3,
-    tipo: 'novedad',
-    tag: '✨ Novedad en el menú',
-    titulo: 'Empanadas de Pipián',
-    subtitulo: 'Masa crujiente, relleno de papa con maní y ají amarillo',
-    cta: 'Probar',
-    ctaAccion: 'plato', ctaValor: 3,
-    from: '#1c1700', to: '#3d3000',
-    acento: '#fbbf24',
-  },
-  {
-    id: 4,
-    tipo: 'promo',
-    tag: '🕐 Happy Hour',
-    titulo: 'Bebidas 2×1',
-    subtitulo: 'Todos los jugos y agua panela — de 3 pm a 6 pm',
-    cta: 'Ver bebidas',
-    ctaAccion: 'categoria', ctaValor: 'Bebidas',
-    from: '#0c1a3a', to: '#133060',
-    acento: '#60a5fa',
-  },
-];
 
 const AUTOPLAY_MS = 5000;
 
@@ -79,16 +17,21 @@ interface Props {
 // ── Componente ───────────────────────────────────────────────────────────────
 
 export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
+  const { promos } = usePromos();
   const [active, setActive]   = useState(0);
   const [animKey, setAnimKey] = useState(0); // fuerza re-montaje de la animación
   const [paused, setPaused]   = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Reinicia el índice si el número de promos cambia
+  useEffect(() => { setActive(0); }, [promos.length]);
+
   // ── Autoplay ──────────────────────────────────────────────────────────────
   function resetTimer() {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (!promos.length) return;
     timerRef.current = setInterval(() => {
-      if (!paused) goTo((prev) => (prev + 1) % SLIDES.length);
+      if (!paused) goTo((prev) => (prev + 1) % promos.length);
     }, AUTOPLAY_MS);
   }
 
@@ -96,7 +39,7 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
     resetTimer();
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused]);
+  }, [paused, promos.length]);
 
   function goTo(indexOrUpdater: number | ((prev: number) => number)) {
     setActive((prev) => {
@@ -111,22 +54,24 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
     resetTimer();
   }
 
-  function handlePrev() { handleNav((active - 1 + SLIDES.length) % SLIDES.length); }
-  function handleNext() { handleNav((active + 1) % SLIDES.length); }
+  function handlePrev() { handleNav((active - 1 + promos.length) % promos.length); }
+  function handleNext() { handleNav((active + 1) % promos.length); }
 
   // ── Datos del slide activo ────────────────────────────────────────────────
-  const slide = SLIDES[active];
-  const plato = typeof slide.ctaValor === 'number'
-    ? platos.find((p) => p.id === slide.ctaValor)
+  const slide = promos[active] ?? promos[0];
+  const plato = slide?.ctaAccion === 'plato'
+    ? platos.find((p) => p.id === Number(slide.ctaValor))
     : null;
 
   function handleCta() {
     if (slide.ctaAccion === 'plato' && plato?.disponible) {
       onPlatoClick(plato);
     } else if (slide.ctaAccion === 'categoria') {
-      onCategoriaClick(slide.ctaValor as string);
+      onCategoriaClick(slide.ctaValor);
     }
   }
+
+  if (!promos.length) return null;
 
   return (
     <div
@@ -137,23 +82,23 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
       {/* ── Slide ─────────────────────────────────────────────────────────── */}
       <div
         className={styles.slide}
-        style={{ background: `linear-gradient(135deg, ${slide.from} 0%, ${slide.to} 100%)` }}
+        style={{ background: `linear-gradient(135deg, ${slide.colorFrom} 0%, ${slide.colorTo} 100%)` }}
       >
         {/* Glow de fondo */}
-        <div className={styles.glow} style={{ background: slide.acento }} />
+        <div className={styles.glow} style={{ background: slide.colorAcento }} />
 
         {/* Contenido animado */}
         <div className={styles.content} key={animKey}>
           {/* Texto */}
           <div className={styles.textSide}>
-            <span className={styles.tag} style={{ color: slide.acento, borderColor: `${slide.acento}44` }}>
+            <span className={styles.tag} style={{ color: slide.colorAcento, borderColor: `${slide.colorAcento}44` }}>
               {slide.tag}
             </span>
             <h2 className={styles.titulo}>{slide.titulo}</h2>
             <p className={styles.subtitulo}>{slide.subtitulo}</p>
             <button
               className={styles.ctaBtn}
-              style={{ background: slide.acento, color: isLight(slide.acento) ? '#1c1917' : '#fff' }}
+              style={{ background: slide.colorAcento, color: isLight(slide.colorAcento) ? '#1c1917' : '#fff' }}
               onClick={handleCta}
             >
               {slide.cta}
@@ -166,8 +111,16 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
 
           {/* Imagen del plato */}
           <div className={styles.imgSide}>
-            <div className={styles.imgHalo} style={{ background: `${slide.acento}28` }} />
-            {plato ? (
+            <div className={styles.imgHalo} style={{ background: `${slide.colorAcento}28` }} />
+            {slide.imageUrl ? (
+              <div className={styles.imgWrap}>
+                <img
+                  src={slide.imageUrl}
+                  alt={slide.titulo}
+                  className={styles.platoImg}
+                />
+              </div>
+            ) : plato ? (
               <div className={styles.imgWrap}>
                 <PlatoImage
                   nombre={plato.nombre}
@@ -182,12 +135,7 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
                 {slide.ctaValor === 'Bebidas' ? '🥤' : '🍽️'}
               </div>
             )}
-            {/* Badge de tipo */}
-            {slide.tipo === 'oferta' && (
-              <div className={styles.ofertaBadge} style={{ background: slide.acento, color: isLight(slide.acento) ? '#1c1917' : '#fff' }}>
-                −15%
-              </div>
-            )}
+            {/* Badge de tipo — ya no se usa, mantenido por compatibilidad CSS */}
           </div>
         </div>
 
@@ -205,11 +153,11 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
 
         {/* ── Dots ──────────────────────────────────────────────────────── */}
         <div className={styles.dots}>
-          {SLIDES.map((s, i) => (
+          {promos.map((p, i) => (
             <button
-              key={s.id}
+              key={p.id}
               className={`${styles.dot} ${i === active ? styles.dotActive : ''}`}
-              style={i === active ? { background: slide.acento } : {}}
+              style={i === active ? { background: slide.colorAcento } : {}}
               onClick={() => handleNav(i)}
               aria-label={`Slide ${i + 1}`}
             />
@@ -219,7 +167,7 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
         {/* Barra de progreso */}
         {!paused && (
           <div className={styles.progressBar} key={`${animKey}-progress`}>
-            <div className={styles.progressFill} style={{ background: slide.acento }} />
+            <div className={styles.progressFill} style={{ background: slide.colorAcento }} />
           </div>
         )}
       </div>
