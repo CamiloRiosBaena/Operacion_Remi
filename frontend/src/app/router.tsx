@@ -16,6 +16,7 @@ import { MenuPage } from '@/features/menu/pages/MenuPage';
 import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntregaPage';
 import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
 import { PagoResultadoPage } from '@/features/pago/pages/PagoResultadoPage';
+import { PromosAdmin } from '@/features/admin/pages/PromosAdmin';
 import { RoleRedirect } from './RoleRedirect';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
@@ -49,6 +50,7 @@ export const router = createBrowserRouter([
   { path: '/admin/estadisticas',  element: <AdminRoute><EstadisticasPage /></AdminRoute> },
   { path: '/admin/ingredientes',  element: <AdminRoute><IngredientesGestion /></AdminRoute> },
   { path: '/admin/mesas',         element: <AdminRoute><MesasAdmin /></AdminRoute> },
+  { path: '/admin/promos',        element: <AdminRoute><PromosAdmin /></AdminRoute> },
 
   // ── Staff ──────────────────────────────────────────────────────
   { path: '/cocina',      element: <ProtectedRoute allowedRoles={['cocinero']}><CocinaDashboard /></ProtectedRoute> },

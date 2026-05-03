@@ -11,6 +11,7 @@ import { usePlatos } from '../context/PlatosContext';
 import { RemiLogo } from '@/shared/components/RemiLogo';
 import { getActivePedido, clearActivePedido } from '@/shared/lib/guestSession';
 import type { Plato } from '../types/plato.types';
+import { ChatWidget } from '@/features/asistente/components/ChatWidget';
 import styles from './MenuPage.module.css';
 
 export type { Plato };
@@ -461,6 +462,8 @@ export function MenuPage() {
         mesaQr={mesaQr}
         onPedidoCreado={handlePedidoCreado}
       />
+
+      <ChatWidget />
     </div>
   );
 }

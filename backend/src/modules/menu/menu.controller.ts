@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { MenuService } from './menu.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
@@ -19,6 +20,8 @@ import { UpdateIngredienteDto } from './dto/update-ingrediente.dto';
 import { CreateExtraDto } from './dto/create-extra.dto';
 import { UpdateExtraDto } from './dto/update-extra.dto';
 import { UpsertPlatoIngredienteDto } from './dto/upsert-plato-ingrediente.dto';
+import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { SupabaseGuard } from '../auth/supabase.guard';
 
 @Controller('menu')
 export class MenuController {
@@ -185,5 +188,44 @@ export class MenuController {
     @Param('ingredienteId', ParseIntPipe) ingredienteId: number,
   ) {
     return this.menuService.deletePlatoIngrediente(platoId, ingredienteId);
+  }
+
+  // ─────────────────────────────────────────
+  // PROMOS BANNER
+  // ─────────────────────────────────────────
+
+  /** Público — solo promos activas, ordenadas */
+  @Get('promos')
+  getActivePromos() {
+    return this.menuService.findActivePromos();
+  }
+
+  /** Admin — todas las promos */
+  @Get('promos/todas')
+  @UseGuards(SupabaseGuard)
+  getAllPromos() {
+    return this.menuService.findAllPromos();
+  }
+
+  @Post('promos')
+  @UseGuards(SupabaseGuard)
+  createPromo(@Body() dto: CreatePromoDto) {
+    return this.menuService.createPromo(dto);
+  }
+
+  @Patch('promos/:id')
+  @UseGuards(SupabaseGuard)
+  updatePromo(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdatePromoDto,
+  ) {
+    return this.menuService.updatePromo(id, dto);
+  }
+
+  @Delete('promos/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(SupabaseGuard)
+  deletePromo(@Param('id', ParseIntPipe) id: number) {
+    return this.menuService.deletePromo(id);
   }
 }

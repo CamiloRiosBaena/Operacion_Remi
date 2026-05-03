@@ -11,6 +11,8 @@ import { Plato } from './entities/plato.entity';
 import { Ingrediente } from './entities/ingrediente.entity';
 import { PlatoIngrediente } from './entities/plato-ingrediente.entity';
 import { Extra } from './entities/extra.entity';
+import { DetallePedido } from '../pedidos/entities/detalle-pedido.entity';
+import { EstadoPedido } from '../pedidos/entities/pedido.entity';
 
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { CreatePlatoDto } from './dto/create-plato.dto';
@@ -20,6 +22,8 @@ import { UpdateIngredienteDto } from './dto/update-ingrediente.dto';
 import { CreateExtraDto } from './dto/create-extra.dto';
 import { UpdateExtraDto } from './dto/update-extra.dto';
 import { UpsertPlatoIngredienteDto } from './dto/upsert-plato-ingrediente.dto';
+import { Promo } from './entities/promo.entity';
+import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 
 @Injectable()
 export class MenuService {
@@ -34,6 +38,10 @@ export class MenuService {
     private readonly piRepo: Repository<PlatoIngrediente>,
     @InjectRepository(Extra)
     private readonly extraRepo: Repository<Extra>,
+    @InjectRepository(DetallePedido)
+    private readonly detalleRepo: Repository<DetallePedido>,
+    @InjectRepository(Promo)
+    private readonly promoRepo: Repository<Promo>,
   ) {}
 
   // ─────────────────────────────────────────
@@ -131,8 +139,29 @@ export class MenuService {
   }
 
   async deletePlato(id: number): Promise<void> {
-    const plato = await this.platoRepo.findOneBy({ id });
+    const plato = await this.platoRepo.findOne({
+      where: { id },
+      relations: ['detalles', 'detalles.pedido', 'extras', 'platoIngredientes'],
+    });
     if (!plato) throw new NotFoundException(`Plato ${id} no encontrado`);
+
+    const estadosActivos: EstadoPedido[] = [
+      EstadoPedido.PENDIENTE,
+      EstadoPedido.EN_COCINA,
+      EstadoPedido.LISTO,
+      EstadoPedido.EN_CAMINO,
+    ];
+    const activos = plato.detalles.filter((d) => estadosActivos.includes(d.pedido.estado));
+    if (activos.length > 0) {
+      throw new BadRequestException(
+        `No puedes eliminar "${plato.nombre}" porque está en ${activos.length} pedido(s) activo(s). Espera a que finalicen o cancélalos primero.`,
+      );
+    }
+
+    // Eliminar registros históricos de pedidos terminados, luego relaciones hijo
+    if (plato.detalles.length) await this.detalleRepo.remove(plato.detalles);
+    if (plato.extras?.length) await this.extraRepo.remove(plato.extras);
+    if (plato.platoIngredientes?.length) await this.piRepo.remove(plato.platoIngredientes);
     await this.platoRepo.remove(plato);
   }
 
@@ -284,5 +313,42 @@ export class MenuService {
       where: { platos: { disponible: true } },
       order: { nombre: 'ASC' },
     });
+  }
+
+  // ─────────────────────────────────────────
+  // PROMOS BANNER
+  // ─────────────────────────────────────────
+
+  findActivePromos(): Promise<Promo[]> {
+    return this.promoRepo.find({
+      where: { activo: true },
+      order: { orden: 'ASC', id: 'ASC' },
+    });
+  }
+
+  findAllPromos(): Promise<Promo[]> {
+    return this.promoRepo.find({ order: { orden: 'ASC', id: 'ASC' } });
+  }
+
+  async createPromo(dto: CreatePromoDto): Promise<Promo> {
+    const promo = this.promoRepo.create({
+      ...dto,
+      activo: dto.activo ?? true,
+      orden: dto.orden ?? 0,
+    });
+    return this.promoRepo.save(promo);
+  }
+
+  async updatePromo(id: number, dto: UpdatePromoDto): Promise<Promo> {
+    const promo = await this.promoRepo.findOneBy({ id });
+    if (!promo) throw new NotFoundException(`Promo ${id} no encontrada`);
+    Object.assign(promo, dto);
+    return this.promoRepo.save(promo);
+  }
+
+  async deletePromo(id: number): Promise<void> {
+    const promo = await this.promoRepo.findOneBy({ id });
+    if (!promo) throw new NotFoundException(`Promo ${id} no encontrada`);
+    await this.promoRepo.remove(promo);
   }
 }

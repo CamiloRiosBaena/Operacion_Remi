@@ -6,6 +6,7 @@ import styles from './AdminLayout.module.css';
 const NAV = [
   { to: '/admin', label: 'Dashboard', icon: '📊', exact: true },
   { to: '/admin/menu', label: 'Gestión de Menú', icon: '🍴' },
+  { to: '/admin/promos', label: 'Banners', icon: '📢' },
   { to: '/admin/ingredientes', label: 'Ingredientes', icon: '🧂' },
   { to: '/admin/pedidos', label: 'Pedidos', icon: '📦' },
   { to: '/admin/domicilios', label: 'Domicilios', icon: '🛵' },
