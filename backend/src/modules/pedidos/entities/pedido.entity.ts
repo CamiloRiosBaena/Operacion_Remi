@@ -47,7 +47,7 @@ export class Pedido {
   @Column({ type: 'varchar', length: 255, nullable: true })
   tokenSesion: string | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   fechaHora: Date;
 
   /** Suma de detalles.subtotal (base gravable sin IVA). */
@@ -81,4 +81,8 @@ export class Pedido {
 
   @OneToMany(() => TokenQr, (t) => t.pedido)
   tokensQr: TokenQr[];
+
+  /** Casillero físico asignado para pedidos locales (mesa / llevar). */
+  @Column({ type: 'varchar', length: 1, nullable: true })
+  casillero: 'X' | 'Y' | null;
 }

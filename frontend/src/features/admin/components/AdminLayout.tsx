@@ -9,6 +9,7 @@ const NAV = [
   { to: '/admin/promos', label: 'Banners', icon: '📢' },
   { to: '/admin/ingredientes', label: 'Ingredientes', icon: '🧂' },
   { to: '/admin/pedidos', label: 'Pedidos', icon: '📦' },
+  { to: '/escanear-entrega', label: 'Entrega en Local', icon: '📷' },
   { to: '/admin/domicilios', label: 'Domicilios', icon: '🛵' },
   { to: '/admin/mesas', label: 'Mesas y QR', icon: '🪑' },
   { to: '/admin/usuarios', label: 'Usuarios', icon: '👥' },

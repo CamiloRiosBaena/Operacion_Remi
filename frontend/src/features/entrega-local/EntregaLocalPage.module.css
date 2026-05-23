@@ -1,0 +1,343 @@
+/* ── Barra Arduino ── */
+.arduinoBar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: #1c1917;
+  flex-wrap: wrap;
+}
+
+.arduinoStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #d6d3d1;
+  font-weight: 500;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotConectado    { background: #22c55e; box-shadow: 0 0 6px #22c55e80; }
+.dotDesconectado { background: #78716c; }
+
+.arduinoActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnConectar {
+  padding: 0.4rem 0.9rem;
+  background: #d4500a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btnConectar:hover { opacity: 0.88; }
+
+.btnEmergencia {
+  padding: 0.35rem 0.75rem;
+  background: #292524;
+  color: #fbbf24;
+  border: 1px solid #44403c;
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btnEmergencia:hover { background: #3d3835; }
+
+.btnDesconectar {
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  color: #a8a29e;
+  border: 1px solid #44403c;
+  border-radius: 7px;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+.btnDesconectar:hover { color: #d6d3d1; }
+
+.serialError {
+  font-size: 0.8125rem;
+  color: #fca5a5;
+  margin: 0;
+  width: 100%;
+}
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  height: calc(100dvh - 100px); /* header AppShell + arduinoBar */
+  padding: 1.25rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* ── Sidebar: lista de pedidos listos ── */
+.sidebar {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 1px solid #f5f5f4;
+}
+
+.sidebarTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin: 0;
+}
+
+.badge {
+  background: #d4500a;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.hint { font-size: 0.875rem; color: #78716c; text-align: center; padding: 1rem; margin: 0; }
+.emptyMsg { font-size: 0.875rem; color: #a8a29e; text-align: center; padding: 2rem 1rem; margin: 0; }
+
+.pedidosList {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.pedidoItem {
+  background: #fafaf8;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pedidoTop {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pedidoId   { font-size: 0.8125rem; font-weight: 700; color: #78716c; }
+.pedidoHora { margin-left: auto; font-size: 0.75rem; color: #a8a29e; }
+
+.tipoBadge  { font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 6px; }
+.tipoMesa   { background: #eff6ff; color: #1d4ed8; }
+.tipoLlevar { background: #fff7ed; color: #c2410c; }
+
+.pedidoCliente { font-size: 0.875rem; font-weight: 600; color: #1c1917; }
+
+.pedidoItems { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.pedidoDetalle {
+  font-size: 0.75rem; color: #57534e;
+  background: #fff; border: 1px solid #e7e5e4;
+  border-radius: 4px; padding: 0.1rem 0.4rem;
+}
+
+.pedidoTotal { font-size: 0.875rem; font-weight: 700; color: #d4500a; }
+
+/* Casillero asignación */
+.casilleroRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.1rem;
+  flex-wrap: wrap;
+}
+
+.casilleroLabel { font-size: 0.75rem; color: #78716c; }
+
+.btnCasillero {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 2px solid #e7e5e4;
+  background: #fff;
+  font-weight: 800;
+  font-size: 0.875rem;
+  color: #44403c;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.btnCasillero:hover:not(:disabled) { border-color: #d4500a; color: #d4500a; }
+.btnCasillero:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.casilleroActivo {
+  background: #d4500a !important;
+  border-color: #d4500a !important;
+  color: #fff !important;
+}
+
+.casilleroAsignado { font-size: 0.75rem; color: #57534e; margin-left: 0.25rem; }
+.casilleroAsignado strong { color: #d4500a; }
+
+/* ── Sección escáner ── */
+.scanSection {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+.scanCard {
+  background: #fff;
+  border: 1px solid #e7e5e4;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.advertenciaSerial {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 0.6rem 0.875rem;
+  font-size: 0.8125rem;
+  color: #92400e;
+}
+
+.scanTitle {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1c1917;
+  margin: 0;
+  text-align: center;
+}
+
+.visor { width: 100%; border-radius: 12px; overflow: hidden; background: #000; min-height: 280px; }
+.visor video { width: 100% !important; border-radius: 12px; }
+
+.scanHint { font-size: 0.875rem; color: #78716c; text-align: center; margin: 0; }
+
+/* ── Casillero destacado en preview ── */
+.casilleroDestacado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fff7ed, #ffedd5);
+  border: 2px solid #fed7aa;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #9a3412;
+}
+
+.casilleroIcono { font-size: 1.5rem; }
+.casilleroDestacado strong { font-size: 1.75rem; color: #d4500a; }
+
+/* ── Preview del pedido ── */
+.preview { display: flex; flex-direction: column; gap: 0.875rem; }
+
+.previewInfo {
+  display: flex; flex-direction: column; gap: 0.4rem;
+  background: #fafaf8; border-radius: 10px; padding: 0.75rem;
+}
+
+.infoRow { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.875rem; }
+.infoLabel { color: #78716c; }
+.infoValor { font-weight: 600; color: #1c1917; }
+
+.itemsList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.itemRow { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; padding: 0.35rem 0.625rem; background: #fafaf8; border-radius: 7px; }
+.itemCant   { font-weight: 700; color: #78716c; min-width: 1.5rem; }
+.itemNombre { flex: 1; color: #1c1917; }
+.itemSub    { font-weight: 600; color: #44403c; }
+
+.totalRow { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 0.9375rem; border-top: 1px solid #e7e5e4; padding-top: 0.5rem; }
+.totalValor { color: #d4500a; font-weight: 800; font-size: 1.0625rem; }
+
+.previewActions { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.btnConfirmar {
+  padding: 0.9rem;
+  background: linear-gradient(135deg, #d4500a, #f26419);
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 1.0625rem; font-weight: 800; cursor: pointer;
+  transition: opacity 0.15s; letter-spacing: 0.01em;
+}
+.btnConfirmar:hover { opacity: 0.88; }
+
+.btnCancelar {
+  padding: 0.65rem; background: #fff; border: 1.5px solid #e7e5e4;
+  border-radius: 10px; font-size: 0.875rem; font-weight: 600;
+  color: #78716c; cursor: pointer;
+}
+.btnCancelar:hover { background: #fafaf8; }
+
+/* ── Procesando ── */
+.procesandoBox { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: 2rem 1rem; }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid #e7e5e4;
+  border-top-color: #d4500a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Éxito ── */
+.exitoBox { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem 1rem; background: #f0fdf4; border-radius: 12px; }
+.exitoMsg { font-size: 1.375rem; font-weight: 800; color: #15803d; margin: 0; }
+.exitoSub { font-size: 0.875rem; color: #166534; margin: 0; text-align: center; }
+
+.btnNuevo {
+  padding: 0.7rem 1.75rem; background: #fff; border: 1.5px solid #bbf7d0;
+  border-radius: 8px; font-weight: 700; color: #15803d; cursor: pointer; font-size: 0.9375rem;
+}
+.btnNuevo:hover { background: #dcfce7; }
+
+/* ── Error ── */
+.errorBox { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.25rem 1rem; background: #fef2f2; border-radius: 12px; }
+.errorMsg { font-size: 0.9375rem; color: #991b1b; margin: 0; text-align: center; font-weight: 500; }
+.btnReintentar { padding: 0.5rem 1.25rem; background: #fff; border: 1.5px solid #fecaca; border-radius: 8px; color: #b91c1c; font-weight: 600; cursor: pointer; }
+.btnReintentar:hover { background: #fff1f2; }

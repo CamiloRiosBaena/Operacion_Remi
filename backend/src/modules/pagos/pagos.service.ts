@@ -18,16 +18,16 @@ import { TipoPedido } from '../pedidos/entities/pedido.entity';
 // ── Tipos de respuesta ────────────────────────────────────────────────────────
 
 export interface GenerarPagoResponse {
-  pagoId:      number;
-  referencia:  string;
+  pagoId: number;
+  referencia: string;
   checkoutUrl: string; // URL de Mercado Pago para redirigir al usuario
 }
 
 export interface ConfirmarPagoResponse {
-  pedidoId:   number;
-  estado:     string;
-  total:      number;
-  tipo:       TipoPedido;
+  pedidoId: number;
+  estado: string;
+  total: number;
+  tipo: TipoPedido;
   referencia: string;
 }
 
@@ -46,10 +46,10 @@ function mapMetodo(mpMethod?: string): MetodoPago | null {
 
 @Injectable()
 export class PagosService {
-  private readonly logger      = new Logger(PagosService.name);
-  private readonly accessToken : string;
-  private readonly appUrl      : string;
-  private readonly mpApiBase   = 'https://api.mercadopago.com';
+  private readonly logger = new Logger(PagosService.name);
+  private readonly accessToken: string;
+  private readonly appUrl: string;
+  private readonly mpApiBase = 'https://api.mercadopago.com';
 
   constructor(
     @InjectRepository(Pago)
@@ -60,7 +60,7 @@ export class PagosService {
     private readonly config: ConfigService,
   ) {
     this.accessToken = config.get<string>('MP_ACCESS_TOKEN', '');
-    this.appUrl      = config.get<string>('APP_URL', 'http://localhost:5173');
+    this.appUrl = config.get<string>('APP_URL', 'http://localhost:5173');
   }
 
   // ── GENERAR PAGO ─────────────────────────────────────────────────────────
@@ -73,7 +73,7 @@ export class PagosService {
 
     // Calcular total desde precios reales (sin confiar en el frontend)
     let totalSinIva = 0;
-    let ivaTotal    = 0;
+    let ivaTotal = 0;
 
     for (const det of dto.detalles) {
       const plato = await this.platoRepo.findOneBy({ id: det.platoId });
@@ -83,7 +83,7 @@ export class PagosService {
 
       const subtotal = Number(plato.precio) * det.cantidad;
       totalSinIva += subtotal;
-      ivaTotal    += subtotal * Number(plato.tasaIva);
+      ivaTotal += subtotal * Number(plato.tasaIva);
     }
 
     const total = Math.round(totalSinIva + ivaTotal); // COP entero (MP no usa centavos)
@@ -95,10 +95,10 @@ export class PagosService {
     const preference = {
       items: [
         {
-          id:          referencia,
-          title:       'Pedido Operación Remi',
-          quantity:    1,
-          unit_price:  total,
+          id: referencia,
+          title: 'Pedido Operación Remi',
+          quantity: 1,
+          unit_price: total,
           currency_id: 'COP',
         },
       ],
@@ -112,9 +112,9 @@ export class PagosService {
     };
 
     const mpRes = await fetch(`${this.mpApiBase}/checkout/preferences`, {
-      method:  'POST',
+      method: 'POST',
       headers: {
-        'Content-Type':  'application/json',
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.accessToken}`,
       },
       body: JSON.stringify(preference),
@@ -128,9 +128,9 @@ export class PagosService {
     }
 
     const mpData = await mpRes.json() as {
-      id:                  string;
-      init_point:          string;
-      sandbox_init_point:  string;
+      id: string;
+      init_point: string;
+      sandbox_init_point: string;
     };
 
     // En modo prueba usar sandbox_init_point; en producción init_point
@@ -139,11 +139,11 @@ export class PagosService {
     // Guardar pago pendiente con datos del carrito
     const pago = await this.pagoRepo.save(
       this.pagoRepo.create({
-        monto:       total,
-        estado:      EstadoPago.PENDIENTE,
+        monto: total,
+        estado: EstadoPago.PENDIENTE,
         referencia,
         datosPedido: JSON.stringify(dto),
-        pedido:      null,
+        pedido: null,
       }),
     );
 
@@ -174,10 +174,10 @@ export class PagosService {
     // 3. Idempotencia: si ya fue procesado, retornar el pedido existente
     if (pago.estado === EstadoPago.APROBADO && pago.pedido) {
       return {
-        pedidoId:   pago.pedido.id,
-        estado:     pago.pedido.estado,
-        total:      Number(pago.pedido.total),
-        tipo:       pago.pedido.tipo,
+        pedidoId: pago.pedido.id,
+        estado: pago.pedido.estado,
+        total: Number(pago.pedido.total),
+        tipo: pago.pedido.tipo,
         referencia: pago.referencia!,
       };
     }
@@ -185,28 +185,28 @@ export class PagosService {
     // 4. Crear el pedido a partir de los datos guardados
     const datosCarrito = JSON.parse(pago.datosPedido!) as GenerarPagoDto;
     const pedido = await this.pedidosService.createPedido({
-      tipo:             datosCarrito.tipo,
-      clienteId:        datosCarrito.clienteId,
-      mesaId:           datosCarrito.mesaId,
+      tipo: datosCarrito.tipo,
+      clienteId: datosCarrito.clienteId,
+      mesaId: datosCarrito.mesaId,
       direccionEntrega: datosCarrito.direccionEntrega,
-      tokenSesion:      datosCarrito.tokenSesion,
-      detalles:         datosCarrito.detalles,
+      tokenSesion: datosCarrito.tokenSesion,
+      detalles: datosCarrito.detalles,
     });
 
     // 5. Actualizar pago
-    pago.estado             = EstadoPago.APROBADO;
-    pago.metodo             = mapMetodo(payment.payment_type_id);
+    pago.estado = EstadoPago.APROBADO;
+    pago.metodo = mapMetodo(payment.payment_type_id);
     pago.gatewayTransaccionId = mpPaymentId; // reutilizamos el campo para el ID de MP
-    pago.pedido             = pedido;
+    pago.pedido = pedido;
     await this.pagoRepo.save(pago);
 
     this.logger.log(`Pago MP ${mpPaymentId} aprobado → Pedido #${pedido.id} creado`);
 
     return {
-      pedidoId:   pedido.id,
-      estado:     pedido.estado,
-      total:      Number(pedido.total),
-      tipo:       pedido.tipo,
+      pedidoId: pedido.id,
+      estado: pedido.estado,
+      total: Number(pedido.total),
+      tipo: pedido.tipo,
       referencia: pago.referencia!,
     };
   }
@@ -220,7 +220,7 @@ export class PagosService {
       throw new BadRequestException('Un pedido a domicilio requiere direccionEntrega');
 
     let totalSinIva = 0;
-    let ivaTotal    = 0;
+    let ivaTotal = 0;
 
     for (const det of dto.detalles) {
       const plato = await this.platoRepo.findOneBy({ id: det.platoId });
@@ -230,26 +230,26 @@ export class PagosService {
 
       const subtotal = Number(plato.precio) * det.cantidad;
       totalSinIva += subtotal;
-      ivaTotal    += subtotal * Number(plato.tasaIva);
+      ivaTotal += subtotal * Number(plato.tasaIva);
     }
 
-    const total     = Math.round(totalSinIva + ivaTotal);
+    const total = Math.round(totalSinIva + ivaTotal);
     const referencia = `REMI-EF-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
 
     const pedido = await this.pedidosService.createPedido({
-      tipo:             dto.tipo,
-      clienteId:        dto.clienteId,
-      mesaId:           dto.mesaId,
+      tipo: dto.tipo,
+      clienteId: dto.clienteId,
+      mesaId: dto.mesaId,
       direccionEntrega: dto.direccionEntrega,
-      tokenSesion:      dto.tokenSesion,
-      detalles:         dto.detalles,
+      tokenSesion: dto.tokenSesion,
+      detalles: dto.detalles,
     });
 
     await this.pagoRepo.save(
       this.pagoRepo.create({
-        monto:      total,
-        estado:     EstadoPago.PENDIENTE,
-        metodo:     MetodoPago.EFECTIVO,
+        monto: total,
+        estado: EstadoPago.PENDIENTE,
+        metodo: MetodoPago.EFECTIVO,
         referencia,
         datosPedido: JSON.stringify(dto),
         pedido,
@@ -259,10 +259,10 @@ export class PagosService {
     this.logger.log(`Pago en efectivo → Pedido #${pedido.id} creado`);
 
     return {
-      pedidoId:   pedido.id,
-      estado:     pedido.estado,
-      total:      Number(pedido.total),
-      tipo:       pedido.tipo,
+      pedidoId: pedido.id,
+      estado: pedido.estado,
+      total: Number(pedido.total),
+      tipo: pedido.tipo,
       referencia,
     };
   }
@@ -281,13 +281,13 @@ export class PagosService {
     }
 
     return res.json() as Promise<{
-      id:                 number;
-      status:             'approved' | 'rejected' | 'pending' | 'in_process' | 'cancelled';
-      status_detail:      string;
+      id: number;
+      status: 'approved' | 'rejected' | 'pending' | 'in_process' | 'cancelled';
+      status_detail: string;
       external_reference: string;
       transaction_amount: number;
-      payment_type_id:    string;
-      payment_method_id:  string;
+      payment_type_id: string;
+      payment_method_id: string;
     }>;
   }
 }

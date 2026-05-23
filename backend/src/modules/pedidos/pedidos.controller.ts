@@ -63,6 +63,14 @@ export class PedidosController {
     return this.pedidosService.cancelarPedido(id, staffId);
   }
 
+  @Patch(':id/casillero')
+  asignarCasillero(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('casillero') casillero: 'X' | 'Y' | null,
+  ) {
+    return this.pedidosService.asignarCasillero(id, casillero);
+  }
+
   // ─────────────────────────────────────────
   // QR DE ENTREGA
   // ─────────────────────────────────────────
