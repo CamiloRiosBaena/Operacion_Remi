@@ -38,6 +38,7 @@ export interface ApiPedido {
   mesa: { id: number; numero: number } | null;
   detalles: ApiDetalle[];
   historial?: ApiHistorialEstado[];
+  casillero?: 'X' | 'Y' | null;
 }
 
 export interface ApiStaff {
@@ -185,6 +186,13 @@ export function infoPedidoPorToken(token: string): Promise<ApiPedido> {
 export function confirmarEntregaConToken(token: string): Promise<ApiPedido> {
   return fetch(`${API_URL}/pedidos/verificar-qr/${token}/confirmar`, { method: 'PATCH' })
     .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
+}
+
+export function asignarCasillero(pedidoId: number, casillero: 'X' | 'Y' | null): Promise<ApiPedido> {
+  return apiFetch(`/pedidos/${pedidoId}/casillero`, {
+    method: 'PATCH',
+    body: { casillero },
+  });
 }
 
 // ── Mesas ─────────────────────────────────────────────────────────────────────

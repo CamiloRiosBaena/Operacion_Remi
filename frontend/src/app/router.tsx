@@ -12,6 +12,7 @@ import { IngredientesGestion } from '@/features/admin/pages/IngredientesGestion'
 import { MesasAdmin } from '@/features/admin/pages/MesasAdmin';
 import { CocinaDashboard } from '@/features/cocina/pages/CocinaDashboard';
 import { DomiciliosDashboard } from '@/features/domicilios/pages/DomiciliosDashboard';
+import { EntregaLocalPage } from '@/features/entrega-local/EntregaLocalPage';
 import { MenuPage } from '@/features/menu/pages/MenuPage';
 import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntregaPage';
 import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
@@ -54,8 +55,9 @@ export const router = createBrowserRouter([
   { path: '/admin/promos',        element: <AdminRoute><PromosAdmin /></AdminRoute> },
 
   // ── Staff ──────────────────────────────────────────────────────
-  { path: '/cocina',      element: <ProtectedRoute allowedRoles={['cocinero']}><CocinaDashboard /></ProtectedRoute> },
-  { path: '/domicilios',  element: <ProtectedRoute allowedRoles={['domiciliario']}><DomiciliosDashboard /></ProtectedRoute> },
+  { path: '/cocina',           element: <ProtectedRoute allowedRoles={['cocinero']}><CocinaDashboard /></ProtectedRoute> },
+  { path: '/domicilios',       element: <ProtectedRoute allowedRoles={['domiciliario']}><DomiciliosDashboard /></ProtectedRoute> },
+  { path: '/escanear-entrega', element: <EntregaLocalPage /> },
 
   {
     path: '/no-autorizado',

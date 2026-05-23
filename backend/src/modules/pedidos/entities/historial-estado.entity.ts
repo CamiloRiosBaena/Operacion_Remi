@@ -10,7 +10,7 @@ export class HistorialEstado {
   @Column({ length: 30 })
   estado: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   fechaHora: Date;
 
   @ManyToOne(() => Pedido, (p) => p.historial, { onDelete: 'CASCADE' })
