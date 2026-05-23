@@ -216,7 +216,13 @@ export class PedidosService {
       }
     }
 
-    return this.findOnePedido(saved.id);
+    // findOnePedido puede fallar por relaciones; si ocurre, devolvemos el pedido parcial
+    // para no generar un 500 después de que el estado ya fue guardado correctamente.
+    try {
+      return await this.findOnePedido(saved.id);
+    } catch {
+      return saved;
+    }
   }
 
   // ─────────────────────────────────────────
@@ -336,11 +342,23 @@ export class PedidosService {
   async getPedidoPorToken(token: string): Promise<Pedido> {
     const tokenQr = await this.tokenQrRepo.findOne({
       where: { token },
-      relations: ['pedido', 'pedido.cliente', 'pedido.detalles', 'pedido.detalles.plato'],
+      relations: ['pedido', 'pedido.cliente', 'pedido.mesa', 'pedido.detalles', 'pedido.detalles.plato'],
     });
     if (!tokenQr) throw new NotFoundException('QR no válido');
     if (tokenQr.expiracion < new Date()) throw new GoneException('El QR ha expirado');
     return tokenQr.pedido;
+  }
+
+  async asignarCasillero(pedidoId: number, casillero: 'X' | 'Y' | null): Promise<Pedido> {
+    const pedido = await this.pedidoRepo.findOne({
+      where: { id: pedidoId },
+      relations: ['cliente', 'mesa', 'detalles', 'detalles.plato'],
+    });
+    if (!pedido) throw new NotFoundException(`Pedido ${pedidoId} no encontrado`);
+    if (pedido.tipo !== TipoPedido.MESA && pedido.tipo !== TipoPedido.PARA_LLEVAR)
+      throw new BadRequestException('Solo se pueden asignar casilleros a pedidos en local');
+    pedido.casillero = casillero;
+    return this.pedidoRepo.save(pedido);
   }
 
   async confirmarEntregaConQr(token: string): Promise<Pedido> {
