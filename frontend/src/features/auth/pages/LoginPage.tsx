@@ -13,7 +13,7 @@ const ROLE_HOME: Record<UserRole, string> = {
   cliente: '/menu',
 };
 
-// Cuentas demo — deben existir en la BD (créalas desde Swagger /api/auth/staff)
+
 const DEMO_ACCOUNTS = [
   { rol: 'Admin',        correo: 'carlos@remi.co',      contrasena: 'admin123',     emoji: '⚙️' },
   { rol: 'Cocina',       correo: 'cocina@remi.co',       contrasena: 'cocina123',    emoji: '👨‍🍳' },
@@ -53,6 +53,16 @@ export function LoginPage() {
   return (
     <div className={styles.page}>
       <AnimatedBg />
+
+      {/* ── Botón cerrar — volver al landing ── */}
+      <button
+        className={styles.closeBtn}
+        onClick={() => navigate('/', { replace: true })}
+        aria-label="Volver al inicio"
+        title="Volver al inicio"
+      >
+        ✕
+      </button>
 
       <div className={styles.card}>
         {/* Brand */}
@@ -111,7 +121,7 @@ export function LoginPage() {
 
         {/* Registro */}
         <p className={styles.registerRow}>
-          ¿Eres cliente? {' '}
+          ¿Eres cliente?{' '}
           <Link to="/registro" className={styles.registerLink}>Crea tu cuenta gratis</Link>
         </p>
 

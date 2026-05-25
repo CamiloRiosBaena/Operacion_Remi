@@ -18,14 +18,15 @@ import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntr
 import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
 import { PagoResultadoPage } from '@/features/pago/pages/PagoResultadoPage';
 import { PromosAdmin } from '@/features/admin/pages/PromosAdmin';
-import { RoleRedirect } from './RoleRedirect';
+import RemiLandingPage from '@/features/landingpages/Pages/RemiLandingPage';
+//import { RoleRedirect } from './RoleRedirect';
 
 function AdminRoute({ children }: { children: React.ReactNode }) {
   return <ProtectedRoute allowedRoles={['admin']}>{children}</ProtectedRoute>;
 }
 
 export const router = createBrowserRouter([
-  { path: '/', element: <ProtectedRoute><RoleRedirect /></ProtectedRoute> },
+  { path: '/', element: <RemiLandingPage /> },
 
   // Auth
   { path: '/login', element: <LoginPage /> },

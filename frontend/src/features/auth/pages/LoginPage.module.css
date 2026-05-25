@@ -8,7 +8,7 @@
   position: relative;
   isolation: isolate;
 
-  /* Fondo oscuro tipo restaurante de noche */
+  
   background:
     radial-gradient(ellipse 80% 55% at 50%  -5%, rgba(190,58,8,0.38)  0%, transparent 65%),
     radial-gradient(ellipse 55% 45% at 90% 105%, rgba(120,38,0,0.28)  0%, transparent 60%),
@@ -16,7 +16,7 @@
     #0e0704;
 }
 
-/* Glow naranja animado — vela sobre el formulario */
+
 .page::before {
   content: '';
   position: absolute;
@@ -27,7 +27,7 @@
   animation: ambientPulse 6s ease-in-out infinite;
 }
 
-/* Segundo glow ámbar suave en la esquina inferior */
+
 .page::after {
   content: '';
   position: absolute;
@@ -41,6 +41,38 @@
 @keyframes ambientPulse {
   0%, 100% { opacity: 0.7; }
   50%       { opacity: 1;   }
+}
+
+/* ── Botón cerrar (X) ── */
+.closeBtn {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.125rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+  line-height: 1;
+}
+
+.closeBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.closeBtn:active {
+  transform: scale(0.95);
 }
 
 /* ── Card glassmorphism ── */
@@ -66,7 +98,7 @@
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Línea accent superior */
+
 .card::before {
   content: '';
   position: absolute;
