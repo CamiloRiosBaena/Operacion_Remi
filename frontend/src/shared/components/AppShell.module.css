@@ -33,6 +33,26 @@
   gap: 0.5rem;
 }
 
+.backBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.backBtn:hover {
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+}
+
 .brandMark {
   font-size: 1.25rem;
   line-height: 1;

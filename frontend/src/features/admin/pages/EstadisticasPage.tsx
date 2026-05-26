@@ -1,9 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '../components/AdminLayout';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
 import { fetchPedidos, type ApiPedido } from '../services/admin.service';
+import {
+  RANGOS_EXPORT,
+  calcExportData,
+  exportarExcel,
+  exportarPDF,
+} from '../utils/estadisticasExport';
 import styles from './EstadisticasPage.module.css';
 
 // ── SVG area chart helpers ─────────────────────────────────────────────────
@@ -45,17 +51,24 @@ function buildDonut(segments: { label: string; porcentaje: number; color: string
   });
 }
 
-// ── Aggregation helpers ────────────────────────────────────────────────────
+// ── Month helpers ──────────────────────────────────────────────────────────
 
-const DAYS_ES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const MONTHS_FULL = [
+  'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
+];
 
-function getLast7Days() {
-  return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
+function getDaysOfMonth(offset: number): Date[] {
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const count = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  return Array.from({ length: count }, (_, i) => new Date(d.getFullYear(), d.getMonth(), i + 1));
+}
+
+function getMonthLabel(offset: number): string {
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 function formatPrecio(n: number) {
@@ -75,8 +88,13 @@ const TIPO_META: Record<string, { label: string; color: string }> = {
 // ── Componente ─────────────────────────────────────────────────────────────
 
 export function EstadisticasPage() {
-  const [pedidos,  setPedidos ] = useState<ApiPedido[]>([]);
-  const [loading,  setLoading ] = useState(true);
+  const [pedidos,       setPedidos      ] = useState<ApiPedido[]>([]);
+  const [loading,       setLoading      ] = useState(true);
+  const [monthOffset,   setMonthOffset  ] = useState(0);
+  const [exportOpen,    setExportOpen   ] = useState(false);
+  const [exportRango,   setExportRango  ] = useState(1);
+  const [exportando,    setExportando   ] = useState(false);
+  const exportWrapRef = useRef<HTMLDivElement>(null);
   const { platos } = usePlatos();
 
   const platoMeta = useMemo(() => {
@@ -92,46 +110,78 @@ export function EstadisticasPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // ── Ventas últimos 7 días ──────────────────────────────────────────────
-  const days7 = getLast7Days();
+  // Cierra el panel al hacer clic fuera
+  useEffect(() => {
+    if (!exportOpen) return;
+    function onOutside(e: MouseEvent) {
+      if (exportWrapRef.current && !exportWrapRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', onOutside);
+    return () => document.removeEventListener('mousedown', onOutside);
+  }, [exportOpen]);
 
-  const ventasSemana = days7.map((day) => {
-    const nextDay = new Date(day); nextDay.setDate(nextDay.getDate() + 1);
+  function handleExportar(formato: 'excel' | 'pdf') {
+    setExportando(true);
+    try {
+      const data = calcExportData(pedidos, monthOffset, exportRango);
+      if (formato === 'excel') exportarExcel(data, exportRango);
+      else exportarPDF(data, exportRango);
+    } finally {
+      setExportando(false);
+      setExportOpen(false);
+    }
+  }
+
+  const daysInMonth = useMemo(() => getDaysOfMonth(monthOffset), [monthOffset]);
+  const monthLabel  = getMonthLabel(monthOffset);
+
+  // ── Ventas por día del mes ─────────────────────────────────────────────
+  const ventasMes = useMemo(() => daysInMonth.map((day) => {
+    const nextDay = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1);
     const del_dia = pedidos.filter((p) => {
       const f = new Date(p.fechaHora);
       return f >= day && f < nextDay && p.estado !== 'cancelado';
     });
     return {
-      dia:     DAYS_ES[day.getDay()],
+      dia:     String(day.getDate()),
       ventas:  del_dia.reduce((s, p) => s + Number(p.total), 0),
       pedidos: del_dia.length,
     };
-  });
+  }), [daysInMonth, pedidos]);
 
-  const totalSemana    = ventasSemana.reduce((s, d) => s + d.ventas,  0);
-  const totalPedidos   = ventasSemana.reduce((s, d) => s + d.pedidos, 0);
-  const ticketPromedio = totalPedidos > 0 ? Math.round(totalSemana / totalPedidos) : 0;
-
-  const mejorDia = ventasSemana.reduce((best, d) => d.ventas > best.ventas ? d : best, ventasSemana[0]);
+  const totalMes       = ventasMes.reduce((s, d) => s + d.ventas,  0);
+  const totalPedidos   = ventasMes.reduce((s, d) => s + d.pedidos, 0);
+  const ticketPromedio = totalPedidos > 0 ? Math.round(totalMes / totalPedidos) : 0;
+  const mejorDia       = ventasMes.length > 0
+    ? ventasMes.reduce((best, d) => d.ventas > best.ventas ? d : best, ventasMes[0])
+    : null;
 
   const KPIS = [
-    { label: 'Ventas semana',   value: formatPrecio(totalSemana),                     meta: 'Últimos 7 días (sin cancelados)', icon: '💰' },
-    { label: 'Pedidos totales', value: String(totalPedidos),                           meta: 'Últimos 7 días',                 icon: '📦' },
-    { label: 'Ticket promedio', value: `$${ticketPromedio.toLocaleString('es-CO')}`,   meta: 'Por pedido',                     icon: '🧾' },
-    { label: 'Mejor día',       value: mejorDia?.dia ?? '—',                           meta: mejorDia ? `${mejorDia.pedidos} pedidos — ${formatPrecio(mejorDia.ventas)}` : '', icon: '🏆' },
+    { label: 'Ventas del mes',  value: formatPrecio(totalMes),                      meta: `${monthLabel} (sin cancelados)`, icon: '💰' },
+    { label: 'Pedidos totales', value: String(totalPedidos),                         meta: monthLabel,                       icon: '📦' },
+    { label: 'Ticket promedio', value: `$${ticketPromedio.toLocaleString('es-CO')}`, meta: 'Por pedido',                     icon: '🧾' },
+    { label: 'Mejor día',       value: mejorDia ? `Día ${mejorDia.dia}` : '—',       meta: mejorDia ? `${mejorDia.pedidos} pedidos — ${formatPrecio(mejorDia.ventas)}` : '', icon: '🏆' },
   ];
 
-  // ── Pedidos de la semana (base para top platos y tipos) ─────────────────
-  const pedidosSemana = pedidos.filter((p) => {
-    const d = new Date(p.fechaHora);
-    return d >= days7[0] && p.estado !== 'cancelado';
-  });
+  // ── Pedidos del mes (base para top platos y tipos) ─────────────────────
+  const pedidosMes = useMemo(() => {
+    if (!daysInMonth.length) return [];
+    const first     = daysInMonth[0];
+    const last      = daysInMonth[daysInMonth.length - 1];
+    const afterLast = new Date(last.getFullYear(), last.getMonth(), last.getDate() + 1);
+    return pedidos.filter((p) => {
+      const f = new Date(p.fechaHora);
+      return f >= first && f < afterLast && p.estado !== 'cancelado';
+    });
+  }, [daysInMonth, pedidos]);
 
-  // ── Top platos (últimos 7 días) ──────────────────────────────────────────
+  // ── Top platos del mes ─────────────────────────────────────────────────
   const platoCount = new Map<string, { pedidos: number; categoria: string }>();
-  for (const p of pedidosSemana) {
+  for (const p of pedidosMes) {
     for (const d of (p.detalles ?? [])) {
-      const key = d.plato.nombre;
+      const key  = d.plato.nombre;
       const prev = platoCount.get(key) ?? { pedidos: 0, categoria: '' };
       platoCount.set(key, { pedidos: prev.pedidos + d.cantidad, categoria: prev.categoria });
     }
@@ -142,13 +192,13 @@ export function EstadisticasPage() {
     .map(([nombre, info]) => ({ nombre, ...info }));
   const maxPlato = platosTop[0]?.pedidos ?? 1;
 
-  // ── Tipos de pedido ──────────────────────────────────────────────────────
-  const totalTipos = pedidosSemana.length || 1;
+  // ── Tipos de pedido ────────────────────────────────────────────────────
+  const totalTipos = pedidosMes.length || 1;
   const tipoData = ['mesa', 'domicilio', 'llevar'].map((tipo) => {
-    const count = pedidosSemana.filter((p) => p.tipo === tipo).length;
+    const count = pedidosMes.filter((p) => p.tipo === tipo).length;
     return {
-      label: TIPO_META[tipo].label,
-      color: TIPO_META[tipo].color,
+      label:      TIPO_META[tipo].label,
+      color:      TIPO_META[tipo].color,
       porcentaje: Math.round((count / totalTipos) * 100),
       count,
     };
@@ -156,8 +206,14 @@ export function EstadisticasPage() {
 
   const donutSegs = buildDonut(tipoData);
 
-  const chartData = buildPaths(ventasSemana.map((d) => d.ventas));
-  const maxVenta  = Math.max(...ventasSemana.map((d) => d.ventas), 1);
+  const chartData  = buildPaths(ventasMes.map((d) => d.ventas));
+  const maxVenta   = Math.max(...ventasMes.map((d) => d.ventas), 1);
+  const showDots   = ventasMes.length <= 10;
+
+  // X-axis: muestra día 1, cada 7 días y el último día
+  const xAxisItems = ventasMes.filter((_, i) =>
+    i === 0 || i === ventasMes.length - 1 || (i + 1) % 7 === 0
+  );
 
   return (
     <AdminLayout title="Estadísticas">
@@ -165,16 +221,105 @@ export function EstadisticasPage() {
 
         {/* ── Sub-header ── */}
         <div className={styles.subHeader}>
-          <p className={styles.subHeadText}>
-            {loading ? 'Cargando datos…' : 'Resumen de los últimos 7 días'}
-          </p>
-          <Link to="/menu" className={styles.clientLink}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            Ver menú del cliente
-          </Link>
+          <div className={styles.monthNav}>
+            <button
+              className={styles.navBtn}
+              onClick={() => setMonthOffset((o) => Math.max(o - 1, -24))}
+              disabled={monthOffset <= -24}
+              aria-label="Mes anterior"
+            >
+              ‹
+            </button>
+            <span className={styles.monthLabel}>{monthLabel}</span>
+            <button
+              className={styles.navBtn}
+              onClick={() => setMonthOffset((o) => o + 1)}
+              disabled={monthOffset >= 0}
+              aria-label="Mes siguiente"
+            >
+              ›
+            </button>
+          </div>
+
+          <div className={styles.subHeaderRight}>
+
+            {/* ── Exportar ── */}
+            <div className={styles.exportWrap} ref={exportWrapRef}>
+              <button
+                className={`${styles.exportBtn} ${exportOpen ? styles.exportBtnActive : ''}`}
+                onClick={() => setExportOpen((o) => !o)}
+                disabled={loading}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Exportar
+              </button>
+
+              {exportOpen && (
+                <div className={styles.exportPanel}>
+                  <p className={styles.exportPanelTitle}>Exportar reporte</p>
+
+                  <div>
+                    <p className={styles.exportSectionLabel}>Período</p>
+                    <div className={styles.exportRanges}>
+                      {RANGOS_EXPORT.map((r) => (
+                        <button
+                          key={r.numMeses}
+                          className={`${styles.exportRangeBtn} ${exportRango === r.numMeses ? styles.exportRangeBtnActive : ''}`}
+                          onClick={() => setExportRango(r.numMeses)}
+                        >
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                    <p className={styles.exportNote}>
+                      Hasta {monthLabel}
+                    </p>
+                  </div>
+
+                  <div className={styles.exportActions}>
+                    <button
+                      className={styles.exportExcelBtn}
+                      onClick={() => handleExportar('excel')}
+                      disabled={exportando}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" />
+                        <line x1="3" y1="9" x2="21" y2="9" />
+                        <line x1="3" y1="15" x2="21" y2="15" />
+                        <line x1="9" y1="3" x2="9" y2="21" />
+                      </svg>
+                      {exportando ? '…' : 'Excel'}
+                    </button>
+                    <button
+                      className={styles.exportPdfBtn}
+                      onClick={() => handleExportar('pdf')}
+                      disabled={exportando}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="8" y1="13" x2="16" y2="13" />
+                        <line x1="8" y1="17" x2="16" y2="17" />
+                      </svg>
+                      {exportando ? '…' : 'PDF'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link to="/menu" className={styles.clientLink}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+              </svg>
+              Ver menú
+            </Link>
+          </div>
         </div>
 
         {/* ── KPI cards ── */}
@@ -194,9 +339,9 @@ export function EstadisticasPage() {
           <div className={styles.areaHeader}>
             <div>
               <h3 className={styles.areaTitle}>Ventas por día</h3>
-              <p className={styles.areaSub}>Últimos 7 días · en pesos colombianos</p>
+              <p className={styles.areaSub}>{monthLabel} · en pesos colombianos</p>
             </div>
-            <span className={styles.areaBadge}>{formatPrecio(totalSemana)} total</span>
+            <span className={styles.areaBadge}>{formatPrecio(totalMes)} total</span>
           </div>
 
           <div className={styles.svgWrap}>
@@ -231,7 +376,7 @@ export function EstadisticasPage() {
                   <line x1={PAD_X} y1={H / 2} x2={W - PAD_X} y2={H / 2} stroke="#e7e5e4" strokeWidth="2" />
                 </svg>
               )}
-              {chartData?.pts.map((pt, i) => (
+              {showDots && chartData?.pts.map((pt, i) => (
                 <div
                   key={i}
                   className={styles.dot}
@@ -242,7 +387,7 @@ export function EstadisticasPage() {
 
             {/* X-axis labels */}
             <div className={styles.xAxis}>
-              {ventasSemana.map((d) => (
+              {xAxisItems.map((d) => (
                 <div key={d.dia} className={styles.xItem}>
                   <span className={styles.xLabel}>{d.dia}</span>
                   <span className={styles.xPedidos}>{loading ? '' : `${d.pedidos}p`}</span>
@@ -266,8 +411,10 @@ export function EstadisticasPage() {
               <div className={styles.topList}>
                 {platosTop.map((p, i) => (
                   <div key={p.nombre} className={styles.topItem}>
-                    <span className={styles.topRank}
-                      style={{ color: i === 0 ? '#ca8a04' : i === 1 ? '#a8a29e' : i === 2 ? '#b45309' : '#d4d4d0' }}>
+                    <span
+                      className={styles.topRank}
+                      style={{ color: i === 0 ? '#ca8a04' : i === 1 ? '#a8a29e' : i === 2 ? '#b45309' : '#d4d4d0' }}
+                    >
                       {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                     </span>
                     <PlatoImage
@@ -319,7 +466,7 @@ export function EstadisticasPage() {
                     Pedidos
                   </text>
                   <text x="70" y="80" textAnchor="middle" className={styles.donutSub}>
-                    esta semana
+                    {monthLabel.split(' ')[0]}
                   </text>
                 </svg>
 

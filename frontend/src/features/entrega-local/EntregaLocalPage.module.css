@@ -183,36 +183,62 @@
 .casilleroRow {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   margin-top: 0.1rem;
   flex-wrap: wrap;
 }
 
 .casilleroLabel { font-size: 0.75rem; color: #78716c; }
 
+.casilleroAsignado {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #15803d;
+}
+.casilleroAsignado strong {
+  color: #d4500a;
+  font-size: 1.05em;
+}
+
+.casilleroEspera {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #b45309;
+  animation: pulseOpacity 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseOpacity {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+
+/* Botones de override admin (desplazados a la derecha) */
+.casilleroOverride {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
 .btnCasillero {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  border: 2px solid #e7e5e4;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 7px;
+  border: 1.5px solid #e7e5e4;
   background: #fff;
   font-weight: 800;
-  font-size: 0.875rem;
-  color: #44403c;
+  font-size: 0.8rem;
+  color: #78716c;
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 .btnCasillero:hover:not(:disabled) { border-color: #d4500a; color: #d4500a; }
-.btnCasillero:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnCasillero:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .casilleroActivo {
   background: #d4500a !important;
   border-color: #d4500a !important;
   color: #fff !important;
 }
-
-.casilleroAsignado { font-size: 0.75rem; color: #57534e; margin-left: 0.25rem; }
-.casilleroAsignado strong { color: #d4500a; }
 
 /* ── Sección escáner ── */
 .scanSection {

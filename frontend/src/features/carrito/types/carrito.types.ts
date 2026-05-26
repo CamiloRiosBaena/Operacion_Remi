@@ -5,6 +5,8 @@ export interface CartExtra {
 }
 
 export interface CartItem {
+  /** Clave única: platoId + personalizaciones. Generada en el contexto. */
+  cartItemKey: string;
   platoId: number;
   nombre: string;
   precio: number;
@@ -29,8 +31,8 @@ export interface CarritoContextValue {
   ivaTotal: number;
   /** Total final con IVA incluido */
   totalConIva: number;
-  addItem: (item: Omit<CartItem, 'cantidad'>) => void;
-  removeItem: (platoId: number) => void;
-  updateCantidad: (platoId: number, cantidad: number) => void;
+  addItem: (item: Omit<CartItem, 'cartItemKey'>) => void;
+  removeItem: (cartItemKey: string) => void;
+  updateCantidad: (cartItemKey: string, cantidad: number) => void;
   clearCart: () => void;
 }

@@ -1,10 +1,28 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
+import { useRealtimePedidos } from '@/shared/hooks/useRealtimePedidos';
 import {
   fetchPedidos, fetchStaff, cambiarEstadoPedido,
   type ApiPedido, type ApiStaff, type EstadoPedidoApi,
 } from '../services/admin.service';
 import styles from './DomiciliosAdmin.module.css';
+
+// ── Month helpers ─────────────────────────────────────────────────────────────
+
+const MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function getMonthRange(offset: number) {
+  const now = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const afterLast = new Date(first.getFullYear(), first.getMonth() + 1, 1);
+  return { first, afterLast };
+}
+
+function getMonthLabel(offset: number) {
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 // Solo estos estados son relevantes para domicilios
 type EstadoEntrega = 'pendiente' | 'listo' | 'en_camino' | 'entregado' | 'cancelado';
@@ -41,9 +59,10 @@ export function DomiciliosAdmin() {
   const [loading,       setLoading      ] = useState(true);
   const [accionando,    setAccionando   ] = useState<number | null>(null);
   const [filtroEstado,  setFiltroEstado ] = useState<EstadoEntrega | 'todos'>('todos');
+  const [monthOffset,   setMonthOffset  ] = useState(0);
 
-  const cargar = useCallback(async () => {
-    setLoading(true);
+  const cargar = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [todos, staff] = await Promise.all([fetchPedidos(), fetchStaff()]);
       setPedidos(todos.filter((p) => p.tipo === 'domicilio'));
@@ -56,12 +75,20 @@ export function DomiciliosAdmin() {
   }, []);
 
   useEffect(() => { cargar(); }, [cargar]);
+  useRealtimePedidos(() => cargar(true));
+
+  const { first: mesFirst, afterLast: mesAfterLast } = getMonthRange(monthOffset);
+
+  const domiciliosDelMes = pedidos.filter((p) => {
+    const f = new Date(p.fechaHora);
+    return f >= mesFirst && f < mesAfterLast;
+  });
 
   const entregasFiltradas = filtroEstado === 'todos'
-    ? pedidos
-    : pedidos.filter((p) => p.estado === filtroEstado);
+    ? domiciliosDelMes
+    : domiciliosDelMes.filter((p) => p.estado === filtroEstado);
 
-  const conteo = (estado: EstadoEntrega) => pedidos.filter((p) => p.estado === estado).length;
+  const conteo = (estado: EstadoEntrega) => domiciliosDelMes.filter((p) => p.estado === estado).length;
 
   async function despacharPedido(pedido: ApiPedido, domiciliarioId: number) {
     setAccionando(pedido.id);
@@ -112,6 +139,23 @@ export function DomiciliosAdmin() {
           </div>
         </div>
 
+        {/* Navegador de mes */}
+        <div className={styles.monthRow}>
+          <button
+            className={styles.navBtn}
+            onClick={() => setMonthOffset((o) => Math.max(o - 1, -24))}
+            disabled={monthOffset <= -24}
+            aria-label="Mes anterior"
+          >‹</button>
+          <span className={styles.monthLabel}>{getMonthLabel(monthOffset)}</span>
+          <button
+            className={styles.navBtn}
+            onClick={() => setMonthOffset((o) => o + 1)}
+            disabled={monthOffset >= 0}
+            aria-label="Mes siguiente"
+          >›</button>
+        </div>
+
         {/* Filtros */}
         <div className={styles.filtros}>
           <button
@@ -131,7 +175,7 @@ export function DomiciliosAdmin() {
           <button
             className={styles.chip}
             style={{ marginLeft: 'auto', background: '#f5f5f4', borderColor: '#e7e5e4' }}
-            onClick={cargar}
+            onClick={() => cargar()}
           >↻ Actualizar</button>
         </div>
 

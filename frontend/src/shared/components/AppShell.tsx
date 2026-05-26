@@ -20,9 +20,10 @@ const ROL_EMOJI: Record<string, string> = {
 interface Props {
   children: ReactNode;
   title: string;
+  backTo?: string;
 }
 
-export function AppShell({ children, title }: Props) {
+export function AppShell({ children, title, backTo }: Props) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -35,6 +36,13 @@ export function AppShell({ children, title }: Props) {
     <div className={styles.shell}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
+          {backTo && (
+            <button className={styles.backBtn} onClick={() => navigate(backTo)} aria-label="Volver">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5" /><path d="M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
           <span className={styles.brandMark}>🍽️</span>
           <span className={styles.brandName}>Remi</span>
           <span className={styles.separator}>/</span>
