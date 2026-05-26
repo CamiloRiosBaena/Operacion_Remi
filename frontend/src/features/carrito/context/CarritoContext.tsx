@@ -12,10 +12,22 @@ const CarritoContext = createContext<CarritoContextValue | null>(null);
 
 const STORAGE_KEY = 'remi_cart';
 
+function makeKey(item: Omit<CartItem, 'cartItemKey' | 'cantidad'>): string {
+  const removidos = [...(item.ingredientesRemovidos ?? [])].sort().join(',');
+  const extras = (item.extras ?? [])
+    .map((e) => `${e.nombre}:${e.cantidad}`)
+    .sort()
+    .join(',');
+  return `${item.platoId}|${removidos}|${extras}|${item.nota ?? ''}`;
+}
+
 function loadCart(): CartItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    if (!raw) return [];
+    const items = JSON.parse(raw) as CartItem[];
+    // Migración: items guardados antes de cartItemKey no tendrán la clave
+    return items.map((i) => ({ ...i, cartItemKey: i.cartItemKey ?? makeKey(i) }));
   } catch {
     return [];
   }
@@ -36,40 +48,39 @@ function itemTotal(item: CartItem): number {
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(loadCart);
 
-  // addItem: si el plato ya existe, incrementa cantidad y reemplaza personalizaciones;
-  // si no existe, lo agrega con cantidad 1.
-  const addItem = useCallback((item: Omit<CartItem, 'cantidad'>) => {
+  // addItem: si ya existe un ítem con la misma clave (platoId + personalizaciones),
+  // incrementa su cantidad; si no existe o la personalización es diferente, crea uno nuevo.
+  const addItem = useCallback((raw: Omit<CartItem, 'cartItemKey'>) => {
+    const key = makeKey(raw);
+    const item: CartItem = { ...raw, cartItemKey: key };
     setItems((prev) => {
-      const existing = prev.find((i) => i.platoId === item.platoId);
+      const existing = prev.find((i) => i.cartItemKey === key);
       const next = existing
         ? prev.map((i) =>
-            i.platoId === item.platoId
-              ? {
-                  ...item,
-                  cantidad: i.cantidad + 1,
-                }
+            i.cartItemKey === key
+              ? { ...i, cantidad: i.cantidad + raw.cantidad }
               : i,
           )
-        : [...prev, { ...item, cantidad: 1 }];
+        : [...prev, item];
       saveCart(next);
       return next;
     });
   }, []);
 
-  const removeItem = useCallback((platoId: number) => {
+  const removeItem = useCallback((cartItemKey: string) => {
     setItems((prev) => {
-      const next = prev.filter((i) => i.platoId !== platoId);
+      const next = prev.filter((i) => i.cartItemKey !== cartItemKey);
       saveCart(next);
       return next;
     });
   }, []);
 
-  const updateCantidad = useCallback((platoId: number, cantidad: number) => {
+  const updateCantidad = useCallback((cartItemKey: string, cantidad: number) => {
     setItems((prev) => {
       const next =
         cantidad <= 0
-          ? prev.filter((i) => i.platoId !== platoId)
-          : prev.map((i) => (i.platoId === platoId ? { ...i, cantidad } : i));
+          ? prev.filter((i) => i.cartItemKey !== cartItemKey)
+          : prev.map((i) => (i.cartItemKey === cartItemKey ? { ...i, cantidad } : i));
       saveCart(next);
       return next;
     });

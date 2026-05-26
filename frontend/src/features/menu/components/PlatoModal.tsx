@@ -68,6 +68,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
       nombre: plato.nombre,
       precio: precioConIva,
       tasaIva: 0,
+      cantidad,
       categoria: plato.categoria,
       imageUrl: plato.imageUrl,
       ingredientesRemovidos: removidos.size > 0 ? Array.from(removidos) : undefined,

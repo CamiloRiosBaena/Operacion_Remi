@@ -438,6 +438,45 @@
   border-radius: 12px;
 }
 
+/* ── Month navigation ── */
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--cream);
+  border: 1.5px solid var(--line-light);
+  border-radius: 7px;
+  color: var(--bark);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.navBtn:hover:not(:disabled) {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+}
+.navBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.monthLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 120px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* ── Misc ── */
 .count {
   text-align: center;

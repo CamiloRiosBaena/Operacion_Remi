@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import {
   fetchStaff, fetchClientes,
   createStaff, updateStaff, deleteStaff, updateEstadoCliente,
@@ -61,6 +62,8 @@ export function UsuariosGestion() {
   }, []);
 
   useEffect(() => { cargar(); }, [cargar]);
+
+  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null));
 
   // Unificar en filas de tabla
   const usuarios: UsuarioRow[] = [
@@ -258,7 +261,7 @@ export function UsuariosGestion() {
 
       {/* Modal */}
       {modal && (
-        <div className={styles.modalOverlay} onClick={() => setModal(null)}>
+        <div className={styles.modalOverlay} {...modalBdProps}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>
               {modal.mode === 'crear' ? '👤 Nuevo usuario staff' : '✏️ Editar usuario'}

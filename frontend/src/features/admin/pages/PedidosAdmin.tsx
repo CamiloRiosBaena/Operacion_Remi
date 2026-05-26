@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
+import { useRealtimePedidos } from '@/shared/hooks/useRealtimePedidos';
 import {
   fetchPedidos,
   cambiarEstadoPedido,
@@ -9,6 +10,23 @@ import {
   type TipoPedidoApi,
 } from '../services/admin.service';
 import styles from './PedidosAdmin.module.css';
+
+// ── Month helpers ─────────────────────────────────────────────────────────────
+
+const MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function getMonthRange(offset: number) {
+  const now = new Date();
+  const first = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  const afterLast = new Date(first.getFullYear(), first.getMonth() + 1, 1);
+  return { first, afterLast };
+}
+
+function getMonthLabel(offset: number) {
+  const now = new Date();
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+  return `${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
+}
 
 // ── Mapeo de estados ──────────────────────────────────────────────────────────
 
@@ -57,15 +75,16 @@ function labelCliente(p: ApiPedido) {
 }
 
 export function PedidosAdmin() {
-  const [pedidos, setPedidos]           = useState<ApiPedido[]>([]);
-  const [loading, setLoading]           = useState(true);
+  const [pedidos,      setPedidos     ] = useState<ApiPedido[]>([]);
+  const [loading,      setLoading     ] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState<EstadoPedidoApi | 'todos'>('todos');
-  const [filtroTipo, setFiltroTipo]     = useState<TipoPedidoApi | 'todos'>('todos');
-  const [accionando, setAccionando]     = useState<number | null>(null);
-  const [detalle, setDetalle]           = useState<ApiPedido | null>(null);
+  const [filtroTipo,   setFiltroTipo  ] = useState<TipoPedidoApi | 'todos'>('todos');
+  const [monthOffset,  setMonthOffset ] = useState(0);
+  const [accionando,   setAccionando  ] = useState<number | null>(null);
+  const [detalle,      setDetalle     ] = useState<ApiPedido | null>(null);
 
-  const cargar = useCallback(() => {
-    setLoading(true);
+  const cargar = useCallback((silent = false) => {
+    if (!silent) setLoading(true);
     fetchPedidos()
       .then(setPedidos)
       .catch(console.error)
@@ -73,8 +92,16 @@ export function PedidosAdmin() {
   }, []);
 
   useEffect(() => { cargar(); }, [cargar]);
+  useRealtimePedidos(() => cargar(true));
 
-  const pedidosFiltrados = pedidos.filter((p) => {
+  const { first: mesFirst, afterLast: mesAfterLast } = getMonthRange(monthOffset);
+
+  const pedidosDelMes = pedidos.filter((p) => {
+    const f = new Date(p.fechaHora);
+    return f >= mesFirst && f < mesAfterLast;
+  });
+
+  const pedidosFiltrados = pedidosDelMes.filter((p) => {
     const matchEstado = filtroEstado === 'todos' || p.estado === filtroEstado;
     const matchTipo   = filtroTipo   === 'todos' || p.tipo   === filtroTipo;
     return matchEstado && matchTipo;
@@ -111,7 +138,7 @@ export function PedidosAdmin() {
     }
   }
 
-  const conteo = (e: EstadoPedidoApi) => pedidos.filter((p) => p.estado === e).length;
+  const conteo = (e: EstadoPedidoApi) => pedidosDelMes.filter((p) => p.estado === e).length;
 
   return (
     <AdminLayout title="Pedidos">
@@ -143,6 +170,24 @@ export function PedidosAdmin() {
         {/* Filtros */}
         <div className={styles.toolbar}>
           <div className={styles.filtroGroup}>
+            <span className={styles.filtroLabel}>Mes:</span>
+            <div className={styles.monthNav}>
+              <button
+                className={styles.navBtn}
+                onClick={() => setMonthOffset((o) => Math.max(o - 1, -24))}
+                disabled={monthOffset <= -24}
+                aria-label="Mes anterior"
+              >‹</button>
+              <span className={styles.monthLabel}>{getMonthLabel(monthOffset)}</span>
+              <button
+                className={styles.navBtn}
+                onClick={() => setMonthOffset((o) => o + 1)}
+                disabled={monthOffset >= 0}
+                aria-label="Mes siguiente"
+              >›</button>
+            </div>
+          </div>
+          <div className={styles.filtroGroup}>
             <span className={styles.filtroLabel}>Estado:</span>
             {ESTADOS_FILTRO.map((e) => (
               <button
@@ -167,7 +212,7 @@ export function PedidosAdmin() {
               </button>
             ))}
           </div>
-          <button className={styles.btnRefresh} onClick={cargar}>↻ Actualizar</button>
+          <button className={styles.btnRefresh} onClick={() => cargar()}>↻ Actualizar</button>
         </div>
 
         {/* Tabla */}

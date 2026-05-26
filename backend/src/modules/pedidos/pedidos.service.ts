@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { randomUUID } from 'crypto';
 
 import { Pedido, EstadoPedido, TipoPedido } from './entities/pedido.entity';
@@ -191,6 +191,9 @@ export class PedidosService {
       userStaff = await this.staffRepo.findOneBy({ id: dto.staffId });
     }
 
+    // Capturar casillero actual antes de cambiar estado (para procesar la cola al entregar)
+    const casilleroAnterior = pedido.casillero;
+
     pedido.estado = dto.estado;
     const saved = await this.pedidoRepo.save(pedido);
 
@@ -206,18 +209,35 @@ export class PedidosService {
       await this.mesaRepo.save(pedido.mesa);
     }
 
-    // Enviar push notification si el pedido tiene sesión de invitado
-    if (pedido.tokenSesion) {
+    // Push notification: para pedidos locales que pasan a LISTO, el mensaje
+    // lo envía asignarCasilleroAutomatico (incluye el número de casillero).
+    const esListoLocal =
+      dto.estado === EstadoPedido.LISTO &&
+      (pedido.tipo === TipoPedido.MESA || pedido.tipo === TipoPedido.PARA_LLEVAR);
+
+    if (pedido.tokenSesion && !esListoLocal) {
       const msg = MENSAJES_ESTADO[dto.estado];
       if (msg) {
         this.notiService
           .enviarPush(pedido.tokenSesion, msg.titulo, msg.cuerpo, `/menu`)
-          .catch(() => { /* fire-and-forget, no interrumpir flujo */ });
+          .catch(() => {});
       }
     }
 
-    // findOnePedido puede fallar por relaciones; si ocurre, devolvemos el pedido parcial
-    // para no generar un 500 después de que el estado ya fue guardado correctamente.
+    // Auto-asignar casillero cuando un pedido local queda listo
+    if (esListoLocal) {
+      await this.asignarCasilleroAutomatico(saved);
+    }
+
+    // Al entregar o cancelar un pedido con casillero, liberar el casillero
+    // y asignarlo al siguiente pedido en espera
+    if (
+      casilleroAnterior &&
+      (dto.estado === EstadoPedido.ENTREGADO || dto.estado === EstadoPedido.CANCELADO)
+    ) {
+      await this.procesarColaEspera(casilleroAnterior);
+    }
+
     try {
       return await this.findOnePedido(saved.id);
     } catch {
@@ -239,6 +259,7 @@ export class PedidosService {
         tipo: true,
         total: true,
         fechaHora: true,
+        casillero: true,
       },
     });
     if (!pedido) throw new NotFoundException(`Pedido ${id} no encontrado`);
@@ -249,6 +270,7 @@ export class PedidosService {
       tipo: pedido.tipo,
       total: pedido.total,
       fechaHora: pedido.fechaHora,
+      casillero: pedido.casillero ?? null,
       items: pedido.detalles?.map((d) => ({
         nombre: d.plato?.nombre ?? 'Plato',
         cantidad: d.cantidad,
@@ -359,6 +381,89 @@ export class PedidosService {
       throw new BadRequestException('Solo se pueden asignar casilleros a pedidos en local');
     pedido.casillero = casillero;
     return this.pedidoRepo.save(pedido);
+  }
+
+  // ─────────────────────────────────────────
+  // LÓGICA DE CASILLEROS
+  // ─────────────────────────────────────────
+
+  /** Devuelve el primer casillero libre ('X' o 'Y'), o null si ambos están ocupados. */
+  private async getLockerLibre(): Promise<'X' | 'Y' | null> {
+    const [conX, conY] = await Promise.all([
+      this.pedidoRepo.count({ where: { estado: EstadoPedido.LISTO, casillero: 'X' } }),
+      this.pedidoRepo.count({ where: { estado: EstadoPedido.LISTO, casillero: 'Y' } }),
+    ]);
+    if (conX === 0) return 'X';
+    if (conY === 0) return 'Y';
+    return null;
+  }
+
+  /**
+   * Intenta asignar un casillero libre al pedido.
+   * Si no hay casillero libre, notifica al cliente que espere.
+   * Si hay casillero libre, lo asigna y notifica con el número.
+   */
+  private async asignarCasilleroAutomatico(pedido: Pedido): Promise<void> {
+    const locker = await this.getLockerLibre();
+
+    if (locker) {
+      pedido.casillero = locker;
+      await this.pedidoRepo.save(pedido);
+
+      if (pedido.tokenSesion) {
+        this.notiService
+          .enviarPush(
+            pedido.tokenSesion,
+            '¡Tu pedido está listo! 🔑',
+            `Retíralo en el casillero ${locker}`,
+            '/menu',
+          )
+          .catch(() => {});
+      }
+    } else {
+      // Ambos casilleros ocupados — el pedido entra en cola
+      if (pedido.tokenSesion) {
+        this.notiService
+          .enviarPush(
+            pedido.tokenSesion,
+            '¡Tu pedido está listo!',
+            'Todos los casilleros están ocupados. Te avisamos en cuanto tengas uno disponible.',
+            '/menu',
+          )
+          .catch(() => {});
+      }
+    }
+  }
+
+  /**
+   * Cuando se libera un casillero, busca el pedido local más antiguo en espera
+   * (listo + sin casillero) y se lo asigna.
+   */
+  private async procesarColaEspera(locker: 'X' | 'Y'): Promise<void> {
+    const enEspera = await this.pedidoRepo.findOne({
+      where: {
+        estado: EstadoPedido.LISTO,
+        tipo: In([TipoPedido.MESA, TipoPedido.PARA_LLEVAR]),
+        casillero: IsNull() as any,
+      },
+      order: { fechaHora: 'ASC' },
+    });
+
+    if (!enEspera) return;
+
+    enEspera.casillero = locker;
+    await this.pedidoRepo.save(enEspera);
+
+    if (enEspera.tokenSesion) {
+      this.notiService
+        .enviarPush(
+          enEspera.tokenSesion,
+          '¡Casillero asignado! 🔑',
+          `Ya puedes retirar tu pedido en el casillero ${locker}`,
+          '/menu',
+        )
+        .catch(() => {});
+    }
   }
 
   async confirmarEntregaConQr(token: string): Promise<Pedido> {

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useRealtimePedidos } from '@/shared/hooks/useRealtimePedidos';
 import { AppShell } from '@/shared/components/AppShell';
 import {
   fetchPedidosCocina, marcarEnCocina, marcarListo,
@@ -120,8 +121,6 @@ export function CocinaDashboard() {
   const [domiciliarioId, setDomiciliarioId] = useState<number | ''>('');
   const [despachando,    setDespachando   ] = useState(false);
 
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
   const cargar = useCallback(async () => {
     try {
       const [kds, cola, staff] = await Promise.all([
@@ -145,11 +144,8 @@ export function CocinaDashboard() {
     }
   }, []);
 
-  useEffect(() => {
-    cargar();
-    intervalRef.current = setInterval(cargar, 5000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [cargar]);
+  useEffect(() => { cargar(); }, [cargar]);
+  useRealtimePedidos(cargar);
 
   // ── Acciones KDS ──────────────────────────────────────────────────────────
 
@@ -222,7 +218,7 @@ export function CocinaDashboard() {
             {loading
               ? 'Conectando…'
               : connected
-              ? `${pedidos.length} comanda${pedidos.length !== 1 ? 's' : ''} activa${pedidos.length !== 1 ? 's' : ''} · actualiza cada 5 s`
+              ? `${pedidos.length} comanda${pedidos.length !== 1 ? 's' : ''} activa${pedidos.length !== 1 ? 's' : ''} · en tiempo real`
               : 'Error de conexión'}
           </p>
           <span

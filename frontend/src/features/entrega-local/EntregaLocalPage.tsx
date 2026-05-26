@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useRealtimePedidos } from '@/shared/hooks/useRealtimePedidos';
 import { Html5Qrcode } from 'html5-qrcode';
 import { AppShell } from '@/shared/components/AppShell';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -84,7 +85,6 @@ export function EntregaLocalPage() {
   // Lista de pedidos listos (mesa / llevar)
   const [pedidos, setPedidos]         = useState<ApiPedido[]>([]);
   const [loadingList, setLoadingList] = useState(true);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Arduino serial
   const serialPortRef                       = useRef<SerialPort | null>(null);
@@ -112,11 +112,8 @@ export function EntregaLocalPage() {
     finally { setLoadingList(false); }
   }, []);
 
-  useEffect(() => {
-    cargarPedidos();
-    intervalRef.current = setInterval(cargarPedidos, 8000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [cargarPedidos]);
+  useEffect(() => { cargarPedidos(); }, [cargarPedidos]);
+  useRealtimePedidos(cargarPedidos);
 
   // Cierra el puerto serial al desmontar (logout/navegación) para que se pueda reconectar
   useEffect(() => {
@@ -254,7 +251,7 @@ export function EntregaLocalPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <AppShell title="Entrega en Local">
+    <AppShell title="Entrega en Local" backTo="/admin">
 
       {/* ── Barra superior: Arduino (solo admin) ── */}
       {isAdmin && (
@@ -327,33 +324,28 @@ export function EntregaLocalPage() {
 
                     {/* Casillero */}
                     <div className={styles.casilleroRow}>
-                      <span className={styles.casilleroLabel}>Casillero:</span>
-                      {isAdmin ? (
-                        <>
+                      {p.casillero ? (
+                        <span className={styles.casilleroAsignado}>
+                          🔑 Casillero <strong>{p.casillero}</strong>
+                        </span>
+                      ) : (
+                        <span className={styles.casilleroEspera}>⏳ Esperando casillero…</span>
+                      )}
+                      {isAdmin && (
+                        <div className={styles.casilleroOverride}>
                           <button
                             className={`${styles.btnCasillero} ${p.casillero === 'X' ? styles.casilleroActivo : ''}`}
                             onClick={() => handleAsignar(p.id, p.casillero === 'X' ? null : 'X')}
                             disabled={enAsignacion}
-                            title="Asignar casillero X"
-                          >
-                            X
-                          </button>
+                            title="Override: asignar / quitar casillero X"
+                          >X</button>
                           <button
                             className={`${styles.btnCasillero} ${p.casillero === 'Y' ? styles.casilleroActivo : ''}`}
                             onClick={() => handleAsignar(p.id, p.casillero === 'Y' ? null : 'Y')}
                             disabled={enAsignacion}
-                            title="Asignar casillero Y"
-                          >
-                            Y
-                          </button>
-                        </>
-                      ) : null}
-                      {p.casillero ? (
-                        <span className={styles.casilleroAsignado}>
-                          <strong>{p.casillero}</strong>
-                        </span>
-                      ) : (
-                        <span className={styles.casilleroLabel}>—</span>
+                            title="Override: asignar / quitar casillero Y"
+                          >Y</button>
+                        </div>
                       )}
                     </div>
                   </li>

@@ -172,6 +172,7 @@ async function handlePagarEfectivo() {
 
     clearCart();
     setActivePedido({ id: data.pedidoId, tipo: data.tipo, estado: data.estado, clienteId: user?.id });
+    onPedidoCreado?.();
     setPedidoConfirmado(data);
     setStep('confirmado');
   } catch (err) {
@@ -224,12 +225,12 @@ async function handlePagarEfectivo() {
                     const extrasActivos = item.extras ?? [];
                     const subtotal = itemTotal(item.precio, extrasActivos, item.cantidad);
                     return (
-                      <li key={item.platoId} className={styles.item}>
+                      <li key={item.cartItemKey} className={styles.item}>
                         <PlatoImage nombre={item.nombre} categoria={item.categoria ?? 'Platos fuertes'} imageUrl={item.imageUrl} size="sm" />
                         <div className={styles.itemMain}>
                           <div className={styles.itemTop}>
                             <p className={styles.itemNombre}>{item.nombre}</p>
-                            <button className={styles.btnRemove} onClick={() => removeItem(item.platoId)} aria-label={`Eliminar ${item.nombre}`}>
+                            <button className={styles.btnRemove} onClick={() => removeItem(item.cartItemKey)} aria-label={`Eliminar ${item.nombre}`}>
                               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                               </svg>
@@ -244,9 +245,9 @@ async function handlePagarEfectivo() {
                           {item.nota && <p className={styles.notaTag}>✏️ {item.nota}</p>}
                           <div className={styles.itemBottom}>
                             <div className={styles.qtyControl}>
-                              <button className={styles.btnQty} onClick={() => updateCantidad(item.platoId, item.cantidad - 1)}>−</button>
+                              <button className={styles.btnQty} onClick={() => updateCantidad(item.cartItemKey, item.cantidad - 1)}>−</button>
                               <span className={styles.qty}>{item.cantidad}</span>
-                              <button className={styles.btnQty} onClick={() => updateCantidad(item.platoId, item.cantidad + 1)}>+</button>
+                              <button className={styles.btnQty} onClick={() => updateCantidad(item.cartItemKey, item.cantidad + 1)}>+</button>
                             </div>
                             <span className={styles.itemSubtotal}>{formatPrecio(subtotal)}</span>
                           </div>
@@ -338,7 +339,7 @@ async function handlePagarEfectivo() {
                 <div className={styles.resumen}>
                   <p className={styles.resumenTitle}>Resumen</p>
                   {items.map((item) => (
-                    <div key={item.platoId} className={styles.resumenRow}>
+                    <div key={item.cartItemKey} className={styles.resumenRow}>
                       <span>{item.nombre} ×{item.cantidad}</span>
                       <span>{formatPrecio(itemTotal(item.precio, item.extras ?? [], item.cantidad))}</span>
                     </div>

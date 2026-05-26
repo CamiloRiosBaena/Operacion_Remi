@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import { QRCodeCanvas } from 'qrcode.react';
 import { AdminLayout } from '../components/AdminLayout';
 import {
@@ -57,6 +58,8 @@ function MesaQR({ mesa }: { mesa: ApiMesa }) {
 // ── Modal QR con Portal ───────────────────────────────────────────────────────
 
 function QrModal({ mesa, onClose }: { mesa: ApiMesa; onClose: () => void }) {
+  const { backdropProps } = useModalClose(onClose);
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose();
@@ -70,7 +73,7 @@ function QrModal({ mesa, onClose }: { mesa: ApiMesa; onClose: () => void }) {
   }, [onClose]);
 
   return createPortal(
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} {...backdropProps}>
       <div className={styles.modalBox} onClick={(e) => e.stopPropagation()}>
         <div className={styles.qrPanelHeader}>
           <div className={styles.qrPanelInfo}>

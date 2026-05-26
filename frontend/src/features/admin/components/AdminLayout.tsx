@@ -1,5 +1,5 @@
 import { type ReactNode, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import styles from './AdminLayout.module.css';
 
@@ -24,7 +24,9 @@ interface Props {
 export function AdminLayout({ children, title }: Props) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isRoot = location.pathname === '/admin';
 
   function handleLogout() {
     logout();
@@ -97,6 +99,18 @@ export function AdminLayout({ children, title }: Props) {
           >
             ☰
           </button>
+          {!isRoot && (
+            <button
+              className={styles.backBtn}
+              onClick={() => navigate('/admin')}
+              aria-label="Volver al dashboard"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
           <h1 className={styles.pageTitle}>{title}</h1>
         </header>
 

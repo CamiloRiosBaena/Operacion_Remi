@@ -216,3 +216,42 @@
 .empty { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 3rem; text-align: center; color: #a8a29e; }
 .empty span { font-size: 2.5rem; }
 .empty p { font-size: 0.9375rem; margin: 0; }
+
+/* ── Month navigation ── */
+.monthRow {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--line-light);
+  border-radius: 8px;
+  color: var(--bark);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.navBtn:hover:not(:disabled) {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+}
+.navBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.monthLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 130px;
+  text-align: center;
+  white-space: nowrap;
+}

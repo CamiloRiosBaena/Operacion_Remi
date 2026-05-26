@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import {
   fetchIngredientes, createIngrediente, updateIngrediente, deleteIngrediente,
   upsertPlatoIngrediente, deletePlatoIngrediente,
@@ -34,12 +35,13 @@ function gramosTotales(ing: Ingrediente) {
   return ing.stockUnidades * ing.gramosPorUnidad;
 }
 
-/** Retorna las porciones mínimas posibles de todos los platos que usan este ingrediente */
+/** Retorna el promedio de porciones posibles entre todos los platos que usan este ingrediente */
 function porcionesEstimadas(ing: Ingrediente, relaciones: PlatoIngrediente[]): number | null {
   const rels = relaciones.filter((r) => r.ingredienteId === ing.id);
   if (rels.length === 0) return null;
   const gramos = gramosTotales(ing);
-  return Math.min(...rels.map((r) => Math.floor(gramos / r.gramosPorPorcion)));
+  const valores = rels.map((r) => Math.floor(gramos / r.gramosPorPorcion));
+  return Math.round(valores.reduce((a, b) => a + b, 0) / valores.length);
 }
 
 function calcStock(ing: Ingrediente, relaciones: PlatoIngrediente[]): Stock {
@@ -276,6 +278,8 @@ export function IngredientesGestion() {
     }));
   }
 
+  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null));
+
   // ── Conversor (calculado a partir de los valores del form) ───────────────
 
   const convGramosPorUnidad = parseFloat(form.gramosPorUnidad) || 0;
@@ -493,7 +497,7 @@ export function IngredientesGestion() {
 
       {/* ── Modal crear / editar ── */}
       {modal && (
-        <div className={styles.modalOverlay} onClick={() => setModal(null)}>
+        <div className={styles.modalOverlay} {...modalBdProps}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>
               {modal.mode === 'crear' ? '➕ Nuevo ingrediente' : '✏️ Editar ingrediente'}
