@@ -14,14 +14,6 @@ const ROLE_HOME: Record<UserRole, string> = {
 };
 
 
-const DEMO_ACCOUNTS = [
-  { rol: 'Admin',        correo: 'carlos@remi.co',      contrasena: 'admin123',     emoji: '⚙️' },
-  { rol: 'Cocina',       correo: 'cocina@remi.co',       contrasena: 'cocina123',    emoji: '👨‍🍳' },
-  { rol: 'Domiciliario', correo: 'domicilio@remi.co',    contrasena: 'domicilio123', emoji: '🛵' },
-  { rol: 'Cliente',      correo: 'cliente@remi.co',      contrasena: 'cliente123',   emoji: '👤' },
-];
-
-
 export function LoginPage() {
   const { login, isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
@@ -42,12 +34,6 @@ export function LoginPage() {
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error al iniciar sesión');
     }
-  }
-
-  function fillDemo(c: string, p: string) {
-    setCorreo(c);
-    setContrasena(p);
-    setErrorMsg('');
   }
 
   return (
@@ -125,24 +111,6 @@ export function LoginPage() {
           <Link to="/registro" className={styles.registerLink}>Crea tu cuenta gratis</Link>
         </p>
 
-        {/* Demo */}
-        <div className={styles.demoSection}>
-          <p className={styles.demoTitle}>Acceso rápido (demo)</p>
-          <div className={styles.demoGrid}>
-            {DEMO_ACCOUNTS.map((acc) => (
-              <button
-                key={acc.correo}
-                type="button"
-                className={styles.demoChip}
-                onClick={() => fillDemo(acc.correo, acc.contrasena)}
-                disabled={isLoading}
-              >
-                <span>{acc.emoji}</span>
-                <span>{acc.rol}</span>
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

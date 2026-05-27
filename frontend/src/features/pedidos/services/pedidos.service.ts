@@ -40,6 +40,10 @@ export async function createPedido(input: CreatePedidoInput): Promise<PedidoCrea
   return apiFetch<PedidoCreado>('/pedidos', { method: 'POST', body: input });
 }
 
+export async function cancelarPedidoPublico(id: number): Promise<void> {
+  return apiFetch<void>(`/pedidos/${id}/cancelar`, { method: 'PATCH' });
+}
+
 export async function fetchQrTokenPublico(pedidoId: number): Promise<{ token: string; expiracion: string }> {
   const res = await fetch(`${API_URL}/pedidos/${pedidoId}/qr`);
   if (!res.ok) {
