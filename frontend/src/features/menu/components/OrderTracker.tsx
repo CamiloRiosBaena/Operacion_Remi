@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getActivePedido, clearActivePedido, type ActivePedido } from '@/shared/lib/guestSession';
 import { useOrderTracking, type EstadoPedido } from '@/shared/hooks/useOrderTracking';
+import { cancelarPedidoPublico } from '@/features/pedidos/services/pedidos.service';
 import styles from './OrderTracker.module.css';
 
 // ─────────────────────────────────────────────
@@ -70,6 +71,7 @@ export function OrderTracker({ pedidoId, onClose }: OrderTrackerProps) {
   const { data, loading, error } = useOrderTracking(pedidoId);
   const [prevEstado, setPrevEstado] = useState<EstadoPedido | null>(null);
   const [animating, setAnimating]   = useState(false);
+  const [canceling, setCanceling]   = useState(false);
 
   // Animar cuando cambia el estado
   useEffect(() => {
@@ -106,6 +108,18 @@ export function OrderTracker({ pedidoId, onClose }: OrderTrackerProps) {
   function handleDismiss() {
     clearActivePedido();
     onClose?.();
+  }
+
+  async function handleCancelar() {
+    if (!data || !confirm('¿Seguro que quieres cancelar tu pedido?')) return;
+    setCanceling(true);
+    try {
+      await cancelarPedidoPublico(data.id);
+    } catch {
+      alert('No se pudo cancelar el pedido. Intenta de nuevo.');
+    } finally {
+      setCanceling(false);
+    }
   }
 
   return (
@@ -200,6 +214,17 @@ export function OrderTracker({ pedidoId, onClose }: OrderTrackerProps) {
             <Link to={`/mi-pedido/${data.id}`} className={styles.btnVerQr}>
               📱 Ver mi QR de entrega
             </Link>
+          )}
+
+          {/* ── Cancelar pedido ── solo disponible mientras está pendiente */}
+          {data.estado === 'pendiente' && (
+            <button
+              className={styles.btnCancelar}
+              onClick={handleCancelar}
+              disabled={canceling}
+            >
+              {canceling ? 'Cancelando…' : 'Cancelar pedido'}
+            </button>
           )}
         </>
       )}

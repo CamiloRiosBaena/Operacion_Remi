@@ -265,7 +265,6 @@ export function MenuPage() {
   }, []);
 
   const esCliente  = user?.rol === 'cliente';
-  const esAdmin    = user?.rol === 'admin';
   const esInvitado = !user;
 
   function handleLogout() {
@@ -311,12 +310,6 @@ export function MenuPage() {
                 <Link to="/login"    className={styles.linkSecondary}>Ingresar</Link>
                 <Link to="/registro" className={styles.linkPrimary}>Crear cuenta</Link>
               </>
-            )}
-
-            {esAdmin && (
-              <Link to="/admin" className={styles.adminBackBtn}>
-                ← Admin
-              </Link>
             )}
 
             {esCliente && (

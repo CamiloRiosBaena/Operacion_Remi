@@ -353,8 +353,8 @@ export class PedidosService {
       return { token: existing.token, expiracion: existing.expiracion };
     }
 
-    // Crear nuevo token con 24 h de vigencia
-    const expiracion = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    // Crear nuevo token con 4 h de vigencia
+    const expiracion = new Date(Date.now() + 4 * 60 * 60 * 1000);
     const saved = await this.tokenQrRepo.save(
       this.tokenQrRepo.create({ token: randomUUID(), expiracion, pedido }),
     );

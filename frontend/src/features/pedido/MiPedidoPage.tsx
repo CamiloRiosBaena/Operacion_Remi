@@ -47,7 +47,7 @@ export function MiPedidoPage() {
               size={220}
               level="M"
             />
-            <p className={styles.qrHint}>Válido por 24 horas</p>
+            <p className={styles.qrHint}>Válido por 4 horas</p>
           </div>
         )}
       </div>

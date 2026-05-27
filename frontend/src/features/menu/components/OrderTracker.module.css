@@ -291,3 +291,30 @@
   background: #ffedd5;
   border-color: #fb923c;
 }
+
+/* ── Botón cancelar pedido ───────────────────────────────── */
+.btnCancelar {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: none;
+  border: 1.5px solid #fca5a5;
+  border-radius: 0.625rem;
+  color: #dc2626;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btnCancelar:hover:not(:disabled) {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
+.btnCancelar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
