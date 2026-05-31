@@ -255,7 +255,8 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 1180px) {
+/* 1060px: monitores verticales FHD (1080px) siguen viendo el sidebar con labels */
+@media (max-width: 1060px) {
   :root { --adm-sidebar-w: 76px; }
   .brandName, .brandSub, .navLabel, .userName, .userRole { display: none; }
   .navItem { justify-content: center; padding: 11px; }
@@ -264,7 +265,6 @@
   .userChip { justify-content: center; }
   .logoutBtn span { display: none; }
   .logoutBtn { padding: 11px; justify-content: center; }
-  .topbarSearch { width: 200px; }
 }
 
 @media (max-width: 768px) {

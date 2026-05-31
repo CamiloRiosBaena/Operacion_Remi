@@ -59,8 +59,21 @@ export class NotificacionesService {
     tokenSesion: string,
     suscripcion: PushSuscripcion,
   ): Promise<void> {
-    const sesion = await this.sesionRepo.findOneBy({ tokenSesion });
-    if (!sesion) throw new NotFoundException('Sesión no encontrada');
+    let sesion = await this.sesionRepo.findOneBy({ tokenSesion });
+
+    // Si el token llegó del frontend pero no hay sesión en BD (ej. BD reseteada),
+    // crear la sesión para poder vincular la suscripción.
+    if (!sesion) {
+      const expiracion = new Date();
+      expiracion.setDate(expiracion.getDate() + 30);
+      sesion = this.sesionRepo.create({
+        tokenSesion,
+        fechaExpiracion: expiracion,
+        plataforma: 'web',
+        pushToken: null,
+        cliente: null,
+      });
+    }
 
     sesion.pushToken = JSON.stringify(suscripcion);
     await this.sesionRepo.save(sesion);

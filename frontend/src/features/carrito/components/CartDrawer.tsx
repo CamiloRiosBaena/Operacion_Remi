@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '@/features/auth/context/AuthContext';
@@ -100,6 +100,14 @@ export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
   const [pedidoConfirmado, setPedidoConfirmado]   = useState<ConfirmarPagoResponse | null>(null);
   const [qrToken, setQrToken]                     = useState<string | null>(null);
 
+  // ── Pasarela simulada de tarjeta ──
+  const [showCardForm,      setShowCardForm     ] = useState(false);
+  const [cardNum,           setCardNum          ] = useState('');
+  const [cardName,          setCardName         ] = useState('');
+  const [cardExpiry,        setCardExpiry       ] = useState('');
+  const [cardCVV,           setCardCVV          ] = useState('');
+  const [simulatingPayment, setSimulatingPayment] = useState(false);
+
   // Cargar QR cuando el pedido queda confirmado (efectivo)
   useEffect(() => {
     if (pedidoConfirmado) {
@@ -140,6 +148,9 @@ export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
           setCargandoPago(false);
           setCargandoEfectivo(false);
           setPedidoConfirmado(null);
+          setShowCardForm(false);
+          setCardNum(''); setCardName(''); setCardExpiry(''); setCardCVV('');
+          setSimulatingPayment(false);
         }
       }, 300);
     }
@@ -228,6 +239,26 @@ async function handlePagarEfectivo() {
     setCargandoEfectivo(false);
   }
 }
+
+  // ── Helpers de la pasarela simulada ──
+  function handleCardNumChange(e: { target: { value: string } }) {
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+    setCardNum(raw.replace(/(.{4})/g, '$1 ').trim());
+  }
+  function handleExpiryChange(e: { target: { value: string } }) {
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCardExpiry(raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw);
+  }
+  async function handlePagarSimulado(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSimulatingPayment(true);
+    try {
+      await new Promise<void>(r => setTimeout(r, 2400));
+      await handlePagarEfectivo();
+    } finally {
+      setSimulatingPayment(false);
+    }
+  }
 
   return (
     <>
@@ -498,26 +529,60 @@ async function handlePagarEfectivo() {
             </div>
 
             <div className={styles.footer}>
-              <button
-                className={styles.btnPagar}
-                onClick={handleLanzarPago}
-                disabled={cargandoPago || cargandoEfectivo}
-              >
-                {cargandoPago
-                  ? 'Redirigiendo a Mercado Pago…'
-                  : `Pagar con Mercado Pago — ${formatPrecio(totalConDescuento)}`}
-              </button>
-              <div className={styles.dividerOr}>
-                <span>o</span>
-              </div>
-              <button
-                className={styles.btnEfectivo}
-                onClick={handlePagarEfectivo}
-                disabled={cargandoPago || cargandoEfectivo}
-              >
-                {cargandoEfectivo ? 'Registrando pedido…' : '💵 Pagar en caja (efectivo)'}
-              </button>
-              <p className={styles.payNote}>Serás redirigido al checkout seguro de Mercado Pago</p>
+              {showCardForm ? (
+                simulatingPayment ? (
+                  <div className={styles.payingOverlay}>
+                    <div className={styles.payingSpinner} />
+                    <p>Procesando pago seguro…</p>
+                    <p className={styles.payingNote}>No cierres esta ventana</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.cardFormHeader}>
+                      <button type="button" className={styles.cardFormBackBtn} onClick={() => setShowCardForm(false)}>
+                        ← Volver
+                      </button>
+                      <span className={styles.cardFormTitle}>💳 Datos de tarjeta</span>
+                    </div>
+                    <form className={styles.cardForm} onSubmit={handlePagarSimulado}>
+                      <input className={styles.cardInput} type="text" placeholder="1234 5678 9012 3456"
+                        value={cardNum} onChange={handleCardNumChange} maxLength={19} required autoComplete="cc-number" />
+                      <input className={styles.cardInput} type="text" placeholder="NOMBRE DEL TITULAR"
+                        value={cardName} onChange={e => setCardName(e.target.value.toUpperCase())} required autoComplete="cc-name" />
+                      <div className={styles.cardRow}>
+                        <input className={styles.cardInput} type="text" placeholder="MM/AA"
+                          value={cardExpiry} onChange={handleExpiryChange} maxLength={5} required autoComplete="cc-exp" />
+                        <input className={styles.cardInput} type="password" placeholder="CVV"
+                          value={cardCVV} onChange={e => setCardCVV(e.target.value.replace(/\D/g, '').slice(0, 4))} maxLength={4} required autoComplete="cc-csc" />
+                      </div>
+                      <button type="submit" className={styles.btnPagar} disabled={cargandoEfectivo}>
+                        {cargandoEfectivo ? 'Registrando…' : `🔒 Pagar ${formatPrecio(totalConDescuento)}`}
+                      </button>
+                    </form>
+                  </>
+                )
+              ) : (
+                <>
+                  <button
+                    className={styles.btnPagar}
+                    onClick={handleLanzarPago}
+                    disabled={cargandoPago || cargandoEfectivo}
+                  >
+                    {cargandoPago
+                      ? 'Redirigiendo a Mercado Pago…'
+                      : `Pagar con Mercado Pago — ${formatPrecio(totalConDescuento)}`}
+                  </button>
+                  <div className={styles.dividerOr}><span>o</span></div>
+                  <button
+                    className={styles.btnEfectivo}
+                    onClick={() => setShowCardForm(true)}
+                    disabled={cargandoPago}
+                  >
+                    💳 Pagar con tarjeta
+                  </button>
+                  <p className={styles.payNote}>Pago procesado de forma segura por Mercado Pago</p>
+                </>
+              )}
             </div>
           </>
         )}
@@ -543,7 +608,7 @@ async function handlePagarEfectivo() {
                   </svg>
                 </div>
                 <h3 className={styles.confirmadoTitle}>¡Pedido enviado a cocina!</h3>
-                <p className={styles.confirmadoSub}>Paga en caja al retirar tu pedido.</p>
+                <p className={styles.confirmadoSub}>Acércate al mostrador cuando esté listo para recogerlo.</p>
 
                 <div className={styles.confirmadoBox}>
                   <div className={styles.confirmadoRow}>
@@ -567,6 +632,19 @@ async function handlePagarEfectivo() {
                     <span className={styles.confirmadoRef}>{pedidoConfirmado.referencia}</span>
                   </div>
                 </div>
+
+                {/* Opt-in notificaciones push */}
+                {swReady && permission !== 'granted' && permission !== 'denied' && permission !== 'unsupported' && (
+                  <div className={styles.pushBanner}>
+                    {!pushSolicitado ? (
+                      <button className={styles.btnPush} onClick={handleSolicitarPush}>
+                        🔔 Avísame cuando mi pedido esté listo
+                      </button>
+                    ) : (
+                      <p className={styles.pushGranted}>✅ Te notificaremos cuando cambie el estado de tu pedido</p>
+                    )}
+                  </div>
+                )}
 
                 {qrToken && (
                   <div className={styles.confirmadoQr}>

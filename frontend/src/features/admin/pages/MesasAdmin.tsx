@@ -126,14 +126,52 @@ export function MesasAdmin() {
   }
 
   function handleDescargarTodos() {
-    mesas.forEach(mesa => {
-      const canvas = document.getElementById(`qr-dl-${mesa.id}`) as HTMLCanvasElement | null;
-      if (!canvas) return;
-      const link = document.createElement('a');
-      link.download = `qr-mesa-${mesa.numero}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    if (mesas.length === 0) return;
+
+    // Parámetros de la hoja
+    const QR_PX   = 200;
+    const PAD     = 24;
+    const LABEL_H = 40;
+    const CELL_W  = QR_PX + PAD * 2;
+    const CELL_H  = QR_PX + LABEL_H + PAD * 2;
+    const COLS    = Math.min(mesas.length, 4);
+    const ROWS    = Math.ceil(mesas.length / COLS);
+
+    const sheet = document.createElement('canvas');
+    sheet.width  = COLS * CELL_W;
+    sheet.height = ROWS * CELL_H;
+    const ctx = sheet.getContext('2d')!;
+
+    // Fondo blanco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, sheet.width, sheet.height);
+
+    mesas.forEach((mesa, i) => {
+      const col = i % COLS;
+      const row = Math.floor(i / COLS);
+      const x   = col * CELL_W + PAD;
+      const y   = row * CELL_H + PAD;
+
+      // QR desde canvas oculto
+      const src = document.getElementById(`qr-dl-${mesa.id}`) as HTMLCanvasElement | null;
+      if (src) ctx.drawImage(src, x, y, QR_PX, QR_PX);
+
+      // Etiqueta "Mesa X"
+      ctx.fillStyle = '#1c1917';
+      ctx.font = 'bold 17px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(`Mesa ${mesa.numero}`, x + QR_PX / 2, y + QR_PX + 22);
+
+      // URL pequeña
+      ctx.fillStyle = '#78716c';
+      ctx.font = '9px system-ui, sans-serif';
+      ctx.fillText(getMenuUrl(mesa.id).replace(window.location.origin, ''), x + QR_PX / 2, y + QR_PX + 36);
     });
+
+    const link = document.createElement('a');
+    link.download = `qr-mesas-${new Date().toISOString().slice(0, 10)}.png`;
+    link.href = sheet.toDataURL('image/png');
+    link.click();
   }
 
   const mesasFiltradas = mesas.filter(m => {

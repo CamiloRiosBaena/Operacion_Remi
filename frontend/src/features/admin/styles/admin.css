@@ -532,7 +532,12 @@
 .adm-tab.active { background: var(--adm-card); color: var(--adm-ink); box-shadow: var(--adm-shadow-sm); }
 .adm-tab:not(.active):hover { color: var(--adm-ink); }
 
-@media (max-width: 1180px) {
+@media (max-width: 1060px) {
+  /* cols-3: pasa a 2 columnas cuando el sidebar ya es icono */
+  .adm-cols-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  /* a 640px ambos colapsan a columna única */
   .adm-cols-2, .adm-cols-3 { grid-template-columns: 1fr; }
 }
 
@@ -768,10 +773,26 @@
   /* Toolbar: apilar en columna si no cabe */
   .adm-toolbar { gap: 8px; }
 
-  /* Search: ancho completo en mobile */
-  .adm-search { min-width: 0; width: 100%; }
+  /* Search: fila propia y ancho completo en mobile (override inline styles) */
+  .adm-search {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100%;
+    flex-basis: 100%;
+    order: -1;
+  }
 
   /* Tiles más pequeños */
   .adm-tile { width: 38px; height: 38px; border-radius: 10px; }
   .adm-tile svg { width: 19px; height: 19px; }
+
+  /* Bar chart: scroll horizontal para evitar overflow con muchas barras */
+  .adm-chart {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    gap: 10px;
+    padding-bottom: 6px;
+  }
+  .adm-bar-col { min-width: 32px; flex-shrink: 0; }
 }

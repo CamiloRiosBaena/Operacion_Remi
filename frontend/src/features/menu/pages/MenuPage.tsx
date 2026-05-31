@@ -461,7 +461,7 @@ export function MenuPage() {
         onPedidoCreado={handlePedidoCreado}
       />
 
-      <ChatWidget />
+      <ChatWidget hidden={cartOpen || !!platoModal} />
     </div>
   );
 }

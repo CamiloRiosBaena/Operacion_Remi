@@ -29,3 +29,9 @@
 }
 .btnMarcar:hover { background: var(--adm-ok); color: #fff; }
 .btnMarcar:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .cardFooter { flex-wrap: wrap; gap: 10px; }
+  .selectDomiciliario { max-width: 100%; width: 100%; }
+  .btnMarcar { width: 100%; justify-content: center; text-align: center; }
+}

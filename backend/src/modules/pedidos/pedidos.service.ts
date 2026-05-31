@@ -246,13 +246,8 @@ export class PedidosService {
       await this.mesaRepo.save(pedido.mesa);
     }
 
-    // Push notification: para pedidos locales que pasan a LISTO, el mensaje
-    // lo envía asignarCasilleroAutomatico (incluye el número de casillero).
-    const esListoLocal =
-      dto.estado === EstadoPedido.LISTO &&
-      (pedido.tipo === TipoPedido.MESA || pedido.tipo === TipoPedido.PARA_LLEVAR);
-
-    if (pedido.tokenSesion && !esListoLocal) {
+    // Push notification general para cualquier cambio de estado
+    if (pedido.tokenSesion) {
       const msg = MENSAJES_ESTADO[dto.estado];
       if (msg) {
         this.notiService
@@ -261,7 +256,12 @@ export class PedidosService {
       }
     }
 
-    // Auto-asignar casillero cuando un pedido local queda listo
+    // Auto-asignar casillero cuando un pedido local (mesa/llevar) queda listo.
+    // Si hay casillero disponible, envía un push adicional con el número.
+    const esListoLocal =
+      dto.estado === EstadoPedido.LISTO &&
+      (pedido.tipo === TipoPedido.MESA || pedido.tipo === TipoPedido.PARA_LLEVAR);
+
     if (esListoLocal) {
       await this.asignarCasilleroAutomatico(saved);
     }

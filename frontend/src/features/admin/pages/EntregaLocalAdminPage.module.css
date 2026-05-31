@@ -298,3 +298,10 @@
 @media (max-width: 640px) {
   .lockerGrid { grid-template-columns: repeat(2, 1fr); }
 }
+@media (max-width: 480px) {
+  /* ardBar: evita overflow en pantallas muy estrechas */
+  .ardBar { flex-wrap: wrap; gap: 10px; }
+  .ardSpacer { display: none; }
+  /* casilleros: columna única en móvil pequeño */
+  .lockerGrid { grid-template-columns: 1fr; }
+}

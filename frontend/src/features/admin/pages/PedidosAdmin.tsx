@@ -130,7 +130,7 @@ export function PedidosAdmin() {
       <div className="adm-view">
 
         {/* ── KPIs — diseño: Pedidos hoy / En local / Domicilios / Ticket promedio ── */}
-        <div className="adm-cols-3" style={{ gridTemplateColumns: 'repeat(4,1fr)', marginBottom: 22 }}>
+        <div className={styles.kpiGrid}>
           <div className="adm-kpi" style={{ padding: 18 }}>
             <div className="adm-kpi-top" style={{ marginBottom: 10 }}>
               <div className="adm-kpi-label">Pedidos hoy</div>
@@ -244,7 +244,7 @@ export function PedidosAdmin() {
         </div>
 
         {/* ── Tabla ── */}
-        <div className="adm-table-wrap">
+        <div className={`adm-table-wrap ${styles.tableWrap}`}>
           {loading ? (
             <div className="adm-loading">Cargando pedidos…</div>
           ) : pedidosFiltrados.length === 0 ? (

@@ -36,7 +36,7 @@ function IconSend() {
 }
 
 // ── Componente principal ─────────────────────────────────────
-export function ChatWidget() {
+export function ChatWidget({ hidden = false }: { hidden?: boolean }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const { user } = useAuth();
@@ -76,6 +76,8 @@ export function ChatWidget() {
       handleSend();
     }
   }
+
+  if (hidden) return null;
 
   return (
     <div className={styles.widget}>

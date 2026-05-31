@@ -48,7 +48,7 @@ function getTipoLabel(tipo: string) {
 function getStatusSub(estado: EstadoPedido, tipo: string): [string, boolean] {
   if (estado === 'pendiente')               return ['Confirmando con cocina', true];
   if (estado === 'en_cocina')               return ['¡Los cocineros están en ello!', true];
-  if (estado === 'listo' && tipo !== 'domicilio') return ['Pasa a recogerlo o espera en tu mesa', false];
+  if (estado === 'listo' && tipo !== 'domicilio') return ['¡Tu pedido está listo! Acércate a recogerlo', false];
   if (estado === 'listo')                   return ['Pronto saldrá a domicilio', false];
   if (estado === 'en_camino')               return ['¡El repartidor ya viene!', false];
   if (estado === 'entregado')               return ['¡Buen provecho!', false];

@@ -90,7 +90,8 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-@media (max-width: 1080px) {
+/* 900px: en monitor vertical FHD (1080px) el layout sigue en 2 columnas */
+@media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
 }
 
@@ -457,7 +458,7 @@
   gap: 4px;
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 900px) {
   .dispatch { position: static; }
 }
 

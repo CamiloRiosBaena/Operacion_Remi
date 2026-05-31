@@ -299,7 +299,7 @@
 
 /* ── Botón volver arriba ── */
 .backToTopBtn {
-  position: fixed; bottom: 24px; right: 24px; z-index: 40;
+  position: fixed; bottom: 90px; right: 24px; z-index: 40;
   width: 44px; height: 44px; border-radius: 50%;
   background: var(--m-accent); color: #fff; border: none;
   font-size: 20px; font-weight: 700; cursor: pointer;
@@ -349,8 +349,26 @@
   .mesaChip { padding: 8px 16px; }
 }
 
-@media (max-width: 480px) {
-  .gallery { gap: 12px; }
+/* Gallery: scroll horizontal en móvil (evita overflow en cards estrechas) */
+@media (max-width: 599px) {
+  .gallery {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 14px;
+    padding-bottom: 10px;
+  }
+  .gallery::-webkit-scrollbar { display: none; }
+  .card {
+    flex-shrink: 0;
+    width: 72vw;
+    max-width: 260px;
+    scroll-snap-align: start;
+  }
+  .cardBody { padding: 12px 13px 14px; }
   .cardNombre { font-size: 16px; }
-  .cardPrecio { font-size: 18px; }
+  .cardPrecio { font-size: 17px; }
+  .cardAddBtn { padding: 6px 10px; font-size: 12px; gap: 4px; }
 }

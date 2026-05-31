@@ -149,14 +149,6 @@ export function AdminLayout({ children, title, subtitle }: Props) {
             <h1 className={styles.pageTitle}>{title}</h1>
             {subtitle && <span className={styles.pageSubtitle}>{subtitle}</span>}
           </div>
-          <div className={styles.topbarSpacer} />
-          <div className={styles.topbarSearch}>
-            <Icon name="search" size={17} />
-            <input placeholder="Buscar platos, pedidos, mesas…" />
-          </div>
-          <button className={styles.iconBtn} title="Notificaciones" aria-label="Notificaciones">
-            <Icon name="bell" size={19} />
-          </button>
         </header>
 
         {/* Content */}
