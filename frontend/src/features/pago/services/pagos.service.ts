@@ -15,6 +15,7 @@ export interface GenerarPagoInput {
   direccionEntrega?: string;
   tokenSesion?: string;
   detalles: DetallePagoInput[];
+  promoIds?: number[];
 }
 
 export interface GenerarPagoResponse {

@@ -9,133 +9,62 @@ import {
 } from '../services/admin.service';
 import styles from './IngredientesGestion.module.css';
 
-// ── Tipos ────────────────────────────────────────────────────────────────────
-
 type Stock = 'ok' | 'bajo' | 'agotado';
+interface Ingrediente { id:number; nombre:string; unidadCompra:string; gramosPorUnidad:number; stockUnidades:number; stockMinimoPorciones:number; eliminable:boolean; }
+interface PlatoIngrediente { platoId:number; ingredienteId:number; gramosPorPorcion:number; }
 
-interface Ingrediente {
-  id: number;
-  nombre: string;
-  unidadCompra: string;         // "bulto", "caja", "kg", "litro"…
-  gramosPorUnidad: number;      // gramos en cada unidad comprada
-  stockUnidades: number;        // unidades actuales en bodega
-  stockMinimoPorciones: number; // alerta cuando porciones < este valor
-  eliminable: boolean;          // el cliente puede pedirlo quitado
+function gramosTotales(ing: Ingrediente) { return ing.stockUnidades * ing.gramosPorUnidad; }
+function porcionesEstimadas(ing: Ingrediente, rels: PlatoIngrediente[]) {
+  const r = rels.filter(r => r.ingredienteId === ing.id); if (!r.length) return null;
+  const g = gramosTotales(ing); const vals = r.map(x => Math.floor(g / x.gramosPorPorcion));
+  return Math.round(vals.reduce((a,b) => a+b,0) / vals.length);
 }
-
-interface PlatoIngrediente {
-  platoId: number;
-  ingredienteId: number;
-  gramosPorPorcion: number;
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-function gramosTotales(ing: Ingrediente) {
-  return ing.stockUnidades * ing.gramosPorUnidad;
-}
-
-/** Retorna el promedio de porciones posibles entre todos los platos que usan este ingrediente */
-function porcionesEstimadas(ing: Ingrediente, relaciones: PlatoIngrediente[]): number | null {
-  const rels = relaciones.filter((r) => r.ingredienteId === ing.id);
-  if (rels.length === 0) return null;
-  const gramos = gramosTotales(ing);
-  const valores = rels.map((r) => Math.floor(gramos / r.gramosPorPorcion));
-  return Math.round(valores.reduce((a, b) => a + b, 0) / valores.length);
-}
-
-function calcStock(ing: Ingrediente, relaciones: PlatoIngrediente[]): Stock {
+function calcStock(ing: Ingrediente, rels: PlatoIngrediente[]): Stock {
   if (ing.stockUnidades === 0) return 'agotado';
-  const p = porcionesEstimadas(ing, relaciones);
-  if (p !== null && p < ing.stockMinimoPorciones) return 'bajo';
+  const p = porcionesEstimadas(ing, rels); if (p !== null && p < ing.stockMinimoPorciones) return 'bajo';
   return 'ok';
 }
-
 function fmtGramos(g: number) {
-  if (g >= 1_000_000) return `${(g / 1_000_000).toLocaleString('es-CO', { maximumFractionDigits: 1 })} t`;
-  if (g >= 1_000)     return `${(g / 1_000).toLocaleString('es-CO',     { maximumFractionDigits: 1 })} kg`;
+  if (g >= 1_000_000) return `${(g/1_000_000).toLocaleString('es-CO',{maximumFractionDigits:1})} t`;
+  if (g >= 1_000)     return `${(g/1_000).toLocaleString('es-CO',{maximumFractionDigits:1})} kg`;
   return `${g.toLocaleString('es-CO')} g`;
 }
-
 function fmtNum(n: number) { return n.toLocaleString('es-CO'); }
 
-const STOCK_CONFIG: Record<Stock, { label: string; color: string; bg: string }> = {
-  ok:      { label: 'Disponible', color: '#15803d', bg: '#dcfce7' },
-  bajo:    { label: 'Stock bajo',  color: '#b45309', bg: '#fef3c7' },
-  agotado: { label: 'Agotado',     color: '#b91c1c', bg: '#fee2e2' },
+const STOCK_CHIP: Record<Stock, string> = {
+  ok: 'adm-chip adm-chip-ok', bajo: 'adm-chip adm-chip-warn', agotado: 'adm-chip adm-chip-bad',
 };
-
-const UNIDADES_COMPRA = ['bulto', 'caja', 'kg', 'litro', 'racimo', 'paca', 'unidad'];
-
-// ── Mapper API → local ───────────────────────────────────────────────────────
+const STOCK_LABEL: Record<Stock, string> = { ok: 'OK', bajo: 'Bajo', agotado: 'Crítico' };
+const STOCK_COL: Record<Stock, string> = { ok: 'var(--adm-ok)', bajo: 'var(--adm-warn)', agotado: 'var(--adm-bad)' };
+const UNIDADES_COMPRA = ['bulto','caja','kg','litro','racimo','paca','unidad'];
 
 function mapApi(a: ApiIngrediente): Ingrediente {
-  return {
-    id:                  a.id,
-    nombre:              a.nombre,
-    unidadCompra:        a.unidadCompra,
-    gramosPorUnidad:     Number(a.gramosPorUnidad),
-    stockUnidades:       Number(a.stockUnidades),
-    stockMinimoPorciones: a.stockMinimoPorciones,
-    eliminable:          a.eliminable,
-  };
+  return { id:a.id, nombre:a.nombre, unidadCompra:a.unidadCompra, gramosPorUnidad:Number(a.gramosPorUnidad),
+    stockUnidades:Number(a.stockUnidades), stockMinimoPorciones:a.stockMinimoPorciones, eliminable:a.eliminable };
 }
-
 function mapRelaciones(apis: ApiIngrediente[]): PlatoIngrediente[] {
-  return apis.flatMap((a) =>
-    (a.platoIngredientes ?? []).map((pi) => ({
-      platoId:         pi.plato.id,
-      ingredienteId:   a.id,
-      gramosPorPorcion: Number(pi.gramosPorPorcion),
-    }))
-  );
+  return apis.flatMap(a => (a.platoIngredientes ?? []).map(pi => ({
+    platoId:pi.plato.id, ingredienteId:a.id, gramosPorPorcion:Number(pi.gramosPorPorcion),
+  })));
 }
-
-// ── Form state ───────────────────────────────────────────────────────────────
 
 type FiltroStock = Stock | 'todos';
-type ModalMode = { mode: 'crear' } | { mode: 'editar'; id: number } | null;
+type ModalMode = { mode:'crear' } | { mode:'editar'; id:number } | null;
+interface FormRelacion { platoId:number; gramos:string; activo:boolean; }
+interface FormState { nombre:string; unidadCompra:string; gramosPorUnidad:string; stockUnidades:string; stockMinimoPorciones:string; eliminable:boolean; relaciones:FormRelacion[]; }
 
-interface FormRelacion { platoId: number; gramos: string; activo: boolean; }
-
-interface FormState {
-  nombre: string;
-  unidadCompra: string;
-  gramosPorUnidad: string;
-  stockUnidades: string;
-  stockMinimoPorciones: string;
-  eliminable: boolean;
-  relaciones: FormRelacion[];
+function buildEmptyForm(ids: number[]): FormState {
+  return { nombre:'', unidadCompra:'kg', gramosPorUnidad:'1000', stockUnidades:'0', stockMinimoPorciones:'10', eliminable:true,
+    relaciones: ids.map(id => ({ platoId:id, gramos:'', activo:false })) };
 }
-
-function buildEmptyForm(platosIds: number[]): FormState {
-  return {
-    nombre: '', unidadCompra: 'kg', gramosPorUnidad: '1000',
-    stockUnidades: '0', stockMinimoPorciones: '10', eliminable: true,
-    relaciones: platosIds.map((id) => ({ platoId: id, gramos: '', activo: false })),
-  };
+function buildEditForm(ing: Ingrediente, rels: PlatoIngrediente[], ids: number[]): FormState {
+  return { nombre:ing.nombre, unidadCompra:ing.unidadCompra, gramosPorUnidad:String(ing.gramosPorUnidad),
+    stockUnidades:String(ing.stockUnidades), stockMinimoPorciones:String(ing.stockMinimoPorciones), eliminable:ing.eliminable,
+    relaciones: ids.map(pid => { const r = rels.find(x => x.platoId === pid && x.ingredienteId === ing.id); return { platoId:pid, gramos:r ? String(r.gramosPorPorcion) : '', activo:!!r }; }) };
 }
-
-function buildEditForm(ing: Ingrediente, relaciones: PlatoIngrediente[], platosIds: number[]): FormState {
-  return {
-    nombre: ing.nombre,
-    unidadCompra: ing.unidadCompra,
-    gramosPorUnidad: String(ing.gramosPorUnidad),
-    stockUnidades: String(ing.stockUnidades),
-    stockMinimoPorciones: String(ing.stockMinimoPorciones),
-    eliminable: ing.eliminable,
-    relaciones: platosIds.map((pid) => {
-      const rel = relaciones.find((r) => r.platoId === pid && r.ingredienteId === ing.id);
-      return { platoId: pid, gramos: rel ? String(rel.gramosPorPorcion) : '', activo: !!rel };
-    }),
-  };
-}
-
-// ── Componente principal ─────────────────────────────────────────────────────
 
 export function IngredientesGestion() {
   const { platos } = usePlatos();
-
   const [ingredientes, setIngredientes] = useState<Ingrediente[]>([]);
   const [relaciones,   setRelaciones  ] = useState<PlatoIngrediente[]>([]);
   const [loading,      setLoading     ] = useState(true);
@@ -144,501 +73,336 @@ export function IngredientesGestion() {
   const [filtro,       setFiltro      ] = useState<FiltroStock>('todos');
   const [busqueda,     setBusqueda    ] = useState('');
   const [modal,        setModal       ] = useState<ModalMode>(null);
-  const [form,         setForm        ] = useState<FormState>(() => buildEmptyForm(platos.map((p) => p.id)));
+  const [form,         setForm        ] = useState<FormState>(() => buildEmptyForm(platos.map(p => p.id)));
 
   const cargar = useCallback(async () => {
     setLoading(true);
-    try {
-      const data = await fetchIngredientes();
-      setIngredientes(data.map(mapApi));
-      setRelaciones(mapRelaciones(data));
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    try { const d = await fetchIngredientes(); setIngredientes(d.map(mapApi)); setRelaciones(mapRelaciones(d)); }
+    catch (err) { console.error(err); } finally { setLoading(false); }
   }, []);
-
   useEffect(() => { cargar(); }, [cargar]);
 
-  // ── Datos derivados ─────────────────────────────────────────────────────
-
-  const lista = ingredientes.filter((ing) => {
-    const estado = calcStock(ing, relaciones);
-    const matchFiltro = filtro === 'todos' || estado === filtro;
-    const matchBusq   = ing.nombre.toLowerCase().includes(busqueda.toLowerCase());
-    return matchFiltro && matchBusq;
+  const lista = ingredientes.filter(ing => {
+    const e = calcStock(ing, relaciones);
+    return (filtro === 'todos' || e === filtro) && ing.nombre.toLowerCase().includes(busqueda.toLowerCase());
   });
+  const agotados = ingredientes.filter(i => calcStock(i,relaciones) === 'agotado');
+  const bajos    = ingredientes.filter(i => calcStock(i,relaciones) === 'bajo');
+  const platosAfectados = new Set(agotados.flatMap(i => relaciones.filter(r => r.ingredienteId === i.id).map(r => r.platoId)));
 
-  const agotados = ingredientes.filter((i) => calcStock(i, relaciones) === 'agotado');
-  const bajos    = ingredientes.filter((i) => calcStock(i, relaciones) === 'bajo');
-
-  // Platos afectados por ingredientes agotados
-  const platosAfectados = new Set(
-    agotados.flatMap((i) => relaciones.filter((r) => r.ingredienteId === i.id).map((r) => r.platoId))
-  );
-  const platosRiesgo = new Set(
-    bajos.flatMap((i) => relaciones.filter((r) => r.ingredienteId === i.id).map((r) => r.platoId))
-  );
-
-  // ── Acciones ────────────────────────────────────────────────────────────
-
-  function openCrear() {
-    setForm(buildEmptyForm(platos.map((p) => p.id)));
-    setErrorMsg('');
-    setModal({ mode: 'crear' });
-  }
-
-  function openEditar(ing: Ingrediente) {
-    setForm(buildEditForm(ing, relaciones, platos.map((p) => p.id)));
-    setErrorMsg('');
-    setModal({ mode: 'editar', id: ing.id });
-  }
+  function openCrear() { setForm(buildEmptyForm(platos.map(p => p.id))); setErrorMsg(''); setModal({ mode:'crear' }); }
+  function openEditar(ing: Ingrediente) { setForm(buildEditForm(ing, relaciones, platos.map(p => p.id))); setErrorMsg(''); setModal({ mode:'editar', id:ing.id }); }
 
   async function handleGuardar() {
-    const gramosPorUnidad      = parseFloat(form.gramosPorUnidad);
-    const stockUnidades        = parseFloat(form.stockUnidades);
-    const stockMinimoPorciones = parseInt(form.stockMinimoPorciones);
-    if (!form.nombre.trim() || isNaN(gramosPorUnidad) || isNaN(stockUnidades)) return;
-
-    setSaving(true);
-    setErrorMsg('');
+    const gpu = parseFloat(form.gramosPorUnidad), su = parseFloat(form.stockUnidades), smp = parseInt(form.stockMinimoPorciones);
+    if (!form.nombre.trim() || isNaN(gpu) || isNaN(su)) return;
+    setSaving(true); setErrorMsg('');
     try {
-      const body = {
-        nombre: form.nombre,
-        unidadCompra: form.unidadCompra,
-        gramosPorUnidad,
-        stockUnidades,
-        stockMinimoPorciones: isNaN(stockMinimoPorciones) ? 10 : stockMinimoPorciones,
-        eliminable: form.eliminable,
-      };
-
-      let ingredienteId: number;
-
-      if (modal?.mode === 'crear') {
-        const creado = await createIngrediente(body);
-        ingredienteId = creado.id;
-        setIngredientes((prev) => [...prev, mapApi(creado)]);
-      } else {
-        ingredienteId = modal!.id;
-        const actualizado = await updateIngrediente(modal!.id, body);
-        setIngredientes((prev) => prev.map((i) => (i.id === modal!.id ? mapApi(actualizado) : i)));
-      }
-
-      // Sincronizar relaciones plato-ingrediente
-      const prevRels = relaciones.filter((r) => r.ingredienteId === ingredienteId);
-      const ops = form.relaciones.map(async (rel) => {
-        const gramos = parseFloat(rel.gramos);
-        const eraActivo = prevRels.some((r) => r.platoId === rel.platoId);
-        if (rel.activo && gramos > 0) {
-          await upsertPlatoIngrediente(rel.platoId, { ingredienteId, gramosPorPorcion: gramos });
-        } else if (!rel.activo && eraActivo) {
-          await deletePlatoIngrediente(rel.platoId, ingredienteId);
-        }
-      });
-      await Promise.all(ops);
-
-      // Recargar ingredientes para reflejar relaciones actualizadas
-      const data = await fetchIngredientes();
-      setIngredientes(data.map(mapApi));
-      setRelaciones(mapRelaciones(data));
-
+      const body = { nombre:form.nombre, unidadCompra:form.unidadCompra, gramosPorUnidad:gpu, stockUnidades:su, stockMinimoPorciones:isNaN(smp)?10:smp, eliminable:form.eliminable };
+      let ingId: number;
+      if (modal?.mode === 'crear') { const c = await createIngrediente(body); ingId = c.id; setIngredientes(prev => [...prev, mapApi(c)]); }
+      else { ingId = modal!.id; const a = await updateIngrediente(modal!.id, body); setIngredientes(prev => prev.map(i => i.id === modal!.id ? mapApi(a) : i)); }
+      const prevRels = relaciones.filter(r => r.ingredienteId === ingId);
+      await Promise.all(form.relaciones.map(async rel => {
+        const g = parseFloat(rel.gramos); const era = prevRels.some(r => r.platoId === rel.platoId);
+        if (rel.activo && g > 0) await upsertPlatoIngrediente(rel.platoId, { ingredienteId:ingId, gramosPorPorcion:g });
+        else if (!rel.activo && era) await deletePlatoIngrediente(rel.platoId, ingId);
+      }));
+      const d = await fetchIngredientes(); setIngredientes(d.map(mapApi)); setRelaciones(mapRelaciones(d));
       setModal(null);
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error guardando');
-    } finally {
-      setSaving(false);
-    }
+    } catch (err) { setErrorMsg(err instanceof Error ? err.message : 'Error guardando'); }
+    finally { setSaving(false); }
   }
 
   async function handleEliminar(ing: Ingrediente) {
-    if (!confirm(`¿Eliminar "${ing.nombre}"? Esta acción no se puede deshacer.`)) return;
-    try {
-      await deleteIngrediente(ing.id);
-      setIngredientes((prev) => prev.filter((i) => i.id !== ing.id));
-      setRelaciones((prev) => prev.filter((r) => r.ingredienteId !== ing.id));
-    } catch (err) {
-      alert(err instanceof Error ? err.message : 'No se pudo eliminar');
-    }
+    if (!confirm(`¿Eliminar "${ing.nombre}"?`)) return;
+    try { await deleteIngrediente(ing.id); setIngredientes(prev => prev.filter(i => i.id !== ing.id)); setRelaciones(prev => prev.filter(r => r.ingredienteId !== ing.id)); }
+    catch (err) { alert(err instanceof Error ? err.message : 'No se pudo eliminar'); }
   }
-
-  function toggleRelacion(platoId: number) {
-    setForm((f) => ({
-      ...f,
-      relaciones: f.relaciones.map((r) =>
-        r.platoId === platoId ? { ...r, activo: !r.activo, gramos: r.activo ? '' : r.gramos } : r
-      ),
-    }));
-  }
-
-  function setGramos(platoId: number, gramos: string) {
-    setForm((f) => ({
-      ...f,
-      relaciones: f.relaciones.map((r) => (r.platoId === platoId ? { ...r, gramos } : r)),
-    }));
-  }
+  function toggleRelacion(pid: number) { setForm(f => ({ ...f, relaciones: f.relaciones.map(r => r.platoId === pid ? { ...r, activo:!r.activo, gramos:r.activo?'':r.gramos } : r) })); }
+  function setGramos(pid: number, gramos: string) { setForm(f => ({ ...f, relaciones: f.relaciones.map(r => r.platoId === pid ? { ...r, gramos } : r) })); }
 
   const { backdropProps: modalBdProps } = useModalClose(() => setModal(null));
-
-  // ── Conversor (calculado a partir de los valores del form) ───────────────
-
-  const convGramosPorUnidad = parseFloat(form.gramosPorUnidad) || 0;
-  const convStockUnidades   = parseFloat(form.stockUnidades)   || 0;
-  const convTotalGramos     = convStockUnidades * convGramosPorUnidad;
-
-  const convResultados = form.relaciones
-    .filter((r) => r.activo && parseFloat(r.gramos) > 0)
-    .map((r) => {
-      const plato        = platos.find((p) => p.id === r.platoId);
-      const gramosPorP   = parseFloat(r.gramos);
-      const porciones    = gramosPorP > 0 ? Math.floor(convTotalGramos / gramosPorP) : 0;
-      return { nombre: plato?.nombre ?? `Plato ${r.platoId}`, gramosPorP, porciones };
-    });
-
-  // ── Render ───────────────────────────────────────────────────────────────
+  const convG = parseFloat(form.gramosPorUnidad)||0, convS = parseFloat(form.stockUnidades)||0, convT = convS*convG;
+  const convRes = form.relaciones.filter(r => r.activo && parseFloat(r.gramos)>0).map(r => {
+    const p = platos.find(x => x.id === r.platoId); const g = parseFloat(r.gramos);
+    return { nombre:p?.nombre??`Plato ${r.platoId}`, gramosPorP:g, porciones:g>0?Math.floor(convT/g):0 };
+  });
 
   return (
-    <AdminLayout title="Ingredientes">
-      <div className={styles.wrapper}>
+    <AdminLayout title="Ingredientes" subtitle="Control de stock y alertas">
+      <div className="adm-view">
 
-        {/* ── Alertas ── */}
+        {/* Alertas */}
         {agotados.length > 0 && (
-          <div className={styles.alert} style={{ borderColor: '#fca5a5', background: '#fef2f2' }}>
-            <span className={styles.alertIcon}>🚨</span>
+          <div className="adm-alert danger">
+            <span className="adm-alert-icon">🚨</span>
             <div>
-              <p className={styles.alertTitle}>
-                {agotados.length} ingrediente{agotados.length > 1 ? 's' : ''} agotado{agotados.length > 1 ? 's' : ''}
-              </p>
-              <p className={styles.alertText}>
-                Platos sin poder servirse: {[...platosAfectados]
-                  .map((id) => platos.find((p) => p.id === id)?.nombre ?? `#${id}`)
-                  .join(', ')}
-              </p>
+              <div className="adm-alert-title">{agotados.length} ingrediente{agotados.length>1?'s':''} en estado crítico</div>
+              <div className="adm-alert-text">
+                Platos sin poder servirse: {[...platosAfectados].map(id => platos.find(p=>p.id===id)?.nombre??`#${id}`).join(', ')}
+              </div>
             </div>
           </div>
         )}
-
         {bajos.length > 0 && (
-          <div className={styles.alert} style={{ borderColor: '#fcd34d', background: '#fffbeb' }}>
-            <span className={styles.alertIcon}>⚠️</span>
+          <div className="adm-alert warn">
+            <span className="adm-alert-icon">⚠️</span>
             <div>
-              <p className={styles.alertTitle}>
-                {bajos.length} ingrediente{bajos.length > 1 ? 's' : ''} con stock bajo
-              </p>
-              <p className={styles.alertText}>
-                Platos en riesgo: {[...platosRiesgo]
-                  .filter((id) => !platosAfectados.has(id))
-                  .map((id) => platos.find((p) => p.id === id)?.nombre ?? `#${id}`)
-                  .join(', ') || '—'}
-              </p>
+              <div className="adm-alert-title">{bajos.length} ingrediente{bajos.length>1?'s':''} con stock bajo</div>
             </div>
           </div>
         )}
 
-        {/* ── Toolbar ── */}
-        <div className={styles.toolbar}>
-          <div className={styles.leftTools}>
-            <input
-              type="search"
-              className={styles.search}
-              placeholder="Buscar ingrediente…"
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
-            <div className={styles.filtros}>
-              {(['todos', 'ok', 'bajo', 'agotado'] as FiltroStock[]).map((f) => {
-                const cfg = f === 'todos' ? null : STOCK_CONFIG[f];
-                return (
-                  <button
-                    key={f}
-                    className={`${styles.chip} ${filtro === f ? styles.chipActive : ''}`}
-                    style={filtro === f && cfg ? { background: cfg.color, borderColor: cfg.color, color: '#fff' } : {}}
-                    onClick={() => setFiltro(f)}
-                  >
-                    {f === 'todos' ? 'Todos' : cfg!.label}
-                  </button>
-                );
-              })}
+        {/* ── Stats ── */}
+        <div className="adm-cols-3" style={{ marginBottom:22 }}>
+          <div className="adm-kpi" style={{ padding:18 }}>
+            <div className="adm-kpi-top" style={{ marginBottom:10 }}>
+              <div className="adm-kpi-label">Ingredientes</div>
+              <div className="adm-tile sage" style={{ width:36, height:36, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M11 20c-3.5 0-7-2.5-7-7 3.5 0 7 2.5 7 7Z"/><path d="M11 20c0-6 3-11 9-13-1 7-4 13-9 13Z"/><path d="M14.5 8.5 18 5"/></svg>
+              </div>
             </div>
+            <div className="adm-kpi-value" style={{ fontSize:26 }}>{loading ? '…' : ingredientes.length}</div>
+            <div className="adm-kpi-foot"><span className="muted">En inventario</span></div>
           </div>
-          <button className={styles.btnNuevo} onClick={openCrear}>+ Nuevo ingrediente</button>
+          <div className="adm-kpi" style={{ padding:18 }}>
+            <div className="adm-kpi-top" style={{ marginBottom:10 }}>
+              <div className="adm-kpi-label">Stock crítico</div>
+              <div className="adm-tile rose" style={{ width:36, height:36, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17.5v.5"/></svg>
+              </div>
+            </div>
+            <div className="adm-kpi-value" style={{ fontSize:26 }}>{loading ? '…' : agotados.length}</div>
+            <div className="adm-kpi-foot"><span className="muted">Reponer hoy</span></div>
+          </div>
+          <div className="adm-kpi" style={{ padding:18 }}>
+            <div className="adm-kpi-top" style={{ marginBottom:10 }}>
+              <div className="adm-kpi-label">Platos afectados</div>
+              <div className="adm-tile peach" style={{ width:36, height:36, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 11a9 9 0 0 1 18 0Z"/><path d="M2 11h20M12 6V3M11 3h2"/></svg>
+              </div>
+            </div>
+            <div className="adm-kpi-value" style={{ fontSize:26 }}>{loading ? '…' : platosAfectados.size}</div>
+            <div className="adm-kpi-foot"><span className="muted">Por faltantes</span></div>
+          </div>
         </div>
 
-        {/* ── Tabla ── */}
-        <div className={styles.tableWrap}>
-          {loading ? (
-            <p style={{ padding: '2rem', textAlign: 'center', color: '#78716c' }}>Cargando ingredientes…</p>
+        {/* Toolbar */}
+        <div className="adm-toolbar">
+          <div className="adm-search" style={{ maxWidth:280 }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input placeholder="Buscar ingredientes…" value={busqueda} onChange={e => setBusqueda(e.target.value)} />
+          </div>
+          {/* Seg: Todos / Crítico / Bajo — igual al diseño */}
+          <div className="adm-seg">
+            <button className={filtro==='todos'   ? 'active' : ''} onClick={() => setFiltro('todos')}>Todos</button>
+            <button className={filtro==='agotado' ? 'active' : ''} onClick={() => setFiltro('agotado')}>Crítico</button>
+            <button className={filtro==='bajo'    ? 'active' : ''} onClick={() => setFiltro('bajo')}>Bajo</button>
+          </div>
+          <div className="adm-toolbar-spacer" />
+          <button className="adm-btn adm-btn-primary" onClick={openCrear}>
+            <svg viewBox="0 0 24 24" width={17} height={17} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            Nuevo ingrediente
+          </button>
+        </div>
+
+        {/* Tabla — 6 columnas como el diseño */}
+        <div className="adm-table-wrap">
+          {loading ? <div className="adm-loading">Cargando ingredientes…</div> : lista.length === 0 ? (
+            <div className="adm-empty">No hay ingredientes con ese filtro</div>
           ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Ingrediente</th>
-                <th>Compra / Stock</th>
-                <th>Gramos disp.</th>
-                <th>Porciones est.</th>
-                <th>Estado</th>
-                <th>Platos</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((ing) => {
-                const estado    = calcStock(ing, relaciones);
-                const cfg       = STOCK_CONFIG[estado];
-                const gramos    = gramosTotales(ing);
-                const porciones = porcionesEstimadas(ing, relaciones);
-                const rels      = relaciones.filter((r) => r.ingredienteId === ing.id);
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th>Ingrediente</th>
+                  <th>Disponible</th>
+                  <th style={{ width: 200 }}>Nivel de stock</th>
+                  <th>Estado</th>
+                  <th>Uso</th>
+                  <th style={{ width: 90 }}>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lista.map(ing => {
+                  const e    = calcStock(ing, relaciones);
+                  const g    = gramosTotales(ing);
+                  const p    = porcionesEstimadas(ing, relaciones);
+                  const rels = relaciones.filter(r => r.ingredienteId === ing.id);
+                  const col  = STOCK_COL[e];
 
-                return (
-                  <tr key={ing.id}>
-                    {/* Nombre */}
-                    <td>
-                      <div className={styles.ingCell}>
-                        <span className={styles.nombre}>{ing.nombre}</span>
-                        {ing.eliminable && (
-                          <span className={styles.eliminableBadge} title="El cliente puede pedirlo quitado">
-                            retirable
-                          </span>
-                        )}
-                      </div>
-                    </td>
+                  // Zona amarilla: 0-45 % · umbral en 50 % · zona verde: 50-100 %
+                  const hasRels = rels.length > 0;
+                  const barColor = !hasRels ? 'var(--adm-line-2)' : col;
+                  const barPct = (() => {
+                    if (ing.stockUnidades === 0) return 0;
+                    if (p === null) return 50; // sin relaciones, indicador neutral
+                    const min = ing.stockMinimoPorciones || 1;
+                    if (p < min) return Math.max(2, Math.round((p / min) * 45));
+                    return Math.min(100, Math.round(50 + ((p - min) / (min * 4)) * 50));
+                  })();
 
-                    {/* Compra / Stock */}
-                    <td>
-                      <div className={styles.stockMeta}>
-                        <span className={styles.stockNum}>{fmtNum(ing.stockUnidades)}</span>
-                        <span className={styles.stockUnit}>{ing.unidadCompra}{ing.stockUnidades !== 1 ? 's' : ''}</span>
-                        <span className={styles.stockEq}>× {fmtGramos(ing.gramosPorUnidad)}</span>
-                      </div>
-                    </td>
+                  return (
+                    <tr key={ing.id}>
 
-                    {/* Gramos disponibles */}
-                    <td>
-                      <span className={styles.gramosDisp}>{fmtGramos(gramos)}</span>
-                    </td>
-
-                    {/* Porciones estimadas */}
-                    <td>
-                      {porciones !== null ? (
-                        <div className={styles.porcionesCell}>
-                          <span
-                            className={styles.porcionesNum}
-                            style={{ color: cfg.color }}
-                          >
-                            {fmtNum(porciones)}
-                          </span>
-                          <span className={styles.porcionesSub}>porciones</span>
-                          {rels.map((r) => {
-                            const nombrePlato = platos.find((p) => p.id === r.platoId)?.nombre ?? `#${r.platoId}`;
-                            return (
-                              <span key={r.platoId} className={styles.porcionesDetalle}>
-                                {nombrePlato}: {fmtNum(Math.floor(gramos / r.gramosPorPorcion))}
-                              </span>
-                            );
-                          })}
+                      {/* Ingrediente */}
+                      <td>
+                        <div className={styles.ingCell}>
+                          <div className="adm-tile sage" style={{ width:38, height:38, borderRadius:10 }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" width={19} height={19}>
+                              <path d="M11 20c-3.5 0-7-2.5-7-7 3.5 0 7 2.5 7 7Z"/>
+                              <path d="M11 20c0-6 3-11 9-13-1 7-4 13-9 13Z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <div className={styles.nombre}>{ing.nombre}</div>
+                            {ing.eliminable && <span className={styles.eliminableBadge}>retirable</span>}
+                          </div>
                         </div>
-                      ) : (
-                        <span className={styles.noPlatos}>—</span>
-                      )}
-                    </td>
+                      </td>
 
-                    {/* Estado */}
-                    <td>
-                      <span
-                        className={styles.stockBadge}
-                        style={{ background: cfg.bg, color: cfg.color }}
-                      >
-                        {cfg.label}
-                      </span>
-                    </td>
+                      {/* Disponible — gramos totales */}
+                      <td>
+                        <span className={styles.gramosDisp}>{fmtGramos(g)}</span>
+                        <div className="adm-cell-sub">{fmtNum(ing.stockUnidades)} {ing.unidadCompra}{ing.stockUnidades !== 1 ? 's' : ''}</div>
+                      </td>
 
-                    {/* Platos */}
-                    <td>
-                      <div className={styles.platosTags}>
-                        {rels.map((r) => {
-                          const nombrePlato = platos.find((p) => p.id === r.platoId)?.nombre ?? `#${r.platoId}`;
-                          return (
-                            <span
-                              key={r.platoId}
-                              className={styles.platoTag}
-                              style={platosAfectados.has(r.platoId) ? { borderColor: '#fca5a5', color: '#b91c1c' } : {}}
-                              title={`Usa ${r.gramosPorPorcion}g/porción`}
-                            >
-                              {nombrePlato}
-                              <span className={styles.gramosTag}>{r.gramosPorPorcion}g</span>
-                            </span>
-                          );
-                        })}
-                        {rels.length === 0 && <span className={styles.noPlatos}>Sin asignar</span>}
-                      </div>
-                    </td>
+                      {/* Nivel de stock — barra + texto */}
+                      <td>
+                        <div className="adm-progress" style={{ marginTop: 0 }}>
+                          <span style={{ width: `${barPct}%`, background: barColor }} />
+                        </div>
+                        <div className="adm-cell-sub" style={{ marginTop: 5 }}>
+                          {p !== null
+                            ? `${fmtNum(p)} porciones · mín. ${fmtNum(ing.stockMinimoPorciones)}`
+                            : 'Sin platos configurados'}
+                        </div>
+                      </td>
 
-                    {/* Acciones */}
-                    <td>
-                      <div style={{ display: 'flex', gap: '0.375rem' }}>
-                        <button className={styles.btnEdit} onClick={() => openEditar(ing)}>✏️ Editar</button>
-                        <button
-                          className={styles.btnEdit}
-                          style={{ background: '#fef2f2', color: '#b91c1c', borderColor: '#fecaca' }}
-                          onClick={() => handleEliminar(ing)}
-                        >🗑</button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                      {/* Estado */}
+                      <td>
+                        <span className={STOCK_CHIP[e]}>
+                          <span className="adm-chip-dot" />
+                          {STOCK_LABEL[e]}
+                        </span>
+                      </td>
+
+                      {/* Uso — número de platos */}
+                      <td>
+                        <span className="adm-cell-sub">
+                          {rels.length} plato{rels.length !== 1 ? 's' : ''}
+                        </span>
+                      </td>
+
+                      {/* Acciones */}
+                      <td>
+                        <div className="adm-row-act">
+                          <button className="adm-mini-btn" title="Editar" onClick={() => openEditar(ing)}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" width={16} height={16}><path d="M14 5l5 5M4 20l1-4L16 5l3 3L8 19l-4 1Z"/></svg>
+                          </button>
+                          <button className="adm-mini-btn danger" title="Eliminar" onClick={() => handleEliminar(ing)}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" width={16} height={16}><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           )}
         </div>
-
-        <p className={styles.count}>{lista.length} ingredientes</p>
+        <p className="adm-count">{lista.length} ingredientes</p>
       </div>
 
-      {/* ── Modal crear / editar ── */}
+      {/* Modal */}
       {modal && (
-        <div className={styles.modalOverlay} {...modalBdProps}>
-          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h3 className={styles.modalTitle}>
-              {modal.mode === 'crear' ? '➕ Nuevo ingrediente' : '✏️ Editar ingrediente'}
-            </h3>
-
-            <div className={styles.modalForm}>
-
-              {/* Nombre */}
-              <div className={styles.modalField}>
+        <div className="adm-overlay" {...modalBdProps}>
+          <div className="adm-modal-box lg" onClick={e => e.stopPropagation()} style={{ maxHeight:'85vh', overflowY:'auto' }}>
+            <div className="adm-modal-title">{modal.mode==='crear'?'Nuevo ingrediente':'Editar ingrediente'}</div>
+            <div className="adm-modal-form">
+              <div className="adm-modal-field">
                 <label>Nombre del ingrediente</label>
-                <input
-                  type="text"
-                  className={styles.input}
-                  value={form.nombre}
-                  onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                  placeholder="Ej: Fríjoles rojos"
-                />
+                <input type="text" className="adm-input" value={form.nombre}
+                  onChange={e => setForm({ ...form, nombre:e.target.value })} placeholder="Ej: Fríjoles rojos" />
               </div>
-
-              {/* Unidad + Gramos por unidad */}
-              <div className={styles.modalRow}>
-                <div className={styles.modalField}>
+              <div className="adm-modal-row">
+                <div className="adm-modal-field">
                   <label>Unidad de compra</label>
-                  <select
-                    className={styles.input}
-                    value={form.unidadCompra}
-                    onChange={(e) => setForm({ ...form, unidadCompra: e.target.value })}
-                  >
-                    {UNIDADES_COMPRA.map((u) => <option key={u}>{u}</option>)}
+                  <select className="adm-input" value={form.unidadCompra}
+                    onChange={e => setForm({ ...form, unidadCompra:e.target.value })}>
+                    {UNIDADES_COMPRA.map(u => <option key={u}>{u}</option>)}
                   </select>
                 </div>
-                <div className={styles.modalField}>
+                <div className="adm-modal-field">
                   <label>Gramos por {form.unidadCompra}</label>
-                  <input
-                    type="number"
-                    className={styles.input}
-                    value={form.gramosPorUnidad}
-                    onChange={(e) => setForm({ ...form, gramosPorUnidad: e.target.value })}
-                    placeholder="50000"
-                    min={1}
-                  />
+                  <input type="number" className="adm-input" value={form.gramosPorUnidad}
+                    onChange={e => setForm({ ...form, gramosPorUnidad:e.target.value })} min={1} />
                 </div>
               </div>
-
-              {/* Stock + Mínimo */}
-              <div className={styles.modalRow}>
-                <div className={styles.modalField}>
+              <div className="adm-modal-row">
+                <div className="adm-modal-field">
                   <label>Stock actual ({form.unidadCompra}s)</label>
-                  <input
-                    type="number"
-                    className={styles.input}
-                    value={form.stockUnidades}
-                    onChange={(e) => setForm({ ...form, stockUnidades: e.target.value })}
-                    placeholder="3"
-                    min={0}
-                    step={0.5}
-                  />
+                  <input type="number" className="adm-input" value={form.stockUnidades}
+                    onChange={e => setForm({ ...form, stockUnidades:e.target.value })} min={0} step={0.5} />
                 </div>
-                <div className={styles.modalField}>
+                <div className="adm-modal-field">
                   <label>Alerta si quedan menos de</label>
                   <div className={styles.inputSuffix}>
-                    <input
-                      type="number"
-                      className={styles.input}
-                      value={form.stockMinimoPorciones}
-                      onChange={(e) => setForm({ ...form, stockMinimoPorciones: e.target.value })}
-                      placeholder="10"
-                      min={1}
-                    />
+                    <input type="number" className="adm-input" value={form.stockMinimoPorciones}
+                      onChange={e => setForm({ ...form, stockMinimoPorciones:e.target.value })} min={1} />
                     <span className={styles.suffix}>porciones</span>
                   </div>
                 </div>
               </div>
-
-              {/* Eliminable */}
-              <label className={styles.checkLabel}>
-                <input
-                  type="checkbox"
-                  checked={form.eliminable}
-                  onChange={(e) => setForm({ ...form, eliminable: e.target.checked })}
-                />
+              <label className="adm-check-label">
+                <input type="checkbox" checked={form.eliminable}
+                  onChange={e => setForm({ ...form, eliminable:e.target.checked })} />
                 El cliente puede pedir que se lo quiten del plato
               </label>
-
-              {/* ── Conversor ── */}
-              {convTotalGramos > 0 && (
+              {convT > 0 && (
                 <div className={styles.conversor}>
                   <p className={styles.conversorTitle}>📐 Conversor</p>
                   <div className={styles.conversorFormula}>
-                    <span className={styles.conversorVal}>{fmtNum(convStockUnidades)}</span>
-                    <span className={styles.conversorOp}>{form.unidadCompra}{convStockUnidades !== 1 ? 's' : ''}</span>
-                    <span className={styles.conversorOp}>×</span>
-                    <span className={styles.conversorVal}>{fmtGramos(convGramosPorUnidad)}</span>
+                    <span className={styles.conversorVal}>{fmtNum(convS)}</span>
+                    <span className={styles.conversorOp}>{form.unidadCompra}(s) ×</span>
+                    <span className={styles.conversorVal}>{fmtGramos(convG)}</span>
                     <span className={styles.conversorOp}>=</span>
-                    <span className={`${styles.conversorVal} ${styles.conversorTotal}`}>{fmtGramos(convTotalGramos)}</span>
+                    <span className={`${styles.conversorVal} ${styles.conversorTotal}`}>{fmtGramos(convT)}</span>
                     <span className={styles.conversorOp}>disponibles</span>
                   </div>
-                  {convResultados.length > 0 && (
+                  {convRes.length > 0 && (
                     <div className={styles.conversorResultados}>
                       <p className={styles.conversorSubtitle}>Alcance por plato:</p>
-                      {convResultados.map((r) => (
+                      {convRes.map(r => (
                         <div key={r.nombre} className={styles.conversorRow}>
                           <span className={styles.conversorPlato}>{r.nombre}</span>
                           <span className={styles.conversorDots} />
                           <span className={styles.conversorPorciones}>{fmtNum(r.porciones)} porc.</span>
-                          <span className={styles.conversorGramos}>(usa {r.gramosPorP}g/plato)</span>
+                          <span className={styles.conversorGramos}>(usa {r.gramosPorP}g)</span>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
               )}
-
-              {/* ── Platos que lo usan ── */}
-              <div className={styles.modalField}>
+              <div className="adm-modal-field">
                 <label>Platos que usan este ingrediente</label>
                 <p className={styles.fieldHint}>Marca los platos y especifica cuántos gramos usa cada porción.</p>
                 <div className={styles.platosGramosGrid}>
-                  {platos.map((plato) => {
-                    const rel = form.relaciones.find((r) => r.platoId === plato.id);
+                  {platos.map(plato => {
+                    const rel = form.relaciones.find(r => r.platoId === plato.id);
                     if (!rel) return null;
                     return (
                       <div key={plato.id} className={`${styles.platoGramoRow} ${rel.activo ? styles.platoGramoRowActive : ''}`}>
                         <label className={styles.platoGramoCheck}>
-                          <input
-                            type="checkbox"
-                            checked={rel.activo}
-                            onChange={() => toggleRelacion(plato.id)}
-                          />
+                          <input type="checkbox" checked={rel.activo} onChange={() => toggleRelacion(plato.id)} />
                           <span className={styles.platoGramoNombre}>{plato.nombre}</span>
                         </label>
                         {rel.activo && (
                           <div className={styles.gramoField}>
-                            <input
-                              type="number"
-                              className={styles.gramoInput}
-                              value={rel.gramos}
-                              onChange={(e) => setGramos(plato.id, e.target.value)}
-                              placeholder="0"
-                              min={1}
-                            />
+                            <input type="number" className={styles.gramoInput} value={rel.gramos}
+                              onChange={e => setGramos(plato.id, e.target.value)} placeholder="0" min={1} />
                             <span className={styles.gramoSuffix}>g/porción</span>
                           </div>
                         )}
@@ -647,15 +411,12 @@ export function IngredientesGestion() {
                   })}
                 </div>
               </div>
+              {errorMsg && <p className="adm-error">{errorMsg}</p>}
             </div>
-
-            {errorMsg && (
-              <p style={{ color: '#b91c1c', fontSize: '0.875rem', margin: '0 0 0.25rem' }}>{errorMsg}</p>
-            )}
-            <div className={styles.modalActions}>
-              <button className={styles.btnCancel} onClick={() => setModal(null)} disabled={saving}>Cancelar</button>
-              <button className={styles.btnSave} onClick={handleGuardar} disabled={saving}>
-                {saving ? 'Guardando…' : modal.mode === 'crear' ? 'Crear ingrediente' : 'Guardar cambios'}
+            <div className="adm-modal-actions">
+              <button className="adm-btn adm-btn-ghost" onClick={() => setModal(null)} disabled={saving}>Cancelar</button>
+              <button className="adm-btn adm-btn-primary" onClick={handleGuardar} disabled={saving}>
+                {saving ? 'Guardando…' : modal.mode==='crear' ? 'Crear ingrediente' : 'Guardar cambios'}
               </button>
             </div>
           </div>

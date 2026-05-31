@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { usePromos } from '@/features/menu/context/PromosContext';
+import { calcularDescuento } from '@/features/menu/types/promo.types';
+import type { Promo } from '@/features/menu/types/promo.types';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import {
   fetchMesas,
@@ -38,7 +41,49 @@ type Step = 'carrito' | 'checkout' | 'pago' | 'confirmado';
 export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
   const { items, count, total, removeItem, updateCantidad, clearCart } = useCarrito();
   const { user } = useAuth();
+  const { promos } = usePromos();
   const { permission, requestPush, swReady } = usePushNotifications();
+
+  // ── Cálculo de descuentos por promos activas ──────────────────────────────
+  /** Para cada cartItemKey → promo aplicable (si tiene descuento configurado) */
+  const promosPorItem = useMemo(() => {
+    const map = new Map<string, Promo>();
+    for (const item of items) {
+      const promo = promos.find(
+        (p) =>
+          p.activo &&
+          p.tipoDescuento &&
+          ((p.ctaAccion === 'plato' && p.ctaValor === String(item.platoId)) ||
+            (p.ctaAccion === 'categoria' && p.ctaValor === item.categoria)),
+      );
+      if (promo) map.set(item.cartItemKey, promo);
+    }
+    return map;
+  }, [items, promos]);
+
+  const descuentoPorItem = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      const promo = promosPorItem.get(item.cartItemKey);
+      if (promo) {
+        map.set(item.cartItemKey, calcularDescuento(promo, item.precio, item.cantidad));
+      }
+    }
+    return map;
+  }, [items, promosPorItem]);
+
+  const descuentoTotal = useMemo(
+    () => [...descuentoPorItem.values()].reduce((s, v) => s + v, 0),
+    [descuentoPorItem],
+  );
+
+  /** IDs únicos de promos aplicadas al carrito actual */
+  const promoIdsAplicadas = useMemo(
+    () => [...new Set([...promosPorItem.values()].map((p) => p.id))],
+    [promosPorItem],
+  );
+
+  const totalConDescuento = total - descuentoTotal;
 
   const [step, setStep]               = useState<Step>('carrito');
   const [tipo, setTipo]               = useState<TipoPedido>(mesaQr ? 'mesa' : 'llevar');
@@ -136,6 +181,7 @@ async function handleLanzarPago() {
       direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
       tokenSesion:      tokenSesion ?? undefined,
       detalles,
+      promoIds:         promoIdsAplicadas.length ? promoIdsAplicadas : undefined,
     });
 
     window.open(data.checkoutUrl, '_blank', 'noopener,noreferrer');
@@ -168,6 +214,7 @@ async function handlePagarEfectivo() {
       direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
       tokenSesion:      tokenSesion ?? undefined,
       detalles,
+      promoIds:         promoIdsAplicadas.length ? promoIdsAplicadas : undefined,
     });
 
     clearCart();
@@ -223,7 +270,9 @@ async function handlePagarEfectivo() {
                 <ul className={styles.list}>
                   {items.map((item) => {
                     const extrasActivos = item.extras ?? [];
-                    const subtotal = itemTotal(item.precio, extrasActivos, item.cantidad);
+                    const subtotal  = itemTotal(item.precio, extrasActivos, item.cantidad);
+                    const descuento = descuentoPorItem.get(item.cartItemKey) ?? 0;
+                    const promo     = promosPorItem.get(item.cartItemKey);
                     return (
                       <li key={item.cartItemKey} className={styles.item}>
                         <PlatoImage nombre={item.nombre} categoria={item.categoria ?? 'Platos fuertes'} imageUrl={item.imageUrl} size="sm" />
@@ -236,6 +285,11 @@ async function handlePagarEfectivo() {
                               </svg>
                             </button>
                           </div>
+                          {promo && (
+                            <p className={styles.promoTag}>
+                              🏷️ {promo.tag} · −{formatPrecio(descuento)}
+                            </p>
+                          )}
                           {extrasActivos.length > 0 && (
                             <p className={styles.personTag}>+ {extrasActivos.map((e) => `${e.nombre} ×${e.cantidad}`).join(', ')}</p>
                           )}
@@ -249,7 +303,10 @@ async function handlePagarEfectivo() {
                               <span className={styles.qty}>{item.cantidad}</span>
                               <button className={styles.btnQty} onClick={() => updateCantidad(item.cartItemKey, item.cantidad + 1)}>+</button>
                             </div>
-                            <span className={styles.itemSubtotal}>{formatPrecio(subtotal)}</span>
+                            <div className={styles.itemSubtotalWrap}>
+                              {descuento > 0 && <span className={styles.itemSubtotalOld}>{formatPrecio(subtotal)}</span>}
+                              <span className={styles.itemSubtotal}>{formatPrecio(subtotal - descuento)}</span>
+                            </div>
                           </div>
                         </div>
                       </li>
@@ -261,9 +318,21 @@ async function handlePagarEfectivo() {
 
             {items.length > 0 && (
               <div className={styles.footer}>
+                {descuentoTotal > 0 && (
+                  <>
+                    <div className={styles.totalRow} style={{ opacity: 0.6 }}>
+                      <span className={styles.totalLabel}>Subtotal</span>
+                      <span className={styles.totalValue}>{formatPrecio(total)}</span>
+                    </div>
+                    <div className={`${styles.totalRow} ${styles.descuentoRow}`}>
+                      <span className={styles.totalLabel}>🏷️ Descuento promo</span>
+                      <span className={styles.descuentoValue}>−{formatPrecio(descuentoTotal)}</span>
+                    </div>
+                  </>
+                )}
                 <div className={styles.totalRow}>
                   <span className={styles.totalLabel}>Total</span>
-                  <span className={styles.totalValue}>{formatPrecio(total)}</span>
+                  <span className={styles.totalValue}>{formatPrecio(totalConDescuento)}</span>
                 </div>
                 <button className={styles.btnPagar} onClick={() => setStep('checkout')}>
                   Proceder al pago →
@@ -338,15 +407,25 @@ async function handlePagarEfectivo() {
                 {/* Resumen */}
                 <div className={styles.resumen}>
                   <p className={styles.resumenTitle}>Resumen</p>
-                  {items.map((item) => (
-                    <div key={item.cartItemKey} className={styles.resumenRow}>
-                      <span>{item.nombre} ×{item.cantidad}</span>
-                      <span>{formatPrecio(itemTotal(item.precio, item.extras ?? [], item.cantidad))}</span>
+                  {items.map((item) => {
+                    const desc = descuentoPorItem.get(item.cartItemKey) ?? 0;
+                    const sub  = itemTotal(item.precio, item.extras ?? [], item.cantidad);
+                    return (
+                      <div key={item.cartItemKey} className={styles.resumenRow}>
+                        <span>{item.nombre} ×{item.cantidad}</span>
+                        <span>{formatPrecio(sub - desc)}</span>
+                      </div>
+                    );
+                  })}
+                  {descuentoTotal > 0 && (
+                    <div className={`${styles.resumenRow} ${styles.descuentoRow}`}>
+                      <span>🏷️ Descuentos aplicados</span>
+                      <span className={styles.descuentoValue}>−{formatPrecio(descuentoTotal)}</span>
                     </div>
-                  ))}
+                  )}
                   <div className={`${styles.resumenRow} ${styles.resumenTotal}`}>
                     <span>Total (IVA inc.)</span>
-                    <span>{formatPrecio(total)}</span>
+                    <span>{formatPrecio(totalConDescuento)}</span>
                   </div>
                 </div>
 
@@ -358,7 +437,7 @@ async function handlePagarEfectivo() {
 
             <div className={styles.footer}>
               <button className={styles.btnPagar} onClick={handleIrAPago}>
-                Ir a pagar — {formatPrecio(total)}
+                Ir a pagar — {formatPrecio(totalConDescuento)}
               </button>
             </div>
           </>
@@ -385,7 +464,7 @@ async function handlePagarEfectivo() {
                 {/* Resumen del total */}
                 <div className={styles.pagoTotal}>
                   <span className={styles.pagoTotalLabel}>Total a pagar</span>
-                  <span className={styles.pagoTotalVal}>{formatPrecio(total)}</span>
+                  <span className={styles.pagoTotalVal}>{formatPrecio(totalConDescuento)}</span>
                 </div>
 
                 {/* Métodos aceptados */}
@@ -426,7 +505,7 @@ async function handlePagarEfectivo() {
               >
                 {cargandoPago
                   ? 'Redirigiendo a Mercado Pago…'
-                  : `Pagar con Mercado Pago — ${formatPrecio(total)}`}
+                  : `Pagar con Mercado Pago — ${formatPrecio(totalConDescuento)}`}
               </button>
               <div className={styles.dividerOr}>
                 <span>o</span>

@@ -163,6 +163,41 @@
 }
 .btnRemove:hover { color: #b91c1c; background: #fef2f2; }
 
+/* Tag de promo aplicada */
+.promoTag {
+  font-size: 0.75rem;
+  color: #16a34a;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+  background: #f0fdf4;
+  border-radius: 5px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+/* Precio tachado + precio final */
+.itemSubtotalWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.itemSubtotalOld {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #a8a29e;
+  text-decoration: line-through;
+}
+
+/* Descuento en total */
+.descuentoRow { }
+.descuentoValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
 /* Tags de personalización */
 .personTag {
   font-size: 0.75rem;

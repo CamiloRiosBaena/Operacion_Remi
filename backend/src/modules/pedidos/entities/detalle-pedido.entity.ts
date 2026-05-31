@@ -22,6 +22,10 @@ export class DetallePedido {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   montoIva: number;
 
+  /** Monto descontado en esta línea por aplicación de promo. */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  descuento: number;
+
   @ManyToOne(() => Plato, (p) => p.detalles, { nullable: false })
   @JoinColumn({ name: 'id_plato' })
   plato: Plato;
