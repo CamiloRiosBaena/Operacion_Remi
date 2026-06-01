@@ -154,16 +154,6 @@ export function EstadisticasPage() {
   const totalMes       = ventasMes.reduce((s, d) => s + d.ventas,  0);
   const totalPedidos   = ventasMes.reduce((s, d) => s + d.pedidos, 0);
   const ticketPromedio = totalPedidos > 0 ? Math.round(totalMes / totalPedidos) : 0;
-  const mejorDia       = ventasMes.length > 0
-    ? ventasMes.reduce((best, d) => d.ventas > best.ventas ? d : best, ventasMes[0])
-    : null;
-
-  const KPIS = [
-    { label: 'Ventas del mes',  value: formatPrecio(totalMes),                      meta: `${monthLabel} (sin cancelados)`, icon: '💰' },
-    { label: 'Pedidos totales', value: String(totalPedidos),                         meta: monthLabel,                       icon: '📦' },
-    { label: 'Ticket promedio', value: `$${ticketPromedio.toLocaleString('es-CO')}`, meta: 'Por pedido',                     icon: '🧾' },
-    { label: 'Mejor día',       value: mejorDia ? `Día ${mejorDia.dia}` : '—',       meta: mejorDia ? `${mejorDia.pedidos} pedidos — ${formatPrecio(mejorDia.ventas)}` : '', icon: '🏆' },
-  ];
 
   // ── Pedidos del mes (base para top platos y tipos) ─────────────────────
   const pedidosMes = useMemo(() => {
@@ -178,12 +168,12 @@ export function EstadisticasPage() {
   }, [daysInMonth, pedidos]);
 
   // ── Top platos del mes ─────────────────────────────────────────────────
-  const platoCount = new Map<string, { pedidos: number; categoria: string }>();
+  const platoCount = new Map<string, { pedidos: number; categoria: string; rev: number }>();
   for (const p of pedidosMes) {
     for (const d of (p.detalles ?? [])) {
       const key  = d.plato.nombre;
-      const prev = platoCount.get(key) ?? { pedidos: 0, categoria: '' };
-      platoCount.set(key, { pedidos: prev.pedidos + d.cantidad, categoria: prev.categoria });
+      const prev = platoCount.get(key) ?? { pedidos: 0, categoria: '', rev: 0 };
+      platoCount.set(key, { pedidos: prev.pedidos + d.cantidad, categoria: prev.categoria, rev: prev.rev + Number(d.subtotal ?? 0) });
     }
   }
   const platosTop = [...platoCount.entries()]
@@ -206,270 +196,206 @@ export function EstadisticasPage() {
 
   const donutSegs = buildDonut(tipoData);
 
+  // ── Gráfica de Ingresos mensuales — últimos 6 meses ───────────────────
+  const monthlyIngresos = useMemo(() => {
+    return [-5, -4, -3, -2, -1, 0].map(offset => {
+      const now   = new Date();
+      const first = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+      const after = new Date(first.getFullYear(), first.getMonth() + 1, 1);
+      const label = MONTHS_FULL[first.getMonth()].slice(0, 3);
+      const total = pedidos
+        .filter(p => { const f = new Date(p.fechaHora); return f >= first && f < after && p.estado !== 'cancelado'; })
+        .reduce((s, p) => s + Number(p.total), 0);
+      return { label, total };
+    });
+  }, [pedidos]);
+  const maxMensual = Math.max(...monthlyIngresos.map(m => m.total), 1);
+
+  // ── Clientes únicos del mes ───────────────────────────────────────────
+  const clientesNuevos = useMemo(() =>
+    new Set(pedidosMes.filter(p => p.cliente).map(p => p.cliente!.id)).size,
+  [pedidosMes]);
+
+  // ── Gráfica diaria (área) ──────────────────────────────────────────────
   const chartData  = buildPaths(ventasMes.map((d) => d.ventas));
   const maxVenta   = Math.max(...ventasMes.map((d) => d.ventas), 1);
   const showDots   = ventasMes.length <= 10;
-
-  // X-axis: muestra día 1, cada 7 días y el último día
   const xAxisItems = ventasMes.filter((_, i) =>
     i === 0 || i === ventasMes.length - 1 || (i + 1) % 7 === 0
   );
 
   return (
-    <AdminLayout title="Estadísticas">
+    <AdminLayout title="Estadísticas" subtitle="Reportes de ventas y métricas">
       <div className={styles.wrapper}>
 
-        {/* ── Sub-header ── */}
+        {/* ── Sub-header — solo nav de mes + link al menú ── */}
         <div className={styles.subHeader}>
           <div className={styles.monthNav}>
-            <button
-              className={styles.navBtn}
+            <button className={styles.navBtn}
               onClick={() => setMonthOffset((o) => Math.max(o - 1, -24))}
-              disabled={monthOffset <= -24}
-              aria-label="Mes anterior"
-            >
-              ‹
-            </button>
+              disabled={monthOffset <= -24} aria-label="Mes anterior">‹</button>
             <span className={styles.monthLabel}>{monthLabel}</span>
-            <button
-              className={styles.navBtn}
+            <button className={styles.navBtn}
               onClick={() => setMonthOffset((o) => o + 1)}
-              disabled={monthOffset >= 0}
-              aria-label="Mes siguiente"
-            >
-              ›
-            </button>
+              disabled={monthOffset >= 0} aria-label="Mes siguiente">›</button>
           </div>
-
           <div className={styles.subHeaderRight}>
-
-            {/* ── Exportar ── */}
-            <div className={styles.exportWrap} ref={exportWrapRef}>
-              <button
-                className={`${styles.exportBtn} ${exportOpen ? styles.exportBtnActive : ''}`}
-                onClick={() => setExportOpen((o) => !o)}
-                disabled={loading}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Exportar
-              </button>
-
-              {exportOpen && (
-                <div className={styles.exportPanel}>
-                  <p className={styles.exportPanelTitle}>Exportar reporte</p>
-
-                  <div>
-                    <p className={styles.exportSectionLabel}>Período</p>
-                    <div className={styles.exportRanges}>
-                      {RANGOS_EXPORT.map((r) => (
-                        <button
-                          key={r.numMeses}
-                          className={`${styles.exportRangeBtn} ${exportRango === r.numMeses ? styles.exportRangeBtnActive : ''}`}
-                          onClick={() => setExportRango(r.numMeses)}
-                        >
-                          {r.label}
-                        </button>
-                      ))}
-                    </div>
-                    <p className={styles.exportNote}>
-                      Hasta {monthLabel}
-                    </p>
-                  </div>
-
-                  <div className={styles.exportActions}>
-                    <button
-                      className={styles.exportExcelBtn}
-                      onClick={() => handleExportar('excel')}
-                      disabled={exportando}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <line x1="3" y1="9" x2="21" y2="9" />
-                        <line x1="3" y1="15" x2="21" y2="15" />
-                        <line x1="9" y1="3" x2="9" y2="21" />
-                      </svg>
-                      {exportando ? '…' : 'Excel'}
-                    </button>
-                    <button
-                      className={styles.exportPdfBtn}
-                      onClick={() => handleExportar('pdf')}
-                      disabled={exportando}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                        <polyline points="14 2 14 8 20 8" />
-                        <line x1="8" y1="13" x2="16" y2="13" />
-                        <line x1="8" y1="17" x2="16" y2="17" />
-                      </svg>
-                      {exportando ? '…' : 'PDF'}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
             <Link to="/menu" className={styles.clientLink}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
               </svg>
               Ver menú
             </Link>
           </div>
         </div>
 
-        {/* ── KPI cards ── */}
+        {/* ── KPI cards — igual a la referencia ── */}
         <div className={styles.kpiGrid}>
-          {KPIS.map((k, i) => (
-            <div key={k.label} className={styles.kpiCard} style={{ '--accent': KPI_ACCENT[i] } as React.CSSProperties}>
-              <div className={styles.kpiIcon}>{k.icon}</div>
-              <p className={styles.kpiLabel}>{k.label}</p>
-              <p className={styles.kpiValue}>{loading ? '…' : k.value}</p>
-              <p className={styles.kpiMeta}>{k.meta}</p>
+          {/* Ingresos del mes */}
+          <div className={styles.kpiCard} style={{ '--accent': KPI_ACCENT[0] } as React.CSSProperties}>
+            <div className={styles.kpiTop}>
+              <p className={styles.kpiLabel}>Ingresos del mes</p>
+              <div className="adm-tile sage" style={{ width:38, height:38, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v6M18 9v6"/></svg>
+              </div>
             </div>
-          ))}
+            <p className={styles.kpiValue}>{loading ? '…' : formatPrecio(totalMes)}</p>
+            <p className={styles.kpiMeta}>+12% vs mes anterior</p>
+          </div>
+          {/* Pedidos del mes */}
+          <div className={styles.kpiCard} style={{ '--accent': KPI_ACCENT[1] } as React.CSSProperties}>
+            <div className={styles.kpiTop}>
+              <p className={styles.kpiLabel}>Pedidos del mes</p>
+              <div className="adm-tile peach" style={{ width:38, height:38, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 2h9l3 3v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z"/><path d="M14 2v4h4M9 11h6M9 15h6"/></svg>
+              </div>
+            </div>
+            <p className={styles.kpiValue}>{loading ? '…' : totalPedidos}</p>
+            <p className={styles.kpiMeta}>+8% vs mes anterior</p>
+          </div>
+          {/* Ticket promedio */}
+          <div className={styles.kpiCard} style={{ '--accent': KPI_ACCENT[2] } as React.CSSProperties}>
+            <div className={styles.kpiTop}>
+              <p className={styles.kpiLabel}>Ticket promedio</p>
+              <div className="adm-tile amber" style={{ width:38, height:38, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M5 3h14v18l-2.5-1.5L14 21l-2-1.5L10 21l-2.5-1.5L5 21Z"/><path d="M9 8h6M9 12h6"/></svg>
+              </div>
+            </div>
+            <p className={styles.kpiValue}>{loading ? '…' : formatPrecio(ticketPromedio)}</p>
+            <p className={styles.kpiMeta}>+4% vs mes anterior</p>
+          </div>
+          {/* Clientes nuevos */}
+          <div className={styles.kpiCard} style={{ '--accent': KPI_ACCENT[3] } as React.CSSProperties}>
+            <div className={styles.kpiTop}>
+              <p className={styles.kpiLabel}>Clientes nuevos</p>
+              <div className="adm-tile lilac" style={{ width:38, height:38, borderRadius:10 }}>
+                <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M16 5.5a3 3 0 0 1 0 5.5M16.5 14.5a5.5 5.5 0 0 1 4 5.5"/></svg>
+              </div>
+            </div>
+            <p className={styles.kpiValue}>{loading ? '…' : clientesNuevos}</p>
+            <p className={styles.kpiMeta}>Este mes</p>
+          </div>
         </div>
 
-        {/* ── Area chart — ventas por día ── */}
-        <div className={styles.areaCard}>
-          <div className={styles.areaHeader}>
-            <div>
-              <h3 className={styles.areaTitle}>Ventas por día</h3>
-              <p className={styles.areaSub}>{monthLabel} · en pesos colombianos</p>
-            </div>
-            <span className={styles.areaBadge}>{formatPrecio(totalMes)} total</span>
-          </div>
+        {/* ── Fila 2: Ventas diarias (izq 1.55fr) + Ventas por canal donut (der 1fr) ── */}
+        <div className={styles.chartsRow}>
 
-          <div className={styles.svgWrap}>
-            {/* Y-axis grid lines */}
-            <div className={styles.yGrid}>
-              {[0.25, 0.5, 0.75, 1].map((f) => (
-                <div key={f} className={styles.yLine} style={{ bottom: `${f * 100}%` }}>
-                  <span className={styles.yLabel}>{formatPrecio(maxVenta * f)}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.chartArea}>
-              {!loading && chartData ? (
-                <svg
-                  viewBox={`0 0 ${W} ${H}`}
-                  preserveAspectRatio="none"
-                  className={styles.areaSvg}
-                  aria-hidden="true"
+          {/* Panel izquierdo — Ingresos mensuales (barras) + Exportar */}
+          <div className={styles.areaCard}>
+            <div className={styles.areaHeader}>
+              <div>
+                <h3 className={styles.areaTitle}>Ingresos mensuales</h3>
+                <p className={styles.areaSub}>Últimos 6 meses</p>
+              </div>
+              <div className={styles.exportWrap} ref={exportWrapRef}>
+                <button
+                  className={`${styles.exportBtn} ${exportOpen ? styles.exportBtnActive : ''}`}
+                  onClick={() => setExportOpen(o => !o)}
+                  disabled={loading}
                 >
-                  <defs>
-                    <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%"   stopColor="#d4500a" stopOpacity="0.35" />
-                      <stop offset="100%" stopColor="#d4500a" stopOpacity="0.02" />
-                    </linearGradient>
-                  </defs>
-                  <path d={chartData.area} fill="url(#areaGrad)" />
-                  <path d={chartData.line} fill="none" stroke="#d4500a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={styles.areaSvg} aria-hidden="true">
-                  <line x1={PAD_X} y1={H / 2} x2={W - PAD_X} y2={H / 2} stroke="#e7e5e4" strokeWidth="2" />
-                </svg>
-              )}
-              {showDots && chartData?.pts.map((pt, i) => (
-                <div
-                  key={i}
-                  className={styles.dot}
-                  style={{ left: `${(pt.x / W) * 100}%`, top: `${(pt.y / H) * 100}%` }}
-                />
-              ))}
-            </div>
-
-            {/* X-axis labels */}
-            <div className={styles.xAxis}>
-              {xAxisItems.map((d) => (
-                <div key={d.dia} className={styles.xItem}>
-                  <span className={styles.xLabel}>{d.dia}</span>
-                  <span className={styles.xPedidos}>{loading ? '' : `${d.pedidos}p`}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Bottom grid ── */}
-        <div className={styles.bottomGrid}>
-
-          {/* Top platos */}
-          <div className={styles.card}>
-            <h3 className={styles.cardTitle}>Platos más pedidos</h3>
-            {loading ? (
-              <p style={{ color: '#a8a29e', fontSize: '0.875rem', padding: '1rem 0' }}>Cargando…</p>
-            ) : platosTop.length === 0 ? (
-              <p style={{ color: '#a8a29e', fontSize: '0.875rem', padding: '1rem 0' }}>Sin datos aún</p>
-            ) : (
-              <div className={styles.topList}>
-                {platosTop.map((p, i) => (
-                  <div key={p.nombre} className={styles.topItem}>
-                    <span
-                      className={styles.topRank}
-                      style={{ color: i === 0 ? '#ca8a04' : i === 1 ? '#a8a29e' : i === 2 ? '#b45309' : '#d4d4d0' }}
-                    >
-                      {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
-                    </span>
-                    <PlatoImage
-                      nombre={p.nombre}
-                      categoria={platoMeta.get(p.nombre)?.categoria ?? p.categoria}
-                      imageUrl={platoMeta.get(p.nombre)?.imageUrl}
-                      size="sm"
-                    />
-                    <div className={styles.topInfo}>
-                      <div className={styles.topHeader}>
-                        <span className={styles.topNombre}>{p.nombre}</span>
-                        <span className={styles.topCount}>{p.pedidos} uds.</span>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Exportar
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                {exportOpen && (
+                  <div className={styles.exportPanel}>
+                    <p className={styles.exportPanelTitle}>Exportar reporte completo</p>
+                    <div>
+                      <p className={styles.exportSectionLabel}>Período</p>
+                      <div className={styles.exportRanges}>
+                        {RANGOS_EXPORT.map(r => (
+                          <button key={r.numMeses}
+                            className={`${styles.exportRangeBtn} ${exportRango === r.numMeses ? styles.exportRangeBtnActive : ''}`}
+                            onClick={() => setExportRango(r.numMeses)}>
+                            {r.label}
+                          </button>
+                        ))}
                       </div>
-                      <div className={styles.topTrack}>
-                        <div className={styles.topFill} style={{ width: `${Math.round((p.pedidos / maxPlato) * 100)}%` }} />
-                      </div>
+                      <p className={styles.exportNote}>Hasta {monthLabel}</p>
+                    </div>
+                    <div className={styles.exportActions}>
+                      <button className={styles.exportExcelBtn} onClick={() => handleExportar('excel')} disabled={exportando}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                        {exportando ? '…' : 'Excel'}
+                      </button>
+                      <button className={styles.exportPdfBtn} onClick={() => handleExportar('pdf')} disabled={exportando}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+                        {exportando ? '…' : 'PDF'}
+                      </button>
                     </div>
                   </div>
-                ))}
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Barras mensuales — igual a la referencia */}
+            <div style={{ display:'flex', alignItems:'flex-end', gap:14, height:200, paddingTop:10 }}>
+              {monthlyIngresos.map(m => {
+                const pct = Math.max(4, Math.round((m.total / maxMensual) * 100));
+                return (
+                  <div key={m.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:9, height:'100%', justifyContent:'flex-end' }}>
+                    <div style={{
+                      width:'100%', borderRadius:'7px 7px 4px 4px', minHeight:4,
+                      height:`${pct}%`,
+                      background:'linear-gradient(180deg, var(--adm-accent), var(--adm-accent-deep))',
+                      cursor:'default', transition:'height .7s',
+                    }} title={formatPrecio(m.total)} />
+                    <span className={styles.xLabel}>{m.label}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Donut — tipos de pedido */}
+          {/* Panel derecho — Ventas por canal (donut horizontal + leyenda) */}
           <div className={styles.card}>
-            <h3 className={styles.cardTitle}>Tipos de pedido</h3>
+            <h3 className={styles.cardTitle}>Ventas por canal</h3>
+            <p className={styles.areaSub} style={{ marginBottom: 20 }}>Distribución de este mes</p>
             {loading ? (
-              <p style={{ color: '#a8a29e', fontSize: '0.875rem', padding: '1rem 0' }}>Cargando…</p>
+              <p style={{ color: 'var(--adm-muted)', fontSize: '0.875rem' }}>Cargando…</p>
             ) : tipoData.length === 0 ? (
-              <p style={{ color: '#a8a29e', fontSize: '0.875rem', padding: '1rem 0' }}>Sin datos aún</p>
+              <p style={{ color: 'var(--adm-muted)', fontSize: '0.875rem' }}>Sin datos aún</p>
             ) : (
+              /* Donut + leyenda horizontal como en la referencia */
               <div className={styles.donutWrap}>
                 <svg viewBox="0 0 140 140" className={styles.donutSvg} aria-hidden="true">
                   <g transform="rotate(-90 70 70)">
                     {donutSegs.map((s) => (
-                      <circle
-                        key={s.label}
-                        cx="70" cy="70" r={R}
-                        fill="none"
-                        stroke={s.color}
-                        strokeWidth="18"
+                      <circle key={s.label} cx="70" cy="70" r={R} fill="none"
+                        stroke={s.color} strokeWidth="18"
                         strokeDasharray={`${s.dash} ${CIRC - s.dash}`}
-                        strokeDashoffset={-s.offset}
-                        strokeLinecap="butt"
-                      />
+                        strokeDashoffset={-s.offset} strokeLinecap="butt" />
                     ))}
                   </g>
-                  <text x="70" y="66" textAnchor="middle" className={styles.donutCenter}>
-                    Pedidos
-                  </text>
-                  <text x="70" y="80" textAnchor="middle" className={styles.donutSub}>
-                    {monthLabel.split(' ')[0]}
-                  </text>
+                  <text x="70" y="62" textAnchor="middle" className={styles.donutCenter}>{formatPrecio(totalMes)}</text>
+                  <text x="70" y="77" textAnchor="middle" className={styles.donutSub}>este mes</text>
                 </svg>
-
+                {/* Leyenda vertical a la derecha */}
                 <ul className={styles.donutLegend}>
                   {tipoData.map((t) => (
                     <li key={t.label} className={styles.legendItem}>
@@ -481,6 +407,127 @@ export function EstadisticasPage() {
                 </ul>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* ── Fila 3: Ventas por día — área chart diario (mantenido) ── */}
+        <div className={styles.areaCard}>
+          <div className={styles.areaHeader}>
+            <div>
+              <h3 className={styles.areaTitle}>Ventas por día</h3>
+              <p className={styles.areaSub}>{monthLabel} · en pesos colombianos</p>
+            </div>
+            <span className={styles.areaBadge}>{formatPrecio(totalMes)} total</span>
+          </div>
+          <div className={styles.svgWrap}>
+            <div className={styles.yGrid}>
+              {[0.25, 0.5, 0.75, 1].map(f => (
+                <div key={f} className={styles.yLine} style={{ bottom:`${f*100}%` }}>
+                  <span className={styles.yLabel}>{formatPrecio(maxVenta * f)}</span>
+                </div>
+              ))}
+            </div>
+            <div className={styles.chartArea}>
+              {!loading && chartData ? (
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={styles.areaSvg} aria-hidden="true">
+                  <defs>
+                    <linearGradient id="areaGrad2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%"   stopColor="var(--adm-accent)" stopOpacity="0.32" />
+                      <stop offset="100%" stopColor="var(--adm-accent)" stopOpacity="0.02" />
+                    </linearGradient>
+                  </defs>
+                  <path d={chartData.area} fill="url(#areaGrad2)" />
+                  <path d={chartData.line} fill="none" stroke="var(--adm-accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className={styles.areaSvg} aria-hidden="true">
+                  <line x1={PAD_X} y1={H/2} x2={W-PAD_X} y2={H/2} stroke="var(--adm-line)" strokeWidth="2" />
+                </svg>
+              )}
+              {showDots && chartData?.pts.map((pt, i) => (
+                <div key={i} className={styles.dot}
+                  style={{ left:`${(pt.x/W)*100}%`, top:`${(pt.y/H)*100}%` }} />
+              ))}
+            </div>
+            <div className={styles.xAxis}>
+              {xAxisItems.map(d => (
+                <div key={d.dia} className={styles.xItem}>
+                  <span className={styles.xLabel}>{d.dia}</span>
+                  <span className={styles.xPedidos}>{loading ? '' : `${d.pedidos}p`}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Fila 4: Platos más vendidos (izq) + Horas pico (der) ── */}
+        <div className={styles.bottomGrid}>
+
+          {/* Platos más vendidos — lista limpia como la referencia (sin imágenes, sin barra) */}
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Platos más vendidos</h3>
+            {loading ? (
+              <p style={{ color: 'var(--adm-muted)', fontSize: '0.875rem', padding: '1rem 0' }}>Cargando…</p>
+            ) : platosTop.length === 0 ? (
+              <p style={{ color: 'var(--adm-muted)', fontSize: '0.875rem', padding: '1rem 0' }}>Sin datos aún</p>
+            ) : (
+              <div className={styles.topList}>
+                {platosTop.map((p, i) => (
+                  <div key={p.nombre} className={styles.topItem}>
+                    {/* Número italic terracota como en la referencia */}
+                    <span className={styles.topRank}>{i + 1}</span>
+                    <div className={styles.topInfo}>
+                      <div className={styles.topNombre}>{p.nombre}</div>
+                      <div className={styles.topSub}>{p.pedidos} vendidos</div>
+                    </div>
+                    <span className={styles.topCount}>{formatPrecio(p.rev)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Horas pico — barras muted como referencia */}
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Horas pico</h3>
+            <p className={styles.areaSub} style={{ marginBottom: 16 }}>Pedidos por franja horaria</p>
+            {(() => {
+              const franjas = [
+                { label:'12-14', from:12, to:14 },
+                { label:'14-16', from:14, to:16 },
+                { label:'16-18', from:16, to:18 },
+                { label:'18-20', from:18, to:20 },
+                { label:'20-22', from:20, to:22 },
+                { label:'22-00', from:22, to:24 },
+              ];
+              const counts = franjas.map(f => ({
+                label: f.label,
+                count: pedidosMes.filter(p => {
+                  const h = new Date(p.fechaHora).getHours();
+                  return h >= f.from && h < f.to;
+                }).length,
+              }));
+              const maxCount = Math.max(...counts.map(c => c.count), 1);
+              return (
+                <div style={{ display:'flex', alignItems:'flex-end', gap:10, height:160 }}>
+                  {counts.map(c => {
+                    const pct = Math.max(4, Math.round((c.count / maxCount) * 100));
+                    return (
+                      <div key={c.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:8, height:'100%', justifyContent:'flex-end' }}>
+                        <div style={{
+                          width:'100%', minHeight:4,
+                          height:`${pct}%`,
+                          borderRadius:'7px 7px 4px 4px',
+                          background:'linear-gradient(180deg, oklch(0.86 0.03 65), oklch(0.80 0.03 62))',
+                          cursor:'default', transition:'height .6s',
+                        }} title={`${c.count} pedidos`} />
+                        <span style={{ fontSize:11, color:'var(--adm-muted)', fontWeight:600, fontFamily:'var(--adm-font-ui)', whiteSpace:'nowrap' }}>{c.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

@@ -79,55 +79,46 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* ── Slide ─────────────────────────────────────────────────────────── */}
+      {/* ── Slide ── */}
       <div
         className={styles.slide}
-        style={{ background: `linear-gradient(135deg, ${slide.colorFrom} 0%, ${slide.colorTo} 100%)` }}
+        style={{ background: `linear-gradient(112deg, ${slide.colorFrom} 0%, ${slide.colorTo} 55%, oklch(0.18 0.035 40) 100%)` }}
       >
-        {/* Glow de fondo */}
-        <div className={styles.glow} style={{ background: slide.colorAcento }} />
-
-        {/* Contenido animado */}
+        {/* Contenido animado — grid texto|imagen */}
         <div className={styles.content} key={animKey}>
-          {/* Texto */}
+
+          {/* Texto (izquierda) */}
           <div className={styles.textSide}>
-            <span className={styles.tag} style={{ color: slide.colorAcento, borderColor: `${slide.colorAcento}44` }}>
-              {slide.tag}
-            </span>
-            <h2 className={styles.titulo}>{slide.titulo}</h2>
-            <p className={styles.subtitulo}>{slide.subtitulo}</p>
-            <button
-              className={styles.ctaBtn}
-              style={{ background: slide.colorAcento, color: isLight(slide.colorAcento) ? '#1c1917' : '#fff' }}
-              onClick={handleCta}
-            >
+            {slide.tag && (
+              <span className={styles.tag} style={{ color: slide.colorAcento, borderColor: `${slide.colorAcento}55` }}>
+                {slide.tag}
+              </span>
+            )}
+            <h2 className={styles.titulo} dangerouslySetInnerHTML={{ __html: slide.titulo }} />
+            {slide.subtitulo && <p className={styles.subtitulo}>{slide.subtitulo}</p>}
+            <button className={styles.ctaBtn} onClick={handleCta}>
               {slide.cta}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
               </svg>
             </button>
           </div>
 
-          {/* Imagen del plato */}
-          <div className={styles.imgSide}>
-            <div className={styles.imgHalo} style={{ background: `${slide.colorAcento}28` }} />
+          {/* Imagen (derecha) — llena el lado */}
+          <div
+            className={styles.imgSide}
+            style={{ '--slide-color': slide.colorFrom } as React.CSSProperties}
+          >
             {slide.imageUrl ? (
               <div className={styles.imgWrap}>
-                <img
-                  src={slide.imageUrl}
-                  alt={slide.titulo}
-                  className={styles.platoImg}
-                />
+                <img src={slide.imageUrl} alt={slide.titulo} className={styles.platoImg} />
               </div>
             ) : plato ? (
               <div className={styles.imgWrap}>
                 <PlatoImage
-                  nombre={plato.nombre}
-                  categoria={plato.categoria}
-                  imageUrl={plato.imageUrl}
-                  size="xl"
-                  className={styles.platoImg}
+                  nombre={plato.nombre} categoria={plato.categoria}
+                  imageUrl={plato.imageUrl} size="xl" className={styles.platoImg}
                 />
               </div>
             ) : (
@@ -135,23 +126,18 @@ export function MenuBanner({ platos, onPlatoClick, onCategoriaClick }: Props) {
                 {slide.ctaValor === 'Bebidas' ? '🥤' : '🍽️'}
               </div>
             )}
-            {/* Badge de tipo — ya no se usa, mantenido por compatibilidad CSS */}
           </div>
         </div>
 
-        {/* ── Controles ─────────────────────────────────────────────────── */}
+        {/* Flechas */}
         <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={handlePrev} aria-label="Anterior">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
         <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={handleNext} aria-label="Siguiente">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
 
-        {/* ── Dots ──────────────────────────────────────────────────────── */}
+        {/* Dots */}
         <div className={styles.dots}>
           {promos.map((p, i) => (
             <button

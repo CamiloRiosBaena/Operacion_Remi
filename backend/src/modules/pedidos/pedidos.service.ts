@@ -13,6 +13,7 @@ import { DetallePedido } from './entities/detalle-pedido.entity';
 import { HistorialEstado } from './entities/historial-estado.entity';
 import { TokenQr } from './entities/token-qr.entity';
 import { Plato } from '../menu/entities/plato.entity';
+import { Promo } from '../menu/entities/promo.entity';
 import { Mesa } from '../mesas/entities/mesa.entity';
 import { EstadoMesa } from '../mesas/entities/mesa.entity';
 import { Cliente } from '../auth/entities/cliente.entity';
@@ -44,6 +45,8 @@ export class PedidosService {
     private readonly tokenQrRepo: Repository<TokenQr>,
     @InjectRepository(Plato)
     private readonly platoRepo: Repository<Plato>,
+    @InjectRepository(Promo)
+    private readonly promoRepo: Repository<Promo>,
     @InjectRepository(Mesa)
     private readonly mesaRepo: Repository<Mesa>,
     @InjectRepository(Cliente)
@@ -75,21 +78,53 @@ export class PedidosService {
       if (!mesa) throw new NotFoundException(`Mesa ${dto.mesaId} no encontrada`);
     }
 
-    let totalSinIva = 0;
-    let ivaTotal = 0;
+    // Cargar promos activas indicadas por el cliente
+    const promos: Promo[] = dto.promoIds?.length
+      ? await this.promoRepo.findBy({ id: In(dto.promoIds), activo: true })
+      : [];
+
+    let totalSinIva   = 0;
+    let ivaTotal      = 0;
+    let descuentoTotal = 0;
     const detallesEntidades: DetallePedido[] = [];
 
     for (const det of dto.detalles) {
-      const plato = await this.platoRepo.findOneBy({ id: det.platoId });
+      const plato = await this.platoRepo.findOne({
+        where: { id: det.platoId },
+        relations: ['categoria'],
+      });
       if (!plato) throw new NotFoundException(`Plato ${det.platoId} no encontrado`);
       if (!plato.disponible)
         throw new BadRequestException(`El plato "${plato.nombre}" no está disponible`);
 
-      const subtotal = Number(plato.precio) * det.cantidad;
+      const subtotalBruto = Number(plato.precio) * det.cantidad;
+
+      // Buscar la promo aplicable a este plato (la primera que coincida)
+      const promo = promos.find((p) =>
+        (p.ctaAccion === 'plato'     && Number(p.ctaValor) === det.platoId) ||
+        (p.ctaAccion === 'categoria' && p.ctaValor === plato.categoria?.nombre),
+      ) ?? null;
+
+      let descuento = 0;
+      if (promo?.tipoDescuento) {
+        const val = Number(promo.valorDescuento ?? 0);
+        if (promo.tipoDescuento === 'porcentaje') {
+          descuento = subtotalBruto * (val / 100);
+        } else if (promo.tipoDescuento === '2x1') {
+          // Cada par de unidades: una va gratis
+          descuento = Number(plato.precio) * Math.floor(det.cantidad / 2);
+        } else if (promo.tipoDescuento === 'monto_fijo') {
+          descuento = Math.min(val, subtotalBruto);
+        }
+        descuento = Math.round(descuento * 100) / 100;
+      }
+
+      const subtotal = subtotalBruto - descuento;
       const montoIva = subtotal * Number(plato.tasaIva);
 
-      totalSinIva += subtotal;
-      ivaTotal    += montoIva;
+      totalSinIva    += subtotal;
+      ivaTotal       += montoIva;
+      descuentoTotal += descuento;
 
       detallesEntidades.push(
         this.detalleRepo.create({
@@ -98,6 +133,7 @@ export class PedidosService {
           personalizacion: det.personalizacion ?? null,
           subtotal,
           montoIva,
+          descuento,
         }),
       );
     }
@@ -112,6 +148,7 @@ export class PedidosService {
       totalSinIva,
       ivaTotal,
       total: totalSinIva + ivaTotal,
+      descuentoTotal,
       detalles: detallesEntidades,
     });
 
@@ -209,13 +246,8 @@ export class PedidosService {
       await this.mesaRepo.save(pedido.mesa);
     }
 
-    // Push notification: para pedidos locales que pasan a LISTO, el mensaje
-    // lo envía asignarCasilleroAutomatico (incluye el número de casillero).
-    const esListoLocal =
-      dto.estado === EstadoPedido.LISTO &&
-      (pedido.tipo === TipoPedido.MESA || pedido.tipo === TipoPedido.PARA_LLEVAR);
-
-    if (pedido.tokenSesion && !esListoLocal) {
+    // Push notification general para cualquier cambio de estado
+    if (pedido.tokenSesion) {
       const msg = MENSAJES_ESTADO[dto.estado];
       if (msg) {
         this.notiService
@@ -224,7 +256,12 @@ export class PedidosService {
       }
     }
 
-    // Auto-asignar casillero cuando un pedido local queda listo
+    // Auto-asignar casillero cuando un pedido local (mesa/llevar) queda listo.
+    // Si hay casillero disponible, envía un push adicional con el número.
+    const esListoLocal =
+      dto.estado === EstadoPedido.LISTO &&
+      (pedido.tipo === TipoPedido.MESA || pedido.tipo === TipoPedido.PARA_LLEVAR);
+
     if (esListoLocal) {
       await this.asignarCasilleroAutomatico(saved);
     }

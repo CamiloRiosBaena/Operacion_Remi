@@ -12,7 +12,7 @@ const TOOLS: Groq.Chat.Completions.ChatCompletionTool[] = [
     function: {
       name: TOOL_NAME,
       description:
-        'Agrega un plato al carrito de compras del cliente. Úsala cuando el cliente exprese intención de pedir o comprar un plato específico.',
+        'Agrega un plato al carrito. SOLO úsala cuando el cliente EXPLÍCITAMENTE diga que quiere pedir, ordenar o agregar ese plato (ej: "quiero uno", "pídeme eso", "agrégalo", "sí quiero ese", "dame X"). NUNCA la uses para simples recomendaciones, preguntas sobre el menú o cuando el cliente no haya confirmado el pedido.',
       parameters: {
         type: 'object',
         properties: {
@@ -58,8 +58,11 @@ export class AsistenteService {
   }
 
   async chat(historial: ChatMessageDto[]): Promise<ChatResponseDto> {
-    const categorias = await this.menuService.getMenuPublico();
-    const systemPrompt = this.buildSystemPrompt(categorias);
+    const [categorias, promos] = await Promise.all([
+      this.menuService.getMenuPublico(),
+      this.menuService.findActivePromos(),
+    ]);
+    const systemPrompt = this.buildSystemPrompt(categorias, promos);
 
     const messages: Groq.Chat.Completions.ChatCompletionMessageParam[] = [
       { role: 'system', content: systemPrompt },
@@ -82,7 +85,7 @@ export class AsistenteService {
     }
 
     return {
-      mensaje: choice.message.content ?? 'Lo siento, no pude procesar tu solicitud.',
+      mensaje: this.sanitizeMessage(choice.message.content),
       cartActions: [],
     };
   }
@@ -94,6 +97,13 @@ export class AsistenteService {
   ): Promise<ChatResponseDto> {
     const cartActions: CartActionDto[] = [];
     const platosDisponibles = categorias.flatMap((c) => c.platos);
+
+    // Mapa platoId → nombreCategoria para que `categoria` llegue correctamente al carrito
+    // y el CartDrawer pueda hacer matching de promos por categoría.
+    // (La relación inversa plato.categoria no se carga en getMenuPublico, así que usamos el árbol de categorias.)
+    const categoriaPorPlato = new Map<number, string>(
+      categorias.flatMap((c) => (c.platos as any[]).map((p) => [p.id as number, c.nombre as string])),
+    );
 
     const toolResults: Groq.Chat.Completions.ChatCompletionMessageParam[] = [];
 
@@ -143,7 +153,7 @@ export class AsistenteService {
         precio: precioConIva,
         cantidad: Math.max(1, args.cantidad ?? 1),
         tasaIva: 0,
-        categoria: plato.categoria?.nombre ?? '',
+        categoria: categoriaPorPlato.get(plato.id) ?? '',
         imageUrl: plato.imagenUrl ?? undefined,
         extras: extrasValidos.length ? extrasValidos : undefined,
         ingredientesRemovidos: args.ingredientesRemovidos?.length
@@ -168,38 +178,105 @@ export class AsistenteService {
     });
 
     return {
-      mensaje: segunda.choices[0].message.content ?? '¡Listo! Tu pedido fue actualizado.',
+      mensaje: this.sanitizeMessage(segunda.choices[0].message.content),
       cartActions,
     };
   }
 
-  private buildSystemPrompt(categorias: any[]): string {
-    const lineas: string[] = [];
+  /** Elimina JSON crudo / bloques de código que el LLM a veces incluye en texto natural */
+  private sanitizeMessage(raw: string | null | undefined): string {
+    if (!raw) return 'Lo siento, no pude procesar tu solicitud.';
+    let msg = raw;
+
+    // Eliminar bloques de código (```json ... ``` o ``` ... ```)
+    msg = msg.replace(/```(?:json)?\s*[\s\S]*?```/g, '');
+
+    // Eliminar objetos JSON que parecen argumentos de tool call o respuestas técnicas
+    msg = msg.replace(/\{\s*"(?:platoId|success|error|nombre|precio|cantidad|id)[\s\S]*?\}/g, '');
+
+    // Eliminar líneas que empiecen con { o contengan "platoId":
+    msg = msg
+      .split('\n')
+      .filter(l => !/^\s*\{/.test(l) && !/"platoId"\s*:/.test(l))
+      .join('\n');
+
+    // Limpiar líneas en blanco excesivas
+    msg = msg.replace(/\n{3,}/g, '\n\n').trim();
+
+    return msg || '¡Listo! Tu pedido fue actualizado.';
+  }
+
+  private buildSystemPrompt(categorias: any[], promos: any[]): string {
+    // ── Sección de menú ──
+    const platosMap = new Map<string, string>(); // ID → nombre, para resolver promos de plato
+    const menuLineas: string[] = [];
     for (const cat of categorias) {
-      lineas.push(`\n### ${cat.nombre}`);
+      menuLineas.push(`\n### ${cat.nombre}`);
       for (const p of cat.platos) {
+        platosMap.set(String(p.id), p.nombre);
         const extrasStr = p.extras?.length
           ? ` | Extras: ${p.extras.map((e: any) => `${e.nombre} (+$${Number(e.precio).toLocaleString('es-CO')})`).join(', ')}`
           : '';
         const desc = p.descripcion ? ` — ${p.descripcion}` : '';
-        lineas.push(
-          `- [ID:${p.id}] ${p.nombre}: $${Number(p.precio).toLocaleString('es-CO')}${desc}${extrasStr}`,
+        menuLineas.push(
+          `- [ID:${p.id}] ${p.nombre}: $${Math.round(Number(p.precio) * (1 + Number(p.tasaIva))).toLocaleString('es-CO')}${desc}${extrasStr}`,
         );
       }
     }
 
-    return `Eres "Remi", el asistente virtual del restaurante Operación Remi. Tu misión es ayudar a los clientes a descubrir el menú, responder preguntas sobre los platos y tomar pedidos de forma natural y amigable.
+    // ── Sección de promociones ──
+    let promoSeccion = '';
+    const promosConDescuento = promos.filter(p => p.tipoDescuento);
+    const promosInformativas = promos.filter(p => !p.tipoDescuento);
 
-MENÚ DISPONIBLE HOY:
-${lineas.join('\n')}
+    if (promos.length > 0) {
+      const pLines: string[] = [];
+
+      for (const p of promosConDescuento) {
+        let descuento = '';
+        if (p.tipoDescuento === 'porcentaje')
+          descuento = `${Number(p.valorDescuento)}% de descuento`;
+        else if (p.tipoDescuento === '2x1')
+          descuento = '2×1 (paga uno, llevas dos — el sistema lo descuenta automáticamente al tener 2+ unidades en el carrito)';
+        else if (p.tipoDescuento === 'monto_fijo')
+          descuento = `$${Number(p.valorDescuento).toLocaleString('es-CO')} de descuento fijo`;
+
+        let aplica = '';
+        if (p.ctaAccion === 'plato') {
+          const nombrePlato = platosMap.get(String(p.ctaValor)) ?? `plato ID ${p.ctaValor}`;
+          aplica = `solo en "${nombrePlato}"`;
+        } else if (p.ctaAccion === 'categoria') {
+          aplica = `en toda la categoría "${p.ctaValor}"`;
+        }
+
+        pLines.push(`- [PROMO] "${p.titulo}" (${p.tag}): ${descuento} — aplica ${aplica}.${p.subtitulo ? ' ' + p.subtitulo : ''}`);
+      }
+
+      for (const p of promosInformativas) {
+        pLines.push(`- [BANNER] "${p.titulo}": ${p.subtitulo ?? p.cta}`);
+      }
+
+      promoSeccion = `\n\nPROMOCIONES Y DESCUENTOS ACTIVOS:\n${pLines.join('\n')}`;
+    }
+
+    return `Eres "Remi", el asistente virtual del restaurante Operación Remi. Tu misión es ayudar a los clientes a descubrir el menú, responder preguntas sobre platos y promociones, y tomar pedidos de forma natural y amigable.
+
+MENÚ DISPONIBLE HOY (precios con IVA incluido):
+${menuLineas.join('\n')}${promoSeccion}
 
 REGLAS:
-1. Solo recomiendes platos que están listados en el menú de arriba.
-2. Cuando el cliente quiera pedir algo, usa la función agregarAlCarrito con los datos exactos del menú (ID, nombre, precio).
-3. Si el plato no existe en el menú, díselo amablemente y sugiere alternativas similares del menú.
-4. Si la solicitud es ambigua (ej: "el de siempre", "algo especial"), pide clarificación antes de agregar.
-5. Responde SIEMPRE en español, tono cálido y conciso.
-6. Nunca inventes precios, IDs ni platos que no estén en el menú.
-7. Si el cliente pide extras que no están listados para ese plato, infórmale que no están disponibles.`;
+1. Solo recomiendas platos que están en el menú de arriba.
+2. CRITICAL — Separación entre RECOMENDAR y PEDIR:
+   - Si el cliente pide una RECOMENDACIÓN ("recomiéndame algo", "¿qué está bueno?") → describe el plato con entusiasmo pero NO uses agregarAlCarrito. Termina preguntando si lo quiere pedir.
+   - Si el cliente CONFIRMA el pedido ("sí", "pídelo", "agrégalo", "dame X", "ponme X") → entonces sí usa agregarAlCarrito.
+3. Cuando el cliente quiera pedir algo, usa agregarAlCarrito con los datos exactos del menú.
+4. Cuando el cliente pregunte por promociones, ofertas o descuentos, describe las PROMOCIONES ACTIVAS listadas arriba con entusiasmo. Si no hay promos, díselo con amabilidad.
+5. Cuando agregues al carrito un plato que tenga una promo activa, menciónala en tu confirmación (ej: "¡Además tiene promo 2×1! Si pides 2, el descuento se aplica automáticamente en el carrito 🎉").
+6. Si el plato no existe en el menú, díselo amablemente y sugiere alternativas.
+7. Si la solicitud es ambigua, pide clarificación antes de agregar.
+8. Responde SIEMPRE en español, tono cálido y conciso.
+9. Nunca inventes precios, IDs ni platos que no estén en el menú.
+10. NUNCA incluyas JSON, bloques de código ni datos técnicos en tus respuestas. Solo lenguaje natural.
+11. Cuando uses agregarAlCarrito, tu respuesta de texto debe ser únicamente una confirmación breve y amigable. Nada más.`;
   }
 }

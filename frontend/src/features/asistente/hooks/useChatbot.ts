@@ -21,16 +21,17 @@ export function useChatbot() {
       const item = {
         platoId: action.platoId,
         nombre: action.nombre,
-        precio: action.precio,
-        tasaIva: action.tasaIva,
-        categoria: action.categoria,
+        precio: Number(action.precio),   // garantiza number, no string
+        cantidad: 1,                      // addItem acumula de 1 en 1
+        tasaIva: Number(action.tasaIva ?? 0),
+        categoria: action.categoria ?? '',
         imageUrl: action.imageUrl,
         extras: action.extras,
         ingredientesRemovidos: action.ingredientesRemovidos,
         nota: action.nota,
       };
-      // Llama addItem `cantidad` veces para respetar la lógica del contexto
-      for (let i = 0; i < action.cantidad; i++) {
+      const veces = Math.max(1, action.cantidad ?? 1);
+      for (let i = 0; i < veces; i++) {
         carrito.addItem(item);
       }
     },

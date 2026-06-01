@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
+import './features/admin/styles/admin.css';
 import App from './App.tsx';
 import { AuthProvider } from './features/auth/context/AuthContext.tsx';
 import { CarritoProvider } from './features/carrito/context/CarritoContext.tsx';

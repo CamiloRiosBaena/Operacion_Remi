@@ -59,13 +59,22 @@ export function usePushNotifications(): UsePushResult {
       });
 
       const tokenSesion = getGuestToken();
-      if (!tokenSesion) return false;
+      if (!tokenSesion) {
+        console.warn('[Push] No hay tokenSesion — crea un pedido antes de suscribirte');
+        return false;
+      }
 
-      await fetch(`${API_URL}/auth/sesiones/push`, {
+      const res = await fetch(`${API_URL}/auth/sesiones/push`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tokenSesion, suscripcion: suscripcion.toJSON() }),
       });
+
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.warn(`[Push] Registro falló ${res.status}:`, body);
+        return false;
+      }
 
       return true;
     } catch (err) {

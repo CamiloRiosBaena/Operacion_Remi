@@ -79,11 +79,13 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
   }
 
   return (
-    <div className={styles.backdrop} onClick={onClose}>
+    <div
+      className={styles.backdrop}
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
       <div
         className={styles.sheet}
         ref={sheetRef}
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label={plato.nombre}

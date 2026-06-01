@@ -163,6 +163,41 @@
 }
 .btnRemove:hover { color: #b91c1c; background: #fef2f2; }
 
+/* Tag de promo aplicada */
+.promoTag {
+  font-size: 0.75rem;
+  color: #16a34a;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+  background: #f0fdf4;
+  border-radius: 5px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+/* Precio tachado + precio final */
+.itemSubtotalWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+.itemSubtotalOld {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #a8a29e;
+  text-decoration: line-through;
+}
+
+/* Descuento en total */
+.descuentoRow { }
+.descuentoValue {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
 /* Tags de personalización */
 .personTag {
   font-size: 0.75rem;
@@ -667,6 +702,116 @@
 }
 .btnEfectivo:hover:not(:disabled) { background: #dcfce7; border-color: #15803d; }
 .btnEfectivo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Pasarela simulada de tarjeta ── */
+.cardFormHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.cardFormBackBtn {
+  font-size: 0.8125rem;
+  color: #78716c;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+.cardFormBackBtn:hover { color: #1c1917; }
+.cardFormTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1c1917;
+}
+.cardForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.cardInput {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  color: #1c1917;
+  background: #fafaf8;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.04em;
+}
+.cardInput:focus {
+  border-color: #d4500a;
+  box-shadow: 0 0 0 3px rgba(212, 80, 10, 0.1);
+  background: #fff;
+}
+.cardInput::placeholder { color: #a8a29e; font-family: inherit; letter-spacing: normal; }
+.cardRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+/* Overlay de procesamiento */
+.payingOverlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.875rem;
+  padding: 1.5rem 0;
+  color: #78716c;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.payingNote {
+  font-size: 0.75rem;
+  color: #a8a29e;
+  margin: 0;
+}
+.payingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #f0efee;
+  border-top-color: #d4500a;
+  border-radius: 50%;
+  animation: cartSpin 0.75s linear infinite;
+}
+@keyframes cartSpin { to { transform: rotate(360deg); } }
+
+/* ── Push opt-in ── */
+.pushBanner {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+.btnPush {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #d97706;
+  border-radius: 12px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btnPush:hover { background: #fef3c7; border-color: #b45309; }
+.pushGranted {
+  font-size: 0.8125rem;
+  color: #15803d;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 0.625rem 0.875rem;
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+}
 
 /* ── Paso confirmado (efectivo) ── */
 .confirmadoStep {

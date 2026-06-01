@@ -56,4 +56,10 @@ export class CreatePedidoDto {
   @ValidateNested({ each: true })
   @Type(() => CreateDetalleDto)
   detalles: CreateDetalleDto[];
+
+  /** IDs de las promos activas a aplicar en este pedido. */
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  promoIds?: number[];
 }

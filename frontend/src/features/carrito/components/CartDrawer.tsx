@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useCarrito } from '../context/CarritoContext';
 import { useAuth } from '@/features/auth/context/AuthContext';
+import { usePromos } from '@/features/menu/context/PromosContext';
+import { calcularDescuento } from '@/features/menu/types/promo.types';
+import type { Promo } from '@/features/menu/types/promo.types';
 import { PlatoImage } from '@/shared/components/PlatoImage';
 import {
   fetchMesas,
@@ -38,7 +41,49 @@ type Step = 'carrito' | 'checkout' | 'pago' | 'confirmado';
 export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
   const { items, count, total, removeItem, updateCantidad, clearCart } = useCarrito();
   const { user } = useAuth();
+  const { promos } = usePromos();
   const { permission, requestPush, swReady } = usePushNotifications();
+
+  // ── Cálculo de descuentos por promos activas ──────────────────────────────
+  /** Para cada cartItemKey → promo aplicable (si tiene descuento configurado) */
+  const promosPorItem = useMemo(() => {
+    const map = new Map<string, Promo>();
+    for (const item of items) {
+      const promo = promos.find(
+        (p) =>
+          p.activo &&
+          p.tipoDescuento &&
+          ((p.ctaAccion === 'plato' && p.ctaValor === String(item.platoId)) ||
+            (p.ctaAccion === 'categoria' && p.ctaValor === item.categoria)),
+      );
+      if (promo) map.set(item.cartItemKey, promo);
+    }
+    return map;
+  }, [items, promos]);
+
+  const descuentoPorItem = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of items) {
+      const promo = promosPorItem.get(item.cartItemKey);
+      if (promo) {
+        map.set(item.cartItemKey, calcularDescuento(promo, item.precio, item.cantidad));
+      }
+    }
+    return map;
+  }, [items, promosPorItem]);
+
+  const descuentoTotal = useMemo(
+    () => [...descuentoPorItem.values()].reduce((s, v) => s + v, 0),
+    [descuentoPorItem],
+  );
+
+  /** IDs únicos de promos aplicadas al carrito actual */
+  const promoIdsAplicadas = useMemo(
+    () => [...new Set([...promosPorItem.values()].map((p) => p.id))],
+    [promosPorItem],
+  );
+
+  const totalConDescuento = total - descuentoTotal;
 
   const [step, setStep]               = useState<Step>('carrito');
   const [tipo, setTipo]               = useState<TipoPedido>(mesaQr ? 'mesa' : 'llevar');
@@ -54,6 +99,14 @@ export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
   const [errorPago, setErrorPago]                 = useState('');
   const [pedidoConfirmado, setPedidoConfirmado]   = useState<ConfirmarPagoResponse | null>(null);
   const [qrToken, setQrToken]                     = useState<string | null>(null);
+
+  // ── Pasarela simulada de tarjeta ──
+  const [showCardForm,      setShowCardForm     ] = useState(false);
+  const [cardNum,           setCardNum          ] = useState('');
+  const [cardName,          setCardName         ] = useState('');
+  const [cardExpiry,        setCardExpiry       ] = useState('');
+  const [cardCVV,           setCardCVV          ] = useState('');
+  const [simulatingPayment, setSimulatingPayment] = useState(false);
 
   // Cargar QR cuando el pedido queda confirmado (efectivo)
   useEffect(() => {
@@ -95,6 +148,9 @@ export function CartDrawer({ open, onClose, mesaQr, onPedidoCreado }: Props) {
           setCargandoPago(false);
           setCargandoEfectivo(false);
           setPedidoConfirmado(null);
+          setShowCardForm(false);
+          setCardNum(''); setCardName(''); setCardExpiry(''); setCardCVV('');
+          setSimulatingPayment(false);
         }
       }, 300);
     }
@@ -136,6 +192,7 @@ async function handleLanzarPago() {
       direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
       tokenSesion:      tokenSesion ?? undefined,
       detalles,
+      promoIds:         promoIdsAplicadas.length ? promoIdsAplicadas : undefined,
     });
 
     window.open(data.checkoutUrl, '_blank', 'noopener,noreferrer');
@@ -168,6 +225,7 @@ async function handlePagarEfectivo() {
       direccionEntrega: tipo === 'domicilio' ? direccion : undefined,
       tokenSesion:      tokenSesion ?? undefined,
       detalles,
+      promoIds:         promoIdsAplicadas.length ? promoIdsAplicadas : undefined,
     });
 
     clearCart();
@@ -181,6 +239,26 @@ async function handlePagarEfectivo() {
     setCargandoEfectivo(false);
   }
 }
+
+  // ── Helpers de la pasarela simulada ──
+  function handleCardNumChange(e: { target: { value: string } }) {
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+    setCardNum(raw.replace(/(.{4})/g, '$1 ').trim());
+  }
+  function handleExpiryChange(e: { target: { value: string } }) {
+    const raw = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCardExpiry(raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw);
+  }
+  async function handlePagarSimulado(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSimulatingPayment(true);
+    try {
+      await new Promise<void>(r => setTimeout(r, 2400));
+      await handlePagarEfectivo();
+    } finally {
+      setSimulatingPayment(false);
+    }
+  }
 
   return (
     <>
@@ -223,7 +301,9 @@ async function handlePagarEfectivo() {
                 <ul className={styles.list}>
                   {items.map((item) => {
                     const extrasActivos = item.extras ?? [];
-                    const subtotal = itemTotal(item.precio, extrasActivos, item.cantidad);
+                    const subtotal  = itemTotal(item.precio, extrasActivos, item.cantidad);
+                    const descuento = descuentoPorItem.get(item.cartItemKey) ?? 0;
+                    const promo     = promosPorItem.get(item.cartItemKey);
                     return (
                       <li key={item.cartItemKey} className={styles.item}>
                         <PlatoImage nombre={item.nombre} categoria={item.categoria ?? 'Platos fuertes'} imageUrl={item.imageUrl} size="sm" />
@@ -236,6 +316,11 @@ async function handlePagarEfectivo() {
                               </svg>
                             </button>
                           </div>
+                          {promo && (
+                            <p className={styles.promoTag}>
+                              🏷️ {promo.tag} · −{formatPrecio(descuento)}
+                            </p>
+                          )}
                           {extrasActivos.length > 0 && (
                             <p className={styles.personTag}>+ {extrasActivos.map((e) => `${e.nombre} ×${e.cantidad}`).join(', ')}</p>
                           )}
@@ -249,7 +334,10 @@ async function handlePagarEfectivo() {
                               <span className={styles.qty}>{item.cantidad}</span>
                               <button className={styles.btnQty} onClick={() => updateCantidad(item.cartItemKey, item.cantidad + 1)}>+</button>
                             </div>
-                            <span className={styles.itemSubtotal}>{formatPrecio(subtotal)}</span>
+                            <div className={styles.itemSubtotalWrap}>
+                              {descuento > 0 && <span className={styles.itemSubtotalOld}>{formatPrecio(subtotal)}</span>}
+                              <span className={styles.itemSubtotal}>{formatPrecio(subtotal - descuento)}</span>
+                            </div>
                           </div>
                         </div>
                       </li>
@@ -261,9 +349,21 @@ async function handlePagarEfectivo() {
 
             {items.length > 0 && (
               <div className={styles.footer}>
+                {descuentoTotal > 0 && (
+                  <>
+                    <div className={styles.totalRow} style={{ opacity: 0.6 }}>
+                      <span className={styles.totalLabel}>Subtotal</span>
+                      <span className={styles.totalValue}>{formatPrecio(total)}</span>
+                    </div>
+                    <div className={`${styles.totalRow} ${styles.descuentoRow}`}>
+                      <span className={styles.totalLabel}>🏷️ Descuento promo</span>
+                      <span className={styles.descuentoValue}>−{formatPrecio(descuentoTotal)}</span>
+                    </div>
+                  </>
+                )}
                 <div className={styles.totalRow}>
                   <span className={styles.totalLabel}>Total</span>
-                  <span className={styles.totalValue}>{formatPrecio(total)}</span>
+                  <span className={styles.totalValue}>{formatPrecio(totalConDescuento)}</span>
                 </div>
                 <button className={styles.btnPagar} onClick={() => setStep('checkout')}>
                   Proceder al pago →
@@ -338,15 +438,25 @@ async function handlePagarEfectivo() {
                 {/* Resumen */}
                 <div className={styles.resumen}>
                   <p className={styles.resumenTitle}>Resumen</p>
-                  {items.map((item) => (
-                    <div key={item.cartItemKey} className={styles.resumenRow}>
-                      <span>{item.nombre} ×{item.cantidad}</span>
-                      <span>{formatPrecio(itemTotal(item.precio, item.extras ?? [], item.cantidad))}</span>
+                  {items.map((item) => {
+                    const desc = descuentoPorItem.get(item.cartItemKey) ?? 0;
+                    const sub  = itemTotal(item.precio, item.extras ?? [], item.cantidad);
+                    return (
+                      <div key={item.cartItemKey} className={styles.resumenRow}>
+                        <span>{item.nombre} ×{item.cantidad}</span>
+                        <span>{formatPrecio(sub - desc)}</span>
+                      </div>
+                    );
+                  })}
+                  {descuentoTotal > 0 && (
+                    <div className={`${styles.resumenRow} ${styles.descuentoRow}`}>
+                      <span>🏷️ Descuentos aplicados</span>
+                      <span className={styles.descuentoValue}>−{formatPrecio(descuentoTotal)}</span>
                     </div>
-                  ))}
+                  )}
                   <div className={`${styles.resumenRow} ${styles.resumenTotal}`}>
                     <span>Total (IVA inc.)</span>
-                    <span>{formatPrecio(total)}</span>
+                    <span>{formatPrecio(totalConDescuento)}</span>
                   </div>
                 </div>
 
@@ -358,7 +468,7 @@ async function handlePagarEfectivo() {
 
             <div className={styles.footer}>
               <button className={styles.btnPagar} onClick={handleIrAPago}>
-                Ir a pagar — {formatPrecio(total)}
+                Ir a pagar — {formatPrecio(totalConDescuento)}
               </button>
             </div>
           </>
@@ -385,7 +495,7 @@ async function handlePagarEfectivo() {
                 {/* Resumen del total */}
                 <div className={styles.pagoTotal}>
                   <span className={styles.pagoTotalLabel}>Total a pagar</span>
-                  <span className={styles.pagoTotalVal}>{formatPrecio(total)}</span>
+                  <span className={styles.pagoTotalVal}>{formatPrecio(totalConDescuento)}</span>
                 </div>
 
                 {/* Métodos aceptados */}
@@ -419,26 +529,60 @@ async function handlePagarEfectivo() {
             </div>
 
             <div className={styles.footer}>
-              <button
-                className={styles.btnPagar}
-                onClick={handleLanzarPago}
-                disabled={cargandoPago || cargandoEfectivo}
-              >
-                {cargandoPago
-                  ? 'Redirigiendo a Mercado Pago…'
-                  : `Pagar con Mercado Pago — ${formatPrecio(total)}`}
-              </button>
-              <div className={styles.dividerOr}>
-                <span>o</span>
-              </div>
-              <button
-                className={styles.btnEfectivo}
-                onClick={handlePagarEfectivo}
-                disabled={cargandoPago || cargandoEfectivo}
-              >
-                {cargandoEfectivo ? 'Registrando pedido…' : '💵 Pagar en caja (efectivo)'}
-              </button>
-              <p className={styles.payNote}>Serás redirigido al checkout seguro de Mercado Pago</p>
+              {showCardForm ? (
+                simulatingPayment ? (
+                  <div className={styles.payingOverlay}>
+                    <div className={styles.payingSpinner} />
+                    <p>Procesando pago seguro…</p>
+                    <p className={styles.payingNote}>No cierres esta ventana</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className={styles.cardFormHeader}>
+                      <button type="button" className={styles.cardFormBackBtn} onClick={() => setShowCardForm(false)}>
+                        ← Volver
+                      </button>
+                      <span className={styles.cardFormTitle}>💳 Datos de tarjeta</span>
+                    </div>
+                    <form className={styles.cardForm} onSubmit={handlePagarSimulado}>
+                      <input className={styles.cardInput} type="text" placeholder="1234 5678 9012 3456"
+                        value={cardNum} onChange={handleCardNumChange} maxLength={19} required autoComplete="cc-number" />
+                      <input className={styles.cardInput} type="text" placeholder="NOMBRE DEL TITULAR"
+                        value={cardName} onChange={e => setCardName(e.target.value.toUpperCase())} required autoComplete="cc-name" />
+                      <div className={styles.cardRow}>
+                        <input className={styles.cardInput} type="text" placeholder="MM/AA"
+                          value={cardExpiry} onChange={handleExpiryChange} maxLength={5} required autoComplete="cc-exp" />
+                        <input className={styles.cardInput} type="password" placeholder="CVV"
+                          value={cardCVV} onChange={e => setCardCVV(e.target.value.replace(/\D/g, '').slice(0, 4))} maxLength={4} required autoComplete="cc-csc" />
+                      </div>
+                      <button type="submit" className={styles.btnPagar} disabled={cargandoEfectivo}>
+                        {cargandoEfectivo ? 'Registrando…' : `🔒 Pagar ${formatPrecio(totalConDescuento)}`}
+                      </button>
+                    </form>
+                  </>
+                )
+              ) : (
+                <>
+                  <button
+                    className={styles.btnPagar}
+                    onClick={handleLanzarPago}
+                    disabled={cargandoPago || cargandoEfectivo}
+                  >
+                    {cargandoPago
+                      ? 'Redirigiendo a Mercado Pago…'
+                      : `Pagar con Mercado Pago — ${formatPrecio(totalConDescuento)}`}
+                  </button>
+                  <div className={styles.dividerOr}><span>o</span></div>
+                  <button
+                    className={styles.btnEfectivo}
+                    onClick={() => setShowCardForm(true)}
+                    disabled={cargandoPago}
+                  >
+                    💳 Pagar con tarjeta
+                  </button>
+                  <p className={styles.payNote}>Pago procesado de forma segura por Mercado Pago</p>
+                </>
+              )}
             </div>
           </>
         )}
@@ -464,7 +608,7 @@ async function handlePagarEfectivo() {
                   </svg>
                 </div>
                 <h3 className={styles.confirmadoTitle}>¡Pedido enviado a cocina!</h3>
-                <p className={styles.confirmadoSub}>Paga en caja al retirar tu pedido.</p>
+                <p className={styles.confirmadoSub}>Acércate al mostrador cuando esté listo para recogerlo.</p>
 
                 <div className={styles.confirmadoBox}>
                   <div className={styles.confirmadoRow}>
@@ -488,6 +632,19 @@ async function handlePagarEfectivo() {
                     <span className={styles.confirmadoRef}>{pedidoConfirmado.referencia}</span>
                   </div>
                 </div>
+
+                {/* Opt-in notificaciones push */}
+                {swReady && permission !== 'granted' && permission !== 'denied' && permission !== 'unsupported' && (
+                  <div className={styles.pushBanner}>
+                    {!pushSolicitado ? (
+                      <button className={styles.btnPush} onClick={handleSolicitarPush}>
+                        🔔 Avísame cuando mi pedido esté listo
+                      </button>
+                    ) : (
+                      <p className={styles.pushGranted}>✅ Te notificaremos cuando cambie el estado de tu pedido</p>
+                    )}
+                  </div>
+                )}
 
                 {qrToken && (
                   <div className={styles.confirmadoQr}>

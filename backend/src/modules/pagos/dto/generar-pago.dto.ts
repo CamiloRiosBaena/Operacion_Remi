@@ -43,4 +43,9 @@ export class GenerarPagoDto {
   @ValidateNested({ each: true })
   @Type(() => DetalleGenerarDto)
   detalles: DetalleGenerarDto[];
+
+  @IsOptional()
+  @IsArray()
+  @IsInt({ each: true })
+  promoIds?: number[];
 }

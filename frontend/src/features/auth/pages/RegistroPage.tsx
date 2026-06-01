@@ -62,13 +62,6 @@ export function RegistroPage() {
           <p className={styles.subtitle}>Accede a recomendaciones y seguimiento de tus pedidos</p>
         </div>
 
-        {/* Beneficios */}
-        <ul className={styles.beneficios}>
-          <li>✅ Historial de pedidos y favoritos</li>
-          <li>✅ Recomendaciones personalizadas</li>
-          <li>✅ Seguimiento en tiempo real</li>
-        </ul>
-
         {/* Formulario */}
         <form onSubmit={handleSubmit} className={styles.form} noValidate>
           <div className={styles.field}>

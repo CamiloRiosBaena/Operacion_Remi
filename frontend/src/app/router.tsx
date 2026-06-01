@@ -18,6 +18,7 @@ import { ConfirmarEntregaPage } from '@/features/confirmar-entrega/ConfirmarEntr
 import { MiPedidoPage } from '@/features/pedido/MiPedidoPage';
 import { PagoResultadoPage } from '@/features/pago/pages/PagoResultadoPage';
 import { PromosAdmin } from '@/features/admin/pages/PromosAdmin';
+import { EntregaLocalAdminPage } from '@/features/admin/pages/EntregaLocalAdminPage';
 import RemiLandingPage from '@/features/landingpages/Pages/RemiLandingPage';
 //import { RoleRedirect } from './RoleRedirect';
 
@@ -53,6 +54,7 @@ export const router = createBrowserRouter([
   { path: '/admin/ingredientes',  element: <AdminRoute><IngredientesGestion /></AdminRoute> },
   { path: '/admin/mesas',         element: <AdminRoute><MesasAdmin /></AdminRoute> },
   { path: '/admin/promos',        element: <AdminRoute><PromosAdmin /></AdminRoute> },
+  { path: '/admin/local',         element: <AdminRoute><EntregaLocalAdminPage /></AdminRoute> },
 
   // ── Staff ──────────────────────────────────────────────────────
   { path: '/cocina',           element: <ProtectedRoute allowedRoles={['cocinero']}><CocinaDashboard /></ProtectedRoute> },

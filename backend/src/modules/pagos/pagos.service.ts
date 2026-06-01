@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Pago, EstadoPago, MetodoPago } from '../pedidos/entities/pago.entity';
 import { Plato } from '../menu/entities/plato.entity';
+import { Promo } from '../menu/entities/promo.entity';
 import { PedidosService } from '../pedidos/pedidos.service';
 
 import { GenerarPagoDto } from './dto/generar-pago.dto';
@@ -56,6 +57,8 @@ export class PagosService {
     private readonly pagoRepo: Repository<Pago>,
     @InjectRepository(Plato)
     private readonly platoRepo: Repository<Plato>,
+    @InjectRepository(Promo)
+    private readonly promoRepo: Repository<Promo>,
     private readonly pedidosService: PedidosService,
     private readonly config: ConfigService,
   ) {
@@ -72,16 +75,43 @@ export class PagosService {
       throw new BadRequestException('Un pedido a domicilio requiere direccionEntrega');
 
     // Calcular total desde precios reales (sin confiar en el frontend)
+    const promos: Promo[] = dto.promoIds?.length
+      ? await this.promoRepo.findBy({ id: In(dto.promoIds), activo: true })
+      : [];
+
     let totalSinIva = 0;
     let ivaTotal = 0;
 
     for (const det of dto.detalles) {
-      const plato = await this.platoRepo.findOneBy({ id: det.platoId });
+      const plato = await this.platoRepo.findOne({
+        where: { id: det.platoId },
+        relations: ['categoria'],
+      });
       if (!plato) throw new NotFoundException(`Plato ${det.platoId} no encontrado`);
       if (!plato.disponible)
         throw new BadRequestException(`El plato "${plato.nombre}" no está disponible`);
 
-      const subtotal = Number(plato.precio) * det.cantidad;
+      const subtotalBruto = Number(plato.precio) * det.cantidad;
+
+      const promo = promos.find((p) =>
+        (p.ctaAccion === 'plato'     && Number(p.ctaValor) === det.platoId) ||
+        (p.ctaAccion === 'categoria' && p.ctaValor === (plato.categoria as any)?.nombre),
+      );
+
+      let descuento = 0;
+      if (promo?.tipoDescuento) {
+        const val = Number(promo.valorDescuento ?? 0);
+        if (promo.tipoDescuento === 'porcentaje') {
+          descuento = subtotalBruto * (val / 100);
+        } else if (promo.tipoDescuento === '2x1') {
+          descuento = Number(plato.precio) * Math.floor(det.cantidad / 2);
+        } else if (promo.tipoDescuento === 'monto_fijo') {
+          descuento = Math.min(val, subtotalBruto);
+        }
+        descuento = Math.round(descuento * 100) / 100;
+      }
+
+      const subtotal = subtotalBruto - descuento;
       totalSinIva += subtotal;
       ivaTotal += subtotal * Number(plato.tasaIva);
     }
@@ -191,6 +221,7 @@ export class PagosService {
       direccionEntrega: datosCarrito.direccionEntrega,
       tokenSesion: datosCarrito.tokenSesion,
       detalles: datosCarrito.detalles,
+      promoIds: datosCarrito.promoIds,
     });
 
     // 5. Actualizar pago
@@ -219,16 +250,43 @@ export class PagosService {
     if (dto.tipo === TipoPedido.DOMICILIO && !dto.direccionEntrega)
       throw new BadRequestException('Un pedido a domicilio requiere direccionEntrega');
 
+    const promosEf: Promo[] = dto.promoIds?.length
+      ? await this.promoRepo.findBy({ id: In(dto.promoIds), activo: true })
+      : [];
+
     let totalSinIva = 0;
     let ivaTotal = 0;
 
     for (const det of dto.detalles) {
-      const plato = await this.platoRepo.findOneBy({ id: det.platoId });
+      const plato = await this.platoRepo.findOne({
+        where: { id: det.platoId },
+        relations: ['categoria'],
+      });
       if (!plato) throw new NotFoundException(`Plato ${det.platoId} no encontrado`);
       if (!plato.disponible)
         throw new BadRequestException(`El plato "${plato.nombre}" no está disponible`);
 
-      const subtotal = Number(plato.precio) * det.cantidad;
+      const subtotalBruto = Number(plato.precio) * det.cantidad;
+
+      const promo = promosEf.find((p) =>
+        (p.ctaAccion === 'plato'     && Number(p.ctaValor) === det.platoId) ||
+        (p.ctaAccion === 'categoria' && p.ctaValor === (plato.categoria as any)?.nombre),
+      );
+
+      let descuento = 0;
+      if (promo?.tipoDescuento) {
+        const val = Number(promo.valorDescuento ?? 0);
+        if (promo.tipoDescuento === 'porcentaje') {
+          descuento = subtotalBruto * (val / 100);
+        } else if (promo.tipoDescuento === '2x1') {
+          descuento = Number(plato.precio) * Math.floor(det.cantidad / 2);
+        } else if (promo.tipoDescuento === 'monto_fijo') {
+          descuento = Math.min(val, subtotalBruto);
+        }
+        descuento = Math.round(descuento * 100) / 100;
+      }
+
+      const subtotal = subtotalBruto - descuento;
       totalSinIva += subtotal;
       ivaTotal += subtotal * Number(plato.tasaIva);
     }
@@ -243,6 +301,7 @@ export class PagosService {
       direccionEntrega: dto.direccionEntrega,
       tokenSesion: dto.tokenSesion,
       detalles: dto.detalles,
+      promoIds: dto.promoIds,
     });
 
     await this.pagoRepo.save(

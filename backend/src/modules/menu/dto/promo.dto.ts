@@ -7,6 +7,7 @@ import {
   Matches,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
@@ -47,6 +48,15 @@ export class CreatePromoDto {
 
   @IsOptional() @IsString()
   imageUrl?: string | null;
+
+  @IsOptional()
+  @IsIn(['porcentaje', '2x1', 'monto_fijo', null])
+  tipoDescuento?: 'porcentaje' | '2x1' | 'monto_fijo' | null;
+
+  /** Requerido cuando tipoDescuento es 'porcentaje' o 'monto_fijo'. */
+  @ValidateIf((o) => o.tipoDescuento === 'porcentaje' || o.tipoDescuento === 'monto_fijo')
+  @IsNumber() @Min(0)
+  valorDescuento?: number | null;
 }
 
 export class UpdatePromoDto {
@@ -85,4 +95,12 @@ export class UpdatePromoDto {
 
   @IsOptional() @IsString()
   imageUrl?: string | null;
+
+  @IsOptional()
+  @IsIn(['porcentaje', '2x1', 'monto_fijo', null])
+  tipoDescuento?: 'porcentaje' | '2x1' | 'monto_fijo' | null;
+
+  @IsOptional()
+  @IsNumber() @Min(0)
+  valorDescuento?: number | null;
 }

@@ -1,394 +1,105 @@
-/* ═══════════════════════════════════════════
-   MESAS Y QR — Remi Design System
-   ═══════════════════════════════════════════ */
+/* MesasAdmin — diseño fiel a la referencia */
+.wrapper { display: flex; flex-direction: column; gap: 18px; }
 
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* ── Resumen ── */
-.resumen {
-  display: flex;
-  gap: 1rem;
-}
-
-.resumenCard {
-  flex: 1;
-  background: var(--card-bg);
-  border: 1px solid var(--line-light);
-  border-radius: var(--radius-card);
-  padding: 1rem 1.25rem;
-  text-align: center;
-  box-shadow: var(--shadow-card);
-}
-
-.resumenNum {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  font-style: italic;
-  color: var(--text-primary);
-  line-height: 1;
-}
-
-.resumenLabel {
-  display: block;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-
-/* ── Crear mesa ── */
-.crearWrap {
-  background: var(--card-bg);
-  border: 1px solid var(--line-light);
-  border-radius: var(--radius-card);
-  padding: 1.25rem 1.5rem;
-  box-shadow: var(--shadow-card);
-}
-
-.crearTitle {
-  font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  font-style: italic;
-  color: var(--text-primary);
-  margin: 0 0 0.75rem;
-}
-
-.crearRow {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.input {
-  flex: 1;
-  border: 1.5px solid var(--line-light);
-  border-radius: 10px;
-  padding: 0.55rem 0.875rem;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-  background: var(--cream);
-  font-family: var(--font-body);
-  transition: border-color 0.15s, box-shadow 0.15s;
-}
-
-.input:focus {
-  outline: none;
-  border-color: var(--ember);
-  background: var(--card-bg);
-  box-shadow: 0 0 0 3px rgba(212,80,10,0.1);
-}
-
-.btnCrear {
-  background: linear-gradient(135deg, var(--ember), var(--ember-glow));
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 0.5rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 2px 10px rgba(212,80,10,0.35);
-  transition: opacity 0.15s, box-shadow 0.15s;
-}
-
-.btnCrear:hover:not(:disabled) {
-  opacity: 0.9;
-  box-shadow: 0 4px 16px rgba(212,80,10,0.45);
-}
-
-.btnCrear:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.errorMsg {
-  color: #b91c1c;
-  font-size: 0.85rem;
-  margin: 0.5rem 0 0;
-  font-weight: 500;
-}
-
-/* ── Grid ── */
+/* Grid de cards */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1rem;
-  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
+/* Card */
 .card {
-  background: var(--card-bg);
-  border: 1.5px solid var(--line-light);
-  border-radius: var(--radius-card);
-  padding: 1.25rem;
+  background: var(--adm-card);
+  border: 1px solid var(--adm-line);
+  border-radius: var(--adm-r-lg);
+  padding: 18px;
+  box-shadow: var(--adm-shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 0.15s, border-color 0.15s;
+  gap: 0;
+  transition: box-shadow .22s var(--adm-ease), transform .22s var(--adm-ease);
 }
+.card:hover { box-shadow: var(--adm-shadow-lg); transform: translateY(-3px); }
 
-.card:hover {
-  box-shadow: 0 4px 16px rgba(14,8,4,0.1);
-  border-color: var(--line);
-}
-
-.cardActive {
-  border-color: var(--ember) !important;
-  box-shadow: 0 0 0 3px rgba(212,80,10,0.12), var(--shadow-card) !important;
-}
-
-/* ── Card header ── */
-.cardHeader {
+/* Top row: tile + chip */
+.cardTop {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-.cardTitle {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  flex-wrap: wrap;
-}
-
+/* "Mesa X" — grande, italic, Playfair */
 .mesaNum {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-family: var(--adm-font-display);
   font-style: italic;
-  color: var(--text-primary);
-}
-
-.estadoBadge {
-  font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-pill);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.btnDelete {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1rem;
-  opacity: 0.4;
-  padding: 0.125rem;
+  font-size: 36px;
+  color: var(--adm-ink);
   line-height: 1;
-  transition: opacity 0.15s;
+  margin-bottom: 10px;
 }
 
-.btnDelete:hover { opacity: 1; }
-
-/* ── Estado select ── */
-.estadoRow {
+/* Cart + pedidos count */
+.pedidosRow {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--adm-muted);
+}
+.pedidosRow svg { flex-shrink: 0; }
+.pedidosText {
+  font-size: 13px;
+  font-family: var(--adm-font-ui);
+  color: var(--adm-muted);
 }
 
-.estadoLabel {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  white-space: nowrap;
+/* Bottom actions: Ver QR (flex) + download + edit */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
 }
-
-.estadoSelect {
+.btnVerQr {
   flex: 1;
-  border: 1.5px solid var(--line-light);
-  border-radius: 8px;
-  padding: 0.3rem 0.5rem;
-  font-size: 0.85rem;
-  color: var(--text-primary);
-  background: var(--cream);
-  font-family: var(--font-body);
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-
-.estadoSelect:focus {
-  outline: none;
-  border-color: var(--ember);
-}
-
-/* ── Botón QR ── */
-.btnQr {
-  background: var(--cream);
-  border: 1.5px solid var(--line-light);
-  border-radius: 10px;
-  padding: 0.45rem 0.875rem;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--bark);
-  font-family: var(--font-body);
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.btnQr:hover {
-  background: var(--ember-soft);
-  border-color: var(--ember);
-  color: var(--ember);
-}
-
-.btnQrActive {
-  background: var(--ember-soft) !important;
-  border-color: var(--ember) !important;
-  color: var(--ember) !important;
-  font-weight: 600 !important;
-}
-
-/* ── Modal overlay ── */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14, 8, 4, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
-  padding: 1rem;
-  backdrop-filter: blur(2px);
+  gap: 7px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--adm-line);
+  background: var(--adm-bg-2);
+  color: var(--adm-ink-soft);
+  cursor: pointer;
+  font-family: var(--adm-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all .18s var(--adm-ease);
 }
+.btnVerQr svg { width: 15px; height: 15px; }
+.btnVerQr:hover { background: var(--adm-accent-soft); color: var(--adm-accent-deep); border-color: var(--adm-accent); }
 
-.modalBox {
-  background: var(--card-bg);
-  border: 1.5px solid var(--line);
-  border-radius: var(--radius-card);
-  padding: 1.75rem 2rem;
-  box-shadow: 0 8px 48px rgba(14,8,4,0.28);
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  width: 100%;
-  max-width: 400px;
-  animation: modalIn 0.18s ease;
+/* Modal de agregar mesa */
+.crearTitle {
+  font-family: var(--adm-font-display);
+  font-style: italic; font-weight: 600;
+  font-size: 18px; color: var(--adm-ink); margin-bottom: 14px;
 }
+.crearRow { display: flex; gap: 10px; align-items: center; }
 
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* ── Modal header ── */
+/* QR modal */
 .qrPanelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--adm-line);
 }
-
-.qrPanelInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
 .qrPanelTitle {
-  font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 600;
-  font-style: italic;
-  color: var(--text-primary);
-  letter-spacing: 0.01em;
+  font-family: var(--adm-font-display); font-style: italic; font-weight: 600;
+  font-size: 22px; color: var(--adm-ink);
 }
-
-.qrPanelSub {
-  font-size: 0.8125rem;
-  color: var(--text-muted);
-  font-weight: 300;
-}
-
-.btnCerrarQr {
-  padding: 0.4rem 0.875rem;
-  background: var(--cream);
-  border: 1.5px solid var(--line-light);
-  border-radius: 10px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--bark);
-  font-family: var(--font-body);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.btnCerrarQr:hover {
-  background: var(--sand);
-  border-color: var(--line);
-  color: var(--text-primary);
-}
-
-/* ── Contenido QR ── */
-.qrInner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem;
-  background: var(--cream);
-  border: 1px solid var(--line-light);
-  border-radius: 14px;
-}
-
-.qrUrl {
-  font-size: 0.75rem;
-  color: var(--dust);
-  word-break: break-all;
-  text-align: center;
-  max-width: 280px;
-  font-weight: 300;
-}
-
-.btnDescargar {
-  background: var(--mahogany);
-  color: var(--parchment);
-  border: none;
-  border-radius: 10px;
-  padding: 0.5rem 1.25rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.btnDescargar:hover { opacity: 0.85; }
-
-/* ── Misc ── */
-.cargando,
-.vacio {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 3rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 300;
-}
-
-.count {
-  text-align: center;
-  color: var(--dust);
-  font-size: 0.82rem;
-  margin: 0;
-}
+.qrPanelSub { font-size: 13px; color: var(--adm-muted); margin-top: 3px; font-family: var(--adm-font-ui); }
+.qrInner { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.qrUrl { font-size: 12px; color: var(--adm-muted); word-break: break-all; text-align: center; font-family: var(--adm-font-ui); }
