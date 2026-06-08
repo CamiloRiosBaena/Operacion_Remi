@@ -9,6 +9,7 @@ import { Pago } from './entities/pago.entity';
 import { HistorialEstado } from './entities/historial-estado.entity';
 import { TokenQr } from './entities/token-qr.entity';
 import { Plato } from '../menu/entities/plato.entity';
+import { Promo } from '../menu/entities/promo.entity';
 import { Mesa } from '../mesas/entities/mesa.entity';
 import { Cliente } from '../auth/entities/cliente.entity';
 import { UserStaff } from '../auth/entities/user-staff.entity';
@@ -17,7 +18,7 @@ import { UserStaff } from '../auth/entities/user-staff.entity';
   imports: [
     TypeOrmModule.forFeature([
       Pedido, DetallePedido, Pago, HistorialEstado, TokenQr,
-      Plato, Mesa, Cliente, UserStaff,
+      Plato, Promo, Mesa, Cliente, UserStaff,
     ]),
     AuthModule,
   ],

@@ -42,4 +42,12 @@ export class Promo {
 
   @Column({ type: 'text', nullable: true, default: null })
   imageUrl: string | null;
+
+  /** 'porcentaje' | '2x1' | 'monto_fijo' | null */
+  @Column({ type: 'varchar', length: 20, nullable: true, default: null })
+  tipoDescuento: 'porcentaje' | '2x1' | 'monto_fijo' | null;
+
+  /** Porcentaje (ej: 15) o monto fijo en pesos. Null para 2×1. */
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true, default: null })
+  valorDescuento: number | null;
 }

@@ -39,22 +39,33 @@ import { Promo } from './modules/menu/entities/promo.entity';
       inject: [ConfigService],
       useFactory: (cfg: ConfigService) => ({
         type: 'postgres',
-        host:     cfg.get<string>('DB_HOST',     'localhost'),
-        port:     cfg.get<number>('DB_PORT',     5432),
-        database: cfg.get<string>('DB_NAME',     'operacion_remi'),
-        username: cfg.get<string>('DB_USER',     'postgres'),
+        host: cfg.get<string>('DB_HOST', 'localhost'),
+        port: cfg.get<number>('DB_PORT', 5432),
+        database: cfg.get<string>('DB_NAME', 'operacion_remi'),
+        username: cfg.get<string>('DB_USER', 'postgres'),
         password: cfg.get<string>('DB_PASSWORD', ''),
-        // SSL requerido por Neon y otros proveedores cloud.
-        // En local (DB_SSL no definida) queda desactivado.
-        ssl: cfg.get<string>('DB_SSL') === 'true'
-          ? { rejectUnauthorized: false }
-          : false,
+
+        ssl:
+          cfg.get<string>('DB_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
         extra: { family: 4 },
         entities: [
-          Categoria, Plato, Ingrediente, PlatoIngrediente, Extra, Promo,
-          UserStaff, Cliente, SesionCliente,
+          Categoria,
+          Plato,
+          Ingrediente,
+          PlatoIngrediente,
+          Extra,
+          Promo,
+          UserStaff,
+          Cliente,
+          SesionCliente,
           Mesa,
-          Pedido, DetallePedido, Pago, HistorialEstado, TokenQr,
+          Pedido,
+          DetallePedido,
+          Pago,
+          HistorialEstado,
+          TokenQr,
         ],
         synchronize: cfg.get<string>('NODE_ENV') !== 'production',
         logging: cfg.get<string>('NODE_ENV') === 'development',

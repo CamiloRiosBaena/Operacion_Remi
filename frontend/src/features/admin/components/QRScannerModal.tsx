@@ -5,7 +5,7 @@ import styles from './QRScannerModal.module.css';
 import adminStyles from '../pages/PedidosAdmin.module.css';
 
 interface Props {
-  pedidoId: number;
+  pedidoId?: number;
   onConfirmado: (pedidoId: number) => void;
   onClose: () => void;
 }
@@ -116,7 +116,9 @@ export function QRScannerModal({ pedidoId, onConfirmado, onClose }: Props) {
     <div className={adminStyles.modalOverlay} onClick={onClose}>
       <div className={adminStyles.modal} onClick={(e) => e.stopPropagation()}>
         <h3 className={adminStyles.modalTitle}>
-          {fase === 'escaneando' ? `Escanear QR — Pedido #${pedidoId}` : `Pedido #${pedido?.id ?? pedidoId}`}
+          {fase === 'escaneando'
+            ? (pedidoId ? `Escanear QR — Pedido #${pedidoId}` : 'Escanear QR del cliente')
+            : `Pedido #${pedido?.id ?? pedidoId ?? '—'}`}
         </h3>
 
         {fase === 'escaneando' && (

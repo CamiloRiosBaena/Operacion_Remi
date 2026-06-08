@@ -150,7 +150,13 @@ const Hero: React.FC = () => {
               <Icon name="arrow_forward" />
             </button>
 
-            <button className="btn-hero-secondary" onClick={() => navigate('/menu')}>
+            <button
+              className="btn-hero-secondary"
+              onClick={() => {
+                const el = document.getElementById('ubicaciones');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Ver Ubicaciones
             </button>
           </div>

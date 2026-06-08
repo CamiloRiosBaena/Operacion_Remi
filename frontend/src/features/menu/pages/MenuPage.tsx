@@ -304,6 +304,19 @@ export function MenuPage() {
             </div>
           </div>
 
+          {/* Categorías — inline entre brand y acciones */}
+          <nav className={styles.catScroll}>
+            {categorias.map((cat) => (
+              <button
+                key={cat}
+                className={`${styles.catChip} ${cat === categoriaActiva ? styles.catChipActive : ''}`}
+                onClick={() => scrollToSection(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </nav>
+
           <div className={styles.headerRight}>
             {esInvitado && (
               <>
@@ -311,59 +324,32 @@ export function MenuPage() {
                 <Link to="/registro" className={styles.linkPrimary}>Crear cuenta</Link>
               </>
             )}
-
             {esCliente && (
-              <span className={styles.clienteChip}>👤 {user.nombre.split(' ')[0]}</span>
+              <span className={styles.clienteChip}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+                {user.nombre.split(' ')[0]}
+              </span>
             )}
-
             {esCliente && (
               <button className={styles.logoutBtn} onClick={handleLogout} title="Cerrar sesión">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
                 </svg>
               </button>
             )}
-
-            <button
-              className={styles.cartBtn}
-              onClick={() => setCartOpen(true)}
-              aria-label={`Carrito — ${count} productos`}
-            >
-              🛒
+            <button className={styles.cartBtn} onClick={() => setCartOpen(true)} aria-label={`Carrito — ${count} productos`}>
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               {count > 0 && <span className={styles.cartBadge}>{count}</span>}
             </button>
           </div>
         </div>
-
-        {/* Filtros de categoría */}
-        <div className={styles.catScroll}>
-          {categorias.map((cat) => (
-            <button
-              key={cat}
-              className={`${styles.catChip} ${cat === categoriaActiva ? styles.catChipActive : ''}`}
-              onClick={() => scrollToSection(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
       </header>
 
-      {/* ── Banner de mesa (cuando viene de un QR) ── */}
+      {/* ── Banner de mesa ── */}
       {mesaQr && (
-        <div style={{
-          background: '#fff7ed',
-          borderBottom: '1px solid #fed7aa',
-          padding: '0.5rem 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          fontSize: '0.875rem',
-          color: '#9a3412',
-          fontWeight: 500,
-        }}>
+        <div className={styles.mesaChip}>
           🪑 Estás en <strong>Mesa {mesaQr}</strong> — tu pedido se registrará en esta mesa
         </div>
       )}
@@ -392,10 +378,13 @@ export function MenuPage() {
               ref={(el) => { sectionRefs.current[cat] = el; }}
               className={styles.seccion}
             >
-              <h2 className={styles.seccionTitulo}>{cat}</h2>
-              <p className={styles.seccionLabel}>
-                {items.filter((p) => p.disponible).length} disponibles
-              </p>
+              <div className={styles.seccionHead}>
+                <h2 className={styles.seccionTitulo}>{cat}</h2>
+                <span className={styles.seccionLabel}>
+                  {items.filter((p) => p.disponible).length} disponibles
+                </span>
+                <div className={styles.seccionRule} />
+              </div>
 
               <div className={styles.gallery}>
                 {items.map((plato) => (
@@ -406,6 +395,12 @@ export function MenuPage() {
                     disabled={!plato.disponible}
                   >
                     <div className={styles.cardImg}>
+                      <button
+                        className={styles.cardFav}
+                        onClick={e => e.stopPropagation()}
+                        aria-label="Favorito"
+                        tabIndex={-1}
+                      >♡</button>
                       <PlatoImage
                         nombre={plato.nombre}
                         categoria={plato.categoria}
@@ -413,16 +408,26 @@ export function MenuPage() {
                         size="xl"
                       />
                       {!plato.disponible && (
-                        <div className={styles.unavailableOverlay}>No disponible</div>
+                        <div className={styles.unavailableOverlay}>Agotado</div>
                       )}
                     </div>
                     <div className={styles.cardBody}>
-                      <p className={styles.cardNombre}>{plato.nombre}</p>
-                      <p className={styles.cardPrecio}>{formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}</p>
+                      <div className={styles.cardNombre}>{plato.nombre}</div>
+                      {plato.descripcion && (
+                        <p className={styles.cardDesc}>{plato.descripcion}</p>
+                      )}
+                      <div className={styles.cardFoot}>
+                        <span className={styles.cardPrecio}>
+                          {formatPrecio(Math.round(plato.precio * (1 + plato.tasaIva)))}
+                        </span>
+                        {plato.disponible && (
+                          <span className={styles.cardAddBtn} aria-hidden="true">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                            Agregar
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    {plato.disponible && (
-                      <div className={styles.cardAddBtn} aria-hidden="true">+</div>
-                    )}
                   </button>
                 ))}
               </div>
@@ -456,7 +461,7 @@ export function MenuPage() {
         onPedidoCreado={handlePedidoCreado}
       />
 
-      <ChatWidget />
+      <ChatWidget hidden={cartOpen || !!platoModal} />
     </div>
   );
 }

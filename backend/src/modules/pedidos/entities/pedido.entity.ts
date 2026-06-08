@@ -62,6 +62,10 @@ export class Pedido {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   total: number;
 
+  /** Suma de todos los descuentos por promociones aplicadas. */
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  descuentoTotal: number;
+
   @ManyToOne(() => Cliente, (c) => c.pedidos, { nullable: true })
   @JoinColumn({ name: 'id_cliente' })
   cliente: Cliente | null;

@@ -1,0 +1,307 @@
+/* EntregaLocalAdminPage — casilleros + Arduino */
+
+/* Arduino bar */
+.ardBar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; border-radius: var(--adm-r-lg);
+  border: 1px solid var(--adm-line); background: var(--adm-card);
+  box-shadow: var(--adm-shadow-sm); margin-bottom: 20px;
+  transition: border-color .3s var(--adm-ease), background .3s var(--adm-ease);
+  font-family: var(--adm-font-ui);
+}
+.ardBar.on {
+  border-color: oklch(0.82 0.09 150);
+  background: linear-gradient(100deg, var(--adm-ok-bg), var(--adm-card) 60%);
+}
+.ardLed {
+  width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0;
+  background: var(--adm-bad); position: relative;
+}
+.ardLed::after {
+  content: ''; position: absolute; inset: -5px; border-radius: 50%;
+  background: var(--adm-bad); opacity: 0.35;
+  animation: ledPulse 1.8s var(--adm-ease) infinite;
+}
+.ardBar.on .ardLed { background: oklch(0.65 0.15 150); }
+.ardBar.on .ardLed::after { background: oklch(0.65 0.15 150); }
+@keyframes ledPulse {
+  0%   { transform: scale(0.6); opacity: 0.5; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.ardText { font-size: 15px; font-weight: 700; color: var(--adm-ink); }
+.ardMeta { font-size: 12.5px; color: var(--adm-muted); margin-left: 2px; }
+.ardSpacer { flex: 1; }
+.ardPort {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 12.5px; font-weight: 600; color: var(--adm-ink-soft);
+  background: var(--adm-bg-2); padding: 6px 12px;
+  border-radius: 9px; border: 1px solid var(--adm-line);
+}
+.ardPort svg { width: 15px; height: 15px; color: var(--adm-muted); }
+
+/* Layout */
+.localGrid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+/* Queue */
+.queueHead {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.queueHead svg { width: 20px; height: 20px; color: var(--adm-accent); flex-shrink: 0; }
+.queueHead h3 {
+  font-family: var(--adm-font-display);
+  font-style: italic; font-weight: 600; font-size: 19px; color: var(--adm-ink);
+}
+.countPill {
+  margin-left: auto;
+  min-width: 24px; height: 24px; padding: 0 8px;
+  border-radius: 99px; background: var(--adm-accent); color: #fff;
+  font-size: 12.5px; font-weight: 700;
+  display: grid; place-items: center;
+  font-family: var(--adm-font-ui);
+}
+
+/* Order card */
+.orderCard {
+  background: var(--adm-card); border: 1px solid var(--adm-line);
+  border-radius: var(--adm-r); padding: 16px;
+  box-shadow: var(--adm-shadow-sm); margin-bottom: 12px;
+  transition: box-shadow .2s var(--adm-ease), border-color .2s var(--adm-ease);
+  font-family: var(--adm-font-ui);
+}
+.orderCard:hover { box-shadow: var(--adm-shadow); border-color: var(--adm-line-2); }
+.ocTop { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.ocId { font-weight: 700; color: var(--adm-ink); font-size: 15px; }
+.ocTime { margin-left: auto; font-size: 12.5px; color: var(--adm-muted); }
+.ocClient { font-size: 14.5px; font-weight: 600; color: var(--adm-ink); margin-bottom: 8px; }
+.ocItems {
+  display: inline-block; font-size: 13px; color: var(--adm-ink-soft);
+  background: var(--adm-bg-2); border: 1px solid var(--adm-line);
+  padding: 5px 11px; border-radius: 8px; margin-bottom: 10px;
+}
+.ocAmt {
+  font-family: var(--adm-font-display); font-style: italic; font-weight: 600;
+  font-size: 21px; color: var(--adm-accent); margin-bottom: 14px;
+}
+.ocFoot {
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 12px; border-top: 1px solid var(--adm-line);
+}
+.ocLocker {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 13.5px; font-weight: 700; color: var(--adm-ink);
+}
+.ocLocker svg { width: 16px; height: 16px; color: var(--adm-i-sage); }
+.ocLocker b { color: var(--adm-accent-deep); }
+
+/* Mode tag */
+.modeTag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 7px;
+  font-family: var(--adm-font-ui);
+}
+.modeTag svg { width: 13px; height: 13px; }
+.modeLlevar { background: var(--adm-t-amber); color: oklch(0.5 0.12 70); }
+.modeLocal  { background: var(--adm-t-sky);   color: var(--adm-i-sky); }
+
+/* Open button */
+.btnOpen {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 14px; border-radius: 10px; border: none;
+  cursor: pointer; font-family: var(--adm-font-ui);
+  font-size: 13.5px; font-weight: 700;
+  background: linear-gradient(150deg, var(--adm-accent), var(--adm-accent-deep));
+  color: #fff; transition: all .18s var(--adm-ease);
+  box-shadow: 0 3px 10px oklch(0.55 0.15 45 / 0.28);
+}
+.btnOpen svg { width: 16px; height: 16px; }
+.btnOpen:hover { transform: translateY(-1px); box-shadow: 0 6px 16px oklch(0.55 0.15 45 / 0.4); }
+.btnOpen:active { transform: translateY(0) scale(0.97); }
+.btnOpen:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Queue empty */
+.queueEmpty {
+  text-align: center; padding: 40px 20px; color: var(--adm-muted);
+  border: 1.5px dashed var(--adm-line-2); border-radius: var(--adm-r);
+  font-family: var(--adm-font-ui);
+}
+.queueEmpty svg { width: 30px; height: 30px; margin-bottom: 8px; color: var(--adm-line-2); display: block; margin-inline: auto; }
+
+/* Locker bank */
+.lockerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.locker {
+  position: relative; border-radius: 16px; padding: 15px;
+  border: 1px solid var(--adm-line); background: var(--adm-card);
+  min-height: 158px; display: flex; flex-direction: column;
+  box-shadow: var(--adm-shadow-sm); overflow: hidden;
+  transition: transform .2s var(--adm-ease), box-shadow .2s var(--adm-ease), border-color .2s var(--adm-ease);
+  font-family: var(--adm-font-ui);
+}
+.locker::before {
+  content: ''; position: absolute; left: 14px; top: 50%;
+  width: 4px; height: 26px; border-radius: 99px;
+  background: var(--adm-line-2); transform: translateY(-50%);
+}
+.lockerNum {
+  font-family: var(--adm-font-display);
+  font-style: italic; font-weight: 600; font-size: 21px;
+  color: var(--adm-ink); padding-left: 14px;
+}
+.lockerState { position: absolute; top: 14px; right: 14px; }
+.lockerBody {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: center; padding-left: 14px;
+}
+
+/* Free */
+.lockerFree {
+  background: repeating-linear-gradient(135deg, var(--adm-bg) 0 10px, var(--adm-bg-2) 10px 20px) !important;
+  border-style: dashed !important; border-color: var(--adm-line-2) !important;
+  box-shadow: none !important;
+}
+.lockerFree::before { display: none; }
+.lockerFree .lockerBody { align-items: center; padding-left: 0; color: var(--adm-muted); }
+.lockerFree .lockerNum { color: var(--adm-muted); padding-left: 0; text-align: center; }
+.lockerFreeIcon { width: 26px; height: 26px; color: var(--adm-line-2); margin-bottom: 6px; }
+.lockerFreeLabel { font-size: 13px; font-weight: 600; color: var(--adm-muted); }
+
+/* Occupied */
+.lockerOccupied { border-color: oklch(0.86 0.05 50) !important; }
+.lockerOccupied::before { background: var(--adm-accent) !important; }
+.lockerOccupied:hover { transform: translateY(-3px); box-shadow: var(--adm-shadow-lg) !important; }
+.lockerOrder { font-size: 13px; color: var(--adm-muted); margin-bottom: 2px; }
+.lockerOrder b { color: var(--adm-ink); font-weight: 700; }
+.lockerClient { font-size: 14px; font-weight: 700; color: var(--adm-ink); }
+.lockerItems { font-size: 12px; color: var(--adm-muted); margin-top: 2px; line-height: 1.3; }
+.lockerAct { margin-top: auto; padding-top: 12px; }
+.lockerAct .btnOpen { width: 100%; justify-content: center; }
+
+/* Open */
+.lockerOpen {
+  border-color: oklch(0.8 0.1 150) !important;
+  background: linear-gradient(160deg, var(--adm-ok-bg), var(--adm-card) 70%) !important;
+}
+.lockerOpen::before { background: oklch(0.65 0.15 150) !important; }
+.lockerOpenFlag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 700; color: var(--adm-ok);
+  margin-top: auto; padding-top: 12px;
+}
+.lockerOpenFlag svg {
+  width: 16px; height: 16px;
+  animation: keyTurn .6s var(--adm-ease);
+}
+@keyframes keyTurn { from { transform: rotate(-40deg); } to { transform: rotate(0); } }
+
+/* Maint */
+.lockerMaint { opacity: 0.7; }
+.lockerMaint::before { background: var(--adm-warn) !important; }
+
+/* QR panel */
+.qrPanel {
+  background: var(--adm-card); border: 1px solid var(--adm-line);
+  border-radius: var(--adm-r-lg); box-shadow: var(--adm-shadow-sm);
+  padding: 22px; margin-top: 20px;
+  font-family: var(--adm-font-ui);
+}
+.qrNote {
+  display: flex; gap: 10px;
+  padding: 12px 14px; border-radius: 11px;
+  font-size: 13px; line-height: 1.45;
+  margin-bottom: 18px; font-weight: 500;
+}
+.qrNote svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+.qrNoteWarn { background: var(--adm-warn-bg); color: oklch(0.46 0.10 65); }
+.qrNoteOk   { background: var(--adm-ok-bg);   color: oklch(0.42 0.10 150); }
+.qrTitle {
+  font-family: var(--adm-font-display); font-style: italic;
+  font-weight: 600; font-size: 20px; color: var(--adm-ink);
+  text-align: center; margin-bottom: 14px;
+}
+.qrView {
+  position: relative; aspect-ratio: 4 / 3;
+  border-radius: var(--adm-r); overflow: hidden;
+  background: radial-gradient(circle at 50% 40%, oklch(0.28 0.01 50), oklch(0.16 0.01 50));
+  display: grid; place-items: center;
+}
+.corner {
+  position: absolute; width: 38px; height: 38px;
+  border: 3px solid oklch(0.95 0.01 70 / 0.9); border-radius: 4px;
+}
+.cornerTL { top: 26px;    left: 26px;  border-right: none; border-bottom: none; }
+.cornerTR { top: 26px;    right: 26px; border-left: none;  border-bottom: none; }
+.cornerBL { bottom: 26px; left: 26px;  border-right: none; border-top: none; }
+.cornerBR { bottom: 26px; right: 26px; border-left: none;  border-top: none; }
+.scanLine {
+  position: absolute; left: 26px; right: 26px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--adm-accent), transparent);
+  box-shadow: 0 0 14px 2px oklch(0.6 0.15 45 / 0.7);
+  animation: scanAnim 2.6s var(--adm-ease) infinite;
+}
+@keyframes scanAnim {
+  0%,100% { top: 30px; }
+  50%     { top: calc(100% - 30px); }
+}
+.qrGlyph { width: 76px; height: 76px; color: oklch(0.5 0.02 60 / 0.5); }
+.qrHint { text-align: center; font-size: 13px; color: var(--adm-muted); margin-top: 14px; }
+
+/* ── Scanner inline ── */
+/* Montaje de html5-qrcode: siempre en el DOM, llena el qrView */
+.scannerMount {
+  position: absolute; inset: 0; overflow: hidden;
+}
+/* Elimina el espejo que html5-qrcode aplica a cámara frontal */
+.scannerMount video {
+  transform: none !important;
+  object-fit: cover !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+/* Oculta chrome innecesario de html5-qrcode (dashboard, header) */
+.scannerMount > div { width: 100% !important; height: 100% !important; border: none !important; }
+.scannerMount > div > div:not([id$="__scan_region"]) { display: none !important; }
+.scannerMount > div > div[id$="__scan_region"] {
+  position: absolute !important; inset: 0 !important;
+  width: 100% !important; height: 100% !important;
+  padding: 0 !important;
+}
+
+/* Capa decorativa idle — encima del mount cuando la cámara está inactiva */
+.scannerIdle {
+  position: absolute; inset: 0; z-index: 1;
+  display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 40%, oklch(0.28 0.01 50), oklch(0.16 0.01 50));
+}
+
+/* Mensaje de error dentro del qrView */
+.scanErrorMsg {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: oklch(0.82 0.04 50); text-align: center; padding: 20px;
+  font-size: 13.5px; font-family: var(--adm-font-ui); max-width: 220px;
+}
+.scanErrorMsg svg { color: var(--adm-warn); }
+
+@media (max-width: 1100px) {
+  .localGrid { grid-template-columns: 1fr; }
+  .lockerGrid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 640px) {
+  .lockerGrid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  /* ardBar: evita overflow en pantallas muy estrechas */
+  .ardBar { flex-wrap: wrap; gap: 10px; }
+  .ardSpacer { display: none; }
+  /* casilleros: columna única en móvil pequeño */
+  .lockerGrid { grid-template-columns: 1fr; }
+}

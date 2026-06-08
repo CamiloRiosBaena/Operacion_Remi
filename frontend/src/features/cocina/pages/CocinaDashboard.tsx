@@ -8,23 +8,92 @@ import {
 import type { ApiPedido, ApiStaff } from '@/features/admin/services/admin.service';
 import styles from './CocinaDashboard.module.css';
 
+// ── SVG Icons ─────────────────────────────────────────────────────────────
+
+const Ic = {
+  flame: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 3c1 4 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 1-3 .5 2 2 2 2 2s-1-4 2-8Z" />
+    </svg>
+  ),
+  check: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M5 12.5 10 17.5 19.5 7" />
+    </svg>
+  ),
+  checkCircle: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="9" /><path d="M8 12.5 11 15.5 16 9.5" />
+    </svg>
+  ),
+  alert: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 3 2 20h20L12 3Z" /><path d="M12 10v4M12 17.5v.5" />
+    </svg>
+  ),
+  box: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5Z" />
+      <path d="M3 7.5 12 12l9-4.5M12 12v9" />
+    </svg>
+  ),
+  clock: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3.5 2" />
+    </svg>
+  ),
+  delivery: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <circle cx="6" cy="18" r="2.5" /><circle cx="17" cy="18" r="2.5" />
+      <path d="M8.5 18h6M17 15.5 14 8h-2M12 8V6h3l2 4M5 12h5l1.5 3.5" />
+    </svg>
+  ),
+  tables: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M4 9h16M5 9 4 4M19 9l1-5M7 9v11M17 9v11M9.5 9v5h5V9" />
+    </svg>
+  ),
+  box2: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3 9 5 4h14l1 5M4 9h16M4 9v10a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V9" />
+    </svg>
+  ),
+  pin: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11Z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </svg>
+  ),
+  dish: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M3 11a9 9 0 0 1 18 0Z" /><path d="M2 11h20M12 6V3M11 3h2" />
+    </svg>
+  ),
+};
+
 // ── Helpers ────────────────────────────────────────────────────────────────
-const TIPO_LABEL: Record<string, string> = {
-  mesa: 'Mesa', llevar: 'Para llevar', domicilio: 'Domicilio',
+
+const TIPO_META: Record<string, { cls: string; icon: keyof typeof Ic; label: string }> = {
+  mesa:      { cls: styles.tagLocal,     icon: 'tables',   label: 'En local'      },
+  llevar:    { cls: styles.tagLlevar,    icon: 'box2',     label: 'Para llevar'   },
+  domicilio: { cls: styles.tagDomicilio, icon: 'delivery', label: 'Domicilio'     },
 };
 
 function formatHora(iso: string) {
   return new Date(iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
 }
 
-function minutosDesde(iso: string) {
+function tiempoTranscurrido(iso: string): { texto: string; mins: number } {
   const fecha = /Z|[+-]\d{2}:\d{2}$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
-  return Math.floor((Date.now() - fecha.getTime()) / 6000000);
+  const s = Math.max(0, Math.floor((Date.now() - fecha.getTime()) / 1000));
+  const m = Math.floor(s / 60);
+  const ss = String(s % 60).padStart(2, '0');
+  return { texto: `${m}:${ss}`, mins: m };
 }
 
-function ubicacion(p: ApiPedido) {
-  if (p.tipo === 'mesa' && p.mesa) return `Mesa ${p.mesa.numero}`;
-  return TIPO_LABEL[p.tipo] ?? p.tipo;
+function minutosDespacho(iso: string) {
+  const fecha = /Z|[+-]\d{2}:\d{2}$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
+  return Math.floor((Date.now() - fecha.getTime()) / 60000);
 }
 
 function horaListo(p: ApiPedido): string {
@@ -32,6 +101,31 @@ function horaListo(p: ApiPedido): string {
     ?.filter((h) => h.estado === 'listo')
     .sort((a, b) => new Date(b.fechaHora).getTime() - new Date(a.fechaHora).getTime())[0];
   return entrada?.fechaHora ?? p.fechaHora;
+}
+
+function ubicacion(p: ApiPedido) {
+  if (p.tipo === 'mesa' && p.mesa) return `Mesa ${p.mesa.numero}`;
+  return TIPO_META[p.tipo]?.label ?? p.tipo;
+}
+
+// ── Timer pill ─────────────────────────────────────────────────────────────
+
+function TimerPill({ iso }: { iso: string }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const { texto, mins } = tiempoTranscurrido(iso);
+  const cls = mins >= 11 ? styles.timerLate : mins >= 6 ? styles.timerWarn : styles.timerOk;
+  void tick;
+  return (
+    <span className={`${styles.timer} ${cls}`}>
+      {Ic.clock}
+      {texto}
+    </span>
+  );
 }
 
 // ── Subcomponente PedidoCard ───────────────────────────────────────────────
@@ -46,62 +140,82 @@ function PedidoCard({
   onAccion: (p: ApiPedido) => void;
 }) {
   const enProceso = actualizando === pedido.id;
+  const esPendiente = pedido.estado === 'pendiente';
+  const tipo = TIPO_META[pedido.tipo];
+
+  // Collect personalizations for note block
+  const notas = (pedido.detalles ?? [])
+    .map((d) => {
+      if (!d.personalizacion) return null;
+      try {
+        const pr = JSON.parse(d.personalizacion);
+        const pts: string[] = [];
+        if (pr.removidos?.length) pts.push(`Sin: ${pr.removidos.join(', ')}`);
+        if (pr.extras?.length)
+          pts.push(`+ ${pr.extras.map((e: { nombre: string; cantidad: number }) => `${e.nombre}×${e.cantidad}`).join(', ')}`);
+        if (pr.nota) pts.push(pr.nota);
+        return pts.length ? `${d.plato.nombre}: ${pts.join(' · ')}` : null;
+      } catch {
+        return d.personalizacion;
+      }
+    })
+    .filter(Boolean);
+
+  const isLate = tiempoTranscurrido(pedido.fechaHora).mins >= 11;
 
   return (
-    <div
-      className={`${styles.card} ${
-        pedido.estado === 'pendiente' ? styles.cardPendiente : styles.cardEnCocina
-      }`}
-    >
-      <div className={styles.cardHeader}>
-        <span className={styles.pedidoId}>#{pedido.id}</span>
-        <span className={styles.mesa}>{ubicacion(pedido)}</span>
-        <span className={styles.hora}>{formatHora(pedido.fechaHora)}</span>
+    <div className={`${styles.cmd} ${esPendiente ? styles.cmdRecv : ''} ${isLate ? styles.cmdLate : ''}`}>
+      <div className={styles.cmdTop}>
+        <span className={styles.cmdId}>#{pedido.id}</span>
+        <TimerPill iso={pedido.fechaHora} />
       </div>
 
-      <ul className={styles.items}>
-        {(pedido.detalles ?? []).map((d) => (
-          <li key={d.id}>
-            <strong>{d.cantidad}×</strong> {d.plato.nombre}
-            {d.personalizacion && (
-              <span className={styles.personTag}>
-                {(() => {
-                  try {
-                    const p = JSON.parse(d.personalizacion);
-                    const pts: string[] = [];
-                    if (p.removidos?.length) pts.push(`Sin: ${p.removidos.join(', ')}`);
-                    if (p.extras?.length)
-                      pts.push(
-                        `+ ${p.extras
-                          .map((e: { nombre: string; cantidad: number }) => `${e.nombre}×${e.cantidad}`)
-                          .join(', ')}`
-                      );
-                    if (p.nota) pts.push(`✏️ ${p.nota}`);
-                    return pts.join(' · ');
-                  } catch {
-                    return d.personalizacion;
-                  }
-                })()}
-              </span>
-            )}
-          </li>
-        ))}
-      </ul>
+      <div className={styles.cmdMeta}>
+        {tipo && (
+          <span className={`${styles.tag} ${tipo.cls}`}>
+            {Ic[tipo.icon]}
+            {tipo.label}
+          </span>
+        )}
+        <span className={styles.cmdWho}>{ubicacion(pedido)}</span>
+      </div>
 
-      <div className={styles.cardFooter}>
-        <button
-          className={`${styles.btnAccion} ${
-            pedido.estado === 'en_cocina' ? styles.btnListo : ''
-          }`}
-          onClick={() => onAccion(pedido)}
-          disabled={enProceso}
-        >
-          {enProceso
-            ? '…'
-            : pedido.estado === 'pendiente'
-            ? 'Comenzar'
-            : 'Marcar listo'}
-        </button>
+      <div className={styles.cmdItems}>
+        {(pedido.detalles ?? []).map((d) => (
+          <div key={d.id} className={styles.cmdItem}>
+            <span className={`${styles.qty} ${d.cantidad >= 4 ? styles.qtyBig : ''}`}>
+              {d.cantidad}×
+            </span>
+            <div className={styles.itName}>{d.plato.nombre}</div>
+          </div>
+        ))}
+      </div>
+
+      {notas.length > 0 && (
+        <div className={styles.cmdNote}>
+          {Ic.alert}
+          <span>{notas.join(' | ')}</span>
+        </div>
+      )}
+
+      <div className={styles.cmdFoot}>
+        {esPendiente ? (
+          <button
+            className={styles.btnPrimary}
+            onClick={() => onAccion(pedido)}
+            disabled={enProceso}
+          >
+            {enProceso ? '…' : <>{Ic.flame} Empezar a preparar</>}
+          </button>
+        ) : (
+          <button
+            className={styles.btnOk}
+            onClick={() => onAccion(pedido)}
+            disabled={enProceso}
+          >
+            {enProceso ? '…' : <>{Ic.check} Marcar listo</>}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -132,7 +246,6 @@ export function CocinaDashboard() {
       setDespacho(cola);
       setDomiciliarios(staff);
       setConnected(true);
-
       setSeleccionados((prev) => {
         const ids = new Set(cola.map((p) => p.id));
         return new Set([...prev].filter((id) => ids.has(id)));
@@ -147,7 +260,7 @@ export function CocinaDashboard() {
   useEffect(() => { cargar(); }, [cargar]);
   useRealtimePedidos(cargar);
 
-  // ── Acciones KDS ──────────────────────────────────────────────────────────
+  // ── Acciones KDS ─────────────────────────────────────────────────────────
 
   async function handleAccion(pedido: ApiPedido) {
     setActualizando(pedido.id);
@@ -174,13 +287,11 @@ export function CocinaDashboard() {
     }
   }
 
-  // ── Acciones despacho ─────────────────────────────────────────────────────
+  // ── Acciones despacho ────────────────────────────────────────────────────
 
   function toggleSeleccion(id: number) {
     setSeleccionados((prev) => {
       const next = new Set(prev);
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
@@ -209,175 +320,140 @@ export function CocinaDashboard() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <AppShell title="KDS — Cocina">
+    <AppShell title="KDS · Cocina">
       <div className={styles.wrapper}>
 
-        {/* Status bar */}
-        <div className={styles.topBar}>
+        {/* Sub-header */}
+        <div className={styles.subHeader}>
           <p className={styles.info}>
             {loading
               ? 'Conectando…'
-              : connected
-              ? `${pedidos.length} comanda${pedidos.length !== 1 ? 's' : ''} activa${pedidos.length !== 1 ? 's' : ''} · en tiempo real`
-              : 'Error de conexión'}
+              : <><b>{pedidos.length} comanda{pedidos.length !== 1 ? 's' : ''} activa{pedidos.length !== 1 ? 's' : ''}</b> · en tiempo real</>}
           </p>
-          <span
-            className={styles.badge}
-            style={
-              connected
-                ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
-                : undefined
-            }
-          >
-            {connected ? '🟢 Conectado' : '🔴 Sin conexión'}
+          <div className={styles.spacer} />
+          <span className={`${styles.connPill} ${!connected ? styles.connPillOff : ''}`}>
+            <span className={`${styles.connDot} ${!connected ? styles.connDotOff : ''}`} />
+            {connected ? 'Conectado' : 'Sin conexión'}
           </span>
         </div>
 
+        {/* Main layout */}
         <div className={styles.layout}>
 
-          {/* ── Panel KDS (Kanban) ── */}
-          <section className={styles.kdsPanel}>
-            <h2 className={styles.panelTitle}>Comandas activas</h2>
-
+          {/* KDS Kanban */}
+          <div>
+            <h2 className={styles.kdsTitle}>Comandas activas</h2>
             <div className={styles.kanban}>
 
-              {/* Columna 1 — Recibido */}
-              <div className={styles.kanbanCol}>
-                <div className={styles.kanbanColHeader}>
-                  <span className={`${styles.kanbanDot} ${styles.dotBlue}`} />
-                  <span>Recibido</span>
-                  <span className={`${styles.kanbanBadge} ${styles.badgeBlue}`}>
-                    {recibidos.length}
-                  </span>
+              {/* Col 1 — Recibido */}
+              <div className={styles.kcol}>
+                <div className={styles.kcolHead}>
+                  <span className={`${styles.kcolDot} ${styles.kcolDotRecv}`} />
+                  <span className={styles.kcolTitle}>Recibido</span>
+                  <span className={`${styles.kcolCount} ${styles.kcolCountRecv}`}>{recibidos.length}</span>
                 </div>
-                {!loading && recibidos.length === 0 ? (
-                  <div className={styles.emptyCol}>Sin comandas</div>
-                ) : (
-                  recibidos.map((p) => (
-                    <PedidoCard
-                      key={p.id}
-                      pedido={p}
-                      actualizando={actualizando}
-                      onAccion={handleAccion}
-                    />
-                  ))
-                )}
+                <div className={styles.kcolBody}>
+                  {!loading && recibidos.length === 0 ? (
+                    <div className={styles.kempty}>{Ic.dish}<div>Sin comandas</div></div>
+                  ) : (
+                    recibidos.map((p) => (
+                      <PedidoCard key={p.id} pedido={p} actualizando={actualizando} onAccion={handleAccion} />
+                    ))
+                  )}
+                </div>
               </div>
 
-              {/* Columna 2 — En preparación */}
-              <div className={styles.kanbanCol}>
-                <div className={styles.kanbanColHeader}>
-                  <span className={`${styles.kanbanDot} ${styles.dotAmber}`} />
-                  <span>En preparación</span>
-                  <span className={`${styles.kanbanBadge} ${styles.badgeAmber}`}>
-                    {enCocina.length}
-                  </span>
+              {/* Col 2 — En preparación */}
+              <div className={styles.kcol}>
+                <div className={styles.kcolHead}>
+                  <span className={`${styles.kcolDot} ${styles.kcolDotPrep}`} />
+                  <span className={styles.kcolTitle}>En preparación</span>
+                  <span className={`${styles.kcolCount} ${styles.kcolCountPrep}`}>{enCocina.length}</span>
                 </div>
-                {!loading && enCocina.length === 0 ? (
-                  <div className={styles.emptyCol}>Sin comandas</div>
-                ) : (
-                  enCocina.map((p) => (
-                    <PedidoCard
-                      key={p.id}
-                      pedido={p}
-                      actualizando={actualizando}
-                      onAccion={handleAccion}
-                    />
-                  ))
-                )}
+                <div className={styles.kcolBody}>
+                  {!loading && enCocina.length === 0 ? (
+                    <div className={styles.kempty}>{Ic.dish}<div>Sin comandas</div></div>
+                  ) : (
+                    enCocina.map((p) => (
+                      <PedidoCard key={p.id} pedido={p} actualizando={actualizando} onAccion={handleAccion} />
+                    ))
+                  )}
+                </div>
               </div>
-
-
 
             </div>
-          </section>
+          </div>
 
-          {/* ── Panel despacho ── */}
-          {(despacho.length > 0 || !loading) && (
-            <section className={styles.despachoPanel}>
-              <h2 className={styles.panelTitle}>
-                📦 Cola de despacho
-                {despacho.length > 0 && (
-                  <span className={styles.despachoCount}>{despacho.length}</span>
-                )}
-              </h2>
+          {/* Dispatch panel — siempre visible */}
+          <aside className={styles.dispatch}>
+              <div className={styles.dispHead}>
+                {Ic.box}
+                <h3>Cola de despacho</h3>
+                <span className={styles.dispCount}>{despacho.length}</span>
+              </div>
+              <p className={styles.dispSub}>
+                Selecciona pedidos con rutas cercanas y asígnalos a un domiciliario.
+              </p>
 
-              {despacho.length === 0 ? (
-                <p className={styles.despachoVacio}>Sin domicilios listos por ahora.</p>
-              ) : (
-                <>
-                  <p className={styles.despachoHint}>
-                    Selecciona pedidos con rutas cercanas y asígnalos a un domiciliario.
-                  </p>
-
-                  <div className={styles.despachoList}>
-                    {despacho.map((p) => {
-                      const mins = minutosDesde(horaListo(p));
-                      const urgente = mins >= 8;
-                      const sel = seleccionados.has(p.id);
-                      return (
-                        <label
-                          key={p.id}
-                          className={`${styles.despachoCard} ${sel ? styles.despachoCardSel : ''} ${urgente ? styles.despachoCardUrgente : ''}`}
-                        >
-                          <input
-                            type="checkbox"
-                            className={styles.check}
-                            checked={sel}
-                            onChange={() => toggleSeleccion(p.id)}
-                          />
-                          <div className={styles.despachoInfo}>
-                            <div className={styles.despachoHeader}>
-                              <span className={styles.pedidoId}>#{p.id}</span>
-                              <span className={`${styles.timerBadge} ${urgente ? styles.timerUrgente : ''}`}>
-                                {urgente ? '⚠️' : '⏱'} {mins} min
-                              </span>
-                            </div>
-
-                            {p.cliente && (
-                              <p className={styles.despachoCliente}>👤 {p.cliente.nombre}</p>
-                            )}
-                            {p.direccionEntrega && (
-                              <p className={styles.despachoDir}>📍 {p.direccionEntrega}</p>
-                            )}
-                            <p className={styles.despachoItems}>
-                              {(p.detalles ?? []).map((d) => `${d.cantidad}× ${d.plato.nombre}`).join(' · ')}
-                            </p>
+              <div className={styles.dispList}>
+                {despacho.length === 0 ? (
+                  <div className={styles.dispEmpty}>No hay pedidos listos para despachar</div>
+                ) : (
+                  despacho.map((p) => {
+                    const mins = minutosDespacho(horaListo(p));
+                    const urgente = mins >= 8;
+                    const sel = seleccionados.has(p.id);
+                    return (
+                      <div
+                        key={p.id}
+                        className={`${styles.dispCard} ${sel ? styles.dispCardSel : ''}`}
+                        onClick={() => toggleSeleccion(p.id)}
+                      >
+                        <div className={styles.dispCheck}>{sel && Ic.check}</div>
+                        <div className={styles.dispMain}>
+                          <div className={styles.dispRow1}>
+                            <span className={styles.dispId}>#{p.id}</span>
+                            <span className={`${styles.dispTimerPill} ${urgente ? styles.dispTimerUrgente : ''}`}>
+                              {Ic.clock}{mins} min
+                            </span>
                           </div>
-                        </label>
-                      );
-                    })}
-                  </div>
+                          {p.direccionEntrega && (
+                            <div className={styles.dispAddr}>{Ic.pin}{p.direccionEntrega}</div>
+                          )}
+                          <div className={styles.dispItems}>
+                            {(p.detalles ?? []).map((d) => `${d.cantidad}× ${d.plato.nombre}`).join(' · ')}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
 
+              <div className={styles.dispField}>
+                <label>Asignar a</label>
+                <select
+                  className={styles.dispSelect}
+                  value={domiciliarioId}
+                  onChange={(e) => setDomiciliarioId(e.target.value ? Number(e.target.value) : '')}
+                >
+                  <option value="">Elegir domiciliario…</option>
+                  {domiciliarios.map((d) => (
+                    <option key={d.id} value={d.id}>{d.nombre}</option>
+                  ))}
+                </select>
+              </div>
 
-                  <div className={styles.despachoActions}>
-                    <select
-                      className={styles.selectDomiciliario}
-                      value={domiciliarioId}
-                      onChange={(e) =>
-                        setDomiciliarioId(e.target.value ? Number(e.target.value) : '')
-                      }
-                    >
-                      <option value="">Elegir domiciliario…</option>
-                      {domiciliarios.map((d) => (
-                        <option key={d.id} value={d.id}>{d.nombre}</option>
-                      ))}
-                    </select>
+              <button
+                className={styles.btnDespachar}
+                onClick={handleDespachar}
+                disabled={despachando || seleccionados.size === 0 || !domiciliarioId}
+              >
+                {Ic.delivery}
+                {despachando ? 'Despachando…' : `Despachar${seleccionados.size > 0 ? ` (${seleccionados.size})` : ''}`}
+              </button>
+            </aside>
 
-                    <button
-                      className={styles.btnDespachar}
-                      onClick={handleDespachar}
-                      disabled={despachando || seleccionados.size === 0 || !domiciliarioId}
-                    >
-                      {despachando
-                        ? 'Despachando…'
-                        : `🛵 Despachar ${seleccionados.size > 0 ? `(${seleccionados.size})` : ''}`}
-                    </button>
-                  </div>
-                </>
-              )}
-            </section>
-          )}
         </div>
       </div>
     </AppShell>
