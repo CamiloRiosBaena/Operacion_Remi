@@ -81,6 +81,10 @@ frontend/src/
 │   └── RoleRedirect.tsx        # Redirige "/" según el rol del usuario
 │
 ├── features/                   # ← AQUÍ va casi todo
+│   ├── landingpages/
+│   │   └── Pages/
+│   │       └── RemiLandingPage.tsx  # "/" — landing pública del producto
+│   │
 │   ├── auth/
 │   │   ├── pages/
 │   │   │   ├── LoginPage.tsx
@@ -110,6 +114,10 @@ frontend/src/
 │   │       └── promo.types.ts    # Interfaz Promo con imageUrl opcional
 │   │
 │   ├── admin/
+│   │   ├── styles/
+│   │   │   └── admin.css            # Design system global del panel admin (variables, paleta)
+│   │   ├── utils/
+│   │   │   └── estadisticasExport.ts # Exporta reportes a Excel (xlsx) y PDF (jsPDF + autoTable)
 │   │   ├── components/
 │   │   │   ├── AdminLayout.tsx      # Shell con sidebar — usado en todas las páginas admin
 │   │   │   └── QRScannerModal.tsx   # Escáner QR con webcam para confirmar entregas
@@ -120,6 +128,7 @@ frontend/src/
 │   │       ├── PromosAdmin.tsx      # CRUD de banners promocionales con upload de imagen
 │   │       ├── PedidosAdmin.tsx     # Botón "📷 Escanear QR" para pedidos mesa/llevar en Listo
 │   │       ├── DomiciliosAdmin.tsx
+│   │       ├── EntregaLocalAdminPage.tsx  # /admin/local — asignación de casilleros y entrega para llevar
 │   │       ├── MesasAdmin.tsx
 │   │       ├── UsuariosGestion.tsx
 │   │       └── EstadisticasPage.tsx
@@ -139,6 +148,13 @@ frontend/src/
 │   ├── domicilios/
 │   │   └── pages/
 │   │       └── DomiciliosDashboard.tsx
+│   │
+│   ├── entrega-local/
+│   │   └── EntregaLocalPage.tsx     # /escanear-entrega — escáner de casillero para "para llevar"
+│   │
+│   ├── pedidos/
+│   │   └── services/
+│   │       └── pedidos.service.ts
 │   │
 │   ├── carrito/
 │   │   ├── context/
@@ -165,7 +181,8 @@ frontend/src/
     │   └── PlatoImage.tsx       # Imagen de plato con fallback SVG por categoría
     ├── hooks/
     │   ├── useModalClose.ts     # Evita cierre de modal al arrastrar texto (mousedown + click)
-    │   └── usePushNotifications.ts
+    │   ├── usePushNotifications.ts
+    │   └── useRealtimePedidos.ts # Suscripción a Supabase Realtime (tabla pedidos) con fallback a polling
     └── lib/
         ├── api.ts               # apiFetch con token Supabase
         ├── storage.ts           # uploadPlatoImage → Supabase Storage bucket "platos"
@@ -257,6 +274,19 @@ backend/src/
     │   └── entities/
     │       └── mesa.entity.ts         # Tabla: mesas
     │
+    ├── pagos/
+    │   ├── pagos.module.ts
+    │   ├── pagos.controller.ts   # POST /pagos/generar, /pagos/confirmar, /pagos/efectivo
+    │   ├── pagos.service.ts      # Integración con Mercado Pago (preferencias, confirmación)
+    │   └── dto/
+    │       ├── generar-pago.dto.ts
+    │       └── confirmar-pago.dto.ts
+    │
+    ├── domicilios/
+    │   ├── domicilios.module.ts
+    │   ├── domicilios.controller.ts  # GET /domicilios/pedidos, PATCH /domicilios/pedidos/:id/entregado
+    │   └── domicilios.service.ts
+    │
     └── cocina/
         ├── cocina.module.ts
         ├── cocina.controller.ts   # GET /cocina/comandas (para el KDS)
@@ -311,10 +341,19 @@ Carrusel en la parte superior del menú, completamente administrable desde el pa
 - El botón CTA puede apuntar a un plato específico o a una categoría del menú.
 - Autoplay con pausa al pasar el cursor, barra de progreso animada y dots de navegación.
 - Orden configurable, activación/desactivación individual.
+- Tipo de descuento opcional (`tipoDescuento`): `porcentaje`, `2x1` o `monto_fijo`, con su `valorDescuento`. Las promos activas se pueden aplicar a un pedido (`promoIds` en `CreatePedidoDto`) y el descuento queda registrado por línea (`descuento` en `detalle_pedido`) y en el total (`descuentoTotal` en `pedido`).
 
 ### 🖼️ Subida de imágenes
 
 Las imágenes de platos y banners se almacenan en **Supabase Storage** (bucket `platos`). La función `uploadPlatoImage(file)` en `shared/lib/storage.ts` gestiona la subida y devuelve la URL pública.
+
+### 📊 Estadísticas y exportación
+
+El panel `/admin/estadisticas` permite exportar los reportes a **Excel** (`xlsx`) y **PDF** (`jsPDF` + `jspdf-autotable`) mediante las funciones de `features/admin/utils/estadisticasExport.ts`.
+
+### 🔔 Pedidos en tiempo real
+
+El hook `shared/hooks/useRealtimePedidos.ts` se suscribe al canal de **Supabase Realtime** sobre la tabla `pedidos` (INSERT/UPDATE/DELETE) y refresca las vistas de cocina, domicilios y entrega local automáticamente. Si Realtime no está habilitado en el proyecto de Supabase, hace fallback a polling cada 30s. Requiere activar la réplica de la tabla `pedidos` en *Database → Replication*.
 
 ---
 
@@ -325,10 +364,14 @@ Las imágenes de platos y banners se almacenan en **Supabase Storage** (bucket `
 | Tipo | Cómo se inicia | Cómo se confirma entrega |
 |---|---|---|
 | **Mesa** | Escaneando el QR de la mesa (URL con `?mesa=N`) | QR del cliente escaneado por el admin |
-| **Para llevar** | Selección manual en el carrito | QR del cliente escaneado por el admin |
+| **Para llevar** | Selección manual en el carrito | Casillero asignado en `/admin/local`, QR escaneado en `/escanear-entrega` |
 | **Domicilio** | Selección manual en el carrito | QR del cliente escaneado por el domiciliario |
 
 > **Importante:** La opción "en mesa" no está disponible en el selector manual del carrito. El cliente llega a ese modo únicamente escaneando el QR físico de la mesa.
+
+### Entrega local con casillero ("para llevar")
+
+Para pedidos **para llevar** listos, el admin asigna un **casillero** (`X` o `Y`) desde `/admin/local` (`EntregaLocalAdminPage`). El cliente recoge su pedido escaneando su QR en `/escanear-entrega` (`EntregaLocalPage`), que valida el token y abre el casillero correspondiente. Ambas vistas se mantienen sincronizadas en tiempo real vía `useRealtimePedidos` y soportan integración con hardware (Web Serial API) para la apertura física del casillero.
 
 ### QR de entrega — flujo completo
 
@@ -369,16 +412,26 @@ El ítem en el carrito guarda `precio = precioConIva` y `tasaIva = 0` para evita
 
 El checkout de **Mercado Pago** se abre en una **nueva pestaña** (`window.open`). La pestaña original con el menú permanece abierta. El resultado del pago se procesa en `/pago-resultado`.
 
+El módulo `backend/src/modules/pagos` gestiona la integración:
+
+| Endpoint | Descripción |
+|---|---|
+| `POST /pagos/generar` | Crea una preferencia en Mercado Pago y devuelve la URL de checkout (público) |
+| `POST /pagos/confirmar` | Verifica el pago con la API de MP tras el redirect y crea el pedido |
+| `POST /pagos/efectivo` | Crea el pedido directamente con pago en efectivo (sin MP) |
+
 ---
 
 ## Roles del sistema
 
 | Rol | Ruta principal | Descripción |
 |---|---|---|
-| `admin` | `/admin` | Gestión completa + escáner QR de entrega para mesa/llevar |
+| `admin` | `/admin` | Gestión completa + escáner QR de entrega para mesa/llevar y asignación de casilleros (`/admin/local`) |
 | `cocinero` | `/cocina` | Vista KDS de comandas |
 | `domiciliario` | `/domicilios` | Gestión de entregas + escáner QR de entrega |
 | `cliente` | `/menu` | Hacer pedidos vía QR o directamente |
+
+> `/` es la landing page pública (`RemiLandingPage`) y `/escanear-entrega` es el escáner público de casillero para recoger pedidos "para llevar".
 
 ---
 
@@ -430,24 +483,6 @@ GROQ_API_KEY=      # Obtener en console.groq.com
 ```
 
 > El frontend también necesita `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` en un archivo `frontend/.env`.
-
----
-
-## Flujo de trabajo en equipo
-
-```
-main
- └── dev              ← rama de integración
-      ├── feat/menu-api
-      ├── feat/auth-jwt
-      ├── feat/kds-cocina
-      └── fix/cart-subtotal
-```
-
-1. Crea tu rama desde `dev`: `git checkout -b feat/nombre-de-la-feature`
-2. Haz commits pequeños y descriptivos
-3. Abre un Pull Request hacia `dev` cuando termines
-4. Nunca hagas push directo a `main`
 
 ---
 
