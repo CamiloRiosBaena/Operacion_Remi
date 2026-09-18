@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsIn,
   IsInt,
   IsNumber,
   IsOptional,
@@ -9,14 +10,15 @@ import {
   Min,
 } from 'class-validator';
 
+const UNIDADES_COMPRA = ['Kg', 'Caja', 'Bulto'] as const;
+
 export class CreateIngredienteDto {
   @IsString()
-  @Length(1, 100)
+  @Length(5, 50)
   nombre: string;
 
-  @IsString()
   @IsOptional()
-  @Length(1, 50)
+  @IsIn(UNIDADES_COMPRA)
   unidadCompra?: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })

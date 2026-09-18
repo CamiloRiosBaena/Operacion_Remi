@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedBg } from '../components/AnimatedBg';
@@ -25,8 +25,13 @@ export function RegistroPage() {
   const [errorMsg, setErrorMsg] = useState('');
 
   // Si ya está autenticado como cliente, ir al menú
+  useEffect(() => {
+    if (isAuthenticated && user?.rol === 'cliente') {
+      navigate('/menu', { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
+
   if (isAuthenticated && user?.rol === 'cliente') {
-    navigate('/menu', { replace: true });
     return null;
   }
 

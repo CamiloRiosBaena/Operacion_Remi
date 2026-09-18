@@ -34,7 +34,9 @@ export class AuthService {
   // ─────────────────────────────────────────
 
   async syncCliente(dto: SyncPerfilDto) {
-    const existe = await this.clienteRepo.findOneBy({ supabase_uid: dto.supabase_uid });
+    const existe = await this.clienteRepo.findOneBy({
+      supabase_uid: dto.supabase_uid,
+    });
     if (existe) return existe;
 
     return this.clienteRepo.save(
@@ -52,7 +54,10 @@ export class AuthService {
 
   async registroCliente(dto: RegistroClienteDto): Promise<Cliente> {
     const existe = await this.clienteRepo.findOneBy({ correo: dto.correo });
-    if (existe) throw new BadRequestException(`El correo "${dto.correo}" ya está registrado`);
+    if (existe)
+      throw new BadRequestException(
+        `El correo "${dto.correo}" ya está registrado`,
+      );
 
     const { data, error } = await this.supabase.admin.createUser({
       email: dto.correo,
@@ -81,13 +86,17 @@ export class AuthService {
 
   async findOneStaff(id: number): Promise<UserStaff> {
     const staff = await this.staffRepo.findOneBy({ id });
-    if (!staff) throw new NotFoundException(`Usuario staff ${id} no encontrado`);
+    if (!staff)
+      throw new NotFoundException(`Usuario staff ${id} no encontrado`);
     return staff;
   }
 
   async createStaff(dto: CreateStaffDto): Promise<UserStaff> {
     const existe = await this.staffRepo.findOneBy({ correo: dto.correo });
-    if (existe) throw new BadRequestException(`El correo "${dto.correo}" ya está registrado`);
+    if (existe)
+      throw new BadRequestException(
+        `El correo "${dto.correo}" ya está registrado`,
+      );
 
     const { data, error } = await this.supabase.admin.createUser({
       email: dto.correo,
@@ -109,7 +118,8 @@ export class AuthService {
 
   async updateStaff(id: number, dto: UpdateStaffDto): Promise<UserStaff> {
     const staff = await this.staffRepo.findOneBy({ id });
-    if (!staff) throw new NotFoundException(`Usuario staff ${id} no encontrado`);
+    if (!staff)
+      throw new NotFoundException(`Usuario staff ${id} no encontrado`);
 
     if (dto.nombre || dto.rol) {
       await this.supabase.admin.updateUserById(staff.supabase_uid, {
@@ -133,7 +143,8 @@ export class AuthService {
 
   async deleteStaff(id: number, callerUid: string): Promise<void> {
     const staff = await this.staffRepo.findOneBy({ id });
-    if (!staff) throw new NotFoundException(`Usuario staff ${id} no encontrado`);
+    if (!staff)
+      throw new NotFoundException(`Usuario staff ${id} no encontrado`);
     if (staff.supabase_uid === callerUid)
       throw new ForbiddenException('No puedes eliminar tu propia cuenta');
     await this.supabase.admin.deleteUser(staff.supabase_uid);

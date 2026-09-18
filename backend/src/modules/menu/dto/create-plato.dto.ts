@@ -12,7 +12,7 @@ import {
 
 export class CreatePlatoDto {
   @IsString()
-  @Length(1, 100)
+  @Length(10, 50)
   nombre: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -21,7 +21,7 @@ export class CreatePlatoDto {
 
   @IsString()
   @IsOptional()
-  @Length(0, 500)
+  @Length(0, 200)
   descripcion?: string;
 
   @IsString()

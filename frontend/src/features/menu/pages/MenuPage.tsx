@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/features/auth/context/AuthContext';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
 import { CartDrawer } from '@/features/carrito/components/CartDrawer';
@@ -22,7 +22,6 @@ function formatPrecio(n: number) {
 
 export function MenuPage() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const { count } = useCarrito();
   const [searchParams] = useSearchParams();
 
@@ -269,7 +268,6 @@ export function MenuPage() {
 
   function handleLogout() {
     logout();
-    navigate('/login', { replace: true });
   }
 
   function scrollToSection(cat: string) {
