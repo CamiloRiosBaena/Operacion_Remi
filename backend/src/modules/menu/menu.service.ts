@@ -99,8 +99,11 @@ export class MenuService {
   }
 
   async createPlato(dto: CreatePlatoDto): Promise<Plato> {
-    const categoria = await this.categoriaRepo.findOneBy({ id: dto.categoriaId });
-    if (!categoria) throw new NotFoundException(`Categoría ${dto.categoriaId} no encontrada`);
+    const categoria = await this.categoriaRepo.findOneBy({
+      id: dto.categoriaId,
+    });
+    if (!categoria)
+      throw new BadRequestException(`Categoría ${dto.categoriaId} no encontrada`);
 
     const plato = this.platoRepo.create({
       nombre: dto.nombre,
@@ -188,7 +191,7 @@ export class MenuService {
   async createIngrediente(dto: CreateIngredienteDto): Promise<Ingrediente> {
     const ing = this.ingredienteRepo.create({
       nombre: dto.nombre,
-      unidadCompra: dto.unidadCompra ?? 'kg',
+      unidadCompra: dto.unidadCompra ?? 'Kg',
       gramosPorUnidad: dto.gramosPorUnidad,
       stockUnidades: dto.stockUnidades ?? 0,
       stockMinimoPorciones: dto.stockMinimoPorciones ?? 10,
@@ -251,7 +254,7 @@ export class MenuService {
 
   async createExtra(dto: CreateExtraDto): Promise<Extra> {
     const plato = await this.platoRepo.findOneBy({ id: dto.platoId });
-    if (!plato) throw new NotFoundException(`Plato ${dto.platoId} no encontrado`);
+    if (!plato) throw new BadRequestException(`Plato ${dto.platoId} no encontrado`);
     return this.extraRepo.save(
       this.extraRepo.create({ nombre: dto.nombre, precio: dto.precio, plato }),
     );

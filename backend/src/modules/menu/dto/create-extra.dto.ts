@@ -2,7 +2,7 @@ import { IsInt, IsNumber, IsPositive, IsString, Length } from 'class-validator';
 
 export class CreateExtraDto {
   @IsString()
-  @Length(1, 100)
+  @Length(5, 30)
   nombre: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })

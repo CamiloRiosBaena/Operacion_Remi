@@ -1,14 +1,14 @@
-import { IsEmail, IsString, Length, MinLength } from 'class-validator';
+import { IsEmail, IsString, Length } from 'class-validator';
 
 export class RegistroClienteDto {
   @IsString()
-  @Length(1, 100)
+  @Length(10, 30)
   nombre: string;
 
   @IsEmail()
   correo: string;
 
   @IsString()
-  @MinLength(6)
+  @Length(8, 20)
   contrasena: string;
 }

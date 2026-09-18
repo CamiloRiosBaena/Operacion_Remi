@@ -17,10 +17,11 @@ export class SupabaseGuard implements CanActivate {
 
     if (!token) throw new UnauthorizedException('Token requerido');
 
-    const { data, error } = await this.supabase.verifyToken(token);
-    if (error || !data.user) throw new UnauthorizedException('Token inválido o expirado');
-
-    req['supabaseUser'] = data.user;
+    try {
+      req['supabaseUser'] = await this.supabase.verifyToken(token);
+    } catch {
+      throw new UnauthorizedException('Token inválido o expirado');
+    }
     return true;
   }
 

@@ -1,16 +1,16 @@
-import { IsEmail, IsEnum, IsOptional, IsString, Length, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsString, Length } from 'class-validator';
 import { RolStaff } from '../entities/user-staff.entity';
 
 export class CreateStaffDto {
   @IsString()
-  @Length(1, 100)
+  @Length(10, 30)
   nombre: string;
 
   @IsEmail()
   correo: string;
 
   @IsString()
-  @MinLength(6)
+  @Length(8, 20)
   contrasena: string;
 
   @IsEnum(RolStaff)

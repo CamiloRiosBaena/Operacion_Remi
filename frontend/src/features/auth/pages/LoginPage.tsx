@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedBg } from '../components/AnimatedBg';
@@ -21,8 +21,13 @@ export function LoginPage() {
   const [contrasena, setContrasena] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate(ROLE_HOME[user.rol], { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
+
   if (isAuthenticated && user) {
-    navigate(ROLE_HOME[user.rol], { replace: true });
     return null;
   }
 
