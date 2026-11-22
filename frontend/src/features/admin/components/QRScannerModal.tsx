@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import { infoPedidoPorToken, confirmarEntregaConToken, type ApiPedido } from '@/features/admin/services/admin.service';
 import styles from './QRScannerModal.module.css';
 import adminStyles from '../pages/PedidosAdmin.module.css';
@@ -48,6 +49,7 @@ async function iniciarEscaner(
 }
 
 export function QRScannerModal({ pedidoId, onConfirmado, onClose }: Props) {
+  const { backdropProps } = useModalClose(onClose);
   const [fase, setFase]         = useState<Fase>('escaneando');
   const [pedido, setPedido]     = useState<ApiPedido | null>(null);
   const [token, setToken]       = useState('');
@@ -113,8 +115,8 @@ export function QRScannerModal({ pedidoId, onConfirmado, onClose }: Props) {
   }
 
   return (
-    <div className={adminStyles.modalOverlay} onClick={onClose}>
-      <div className={adminStyles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={adminStyles.modalOverlay} {...backdropProps}>
+      <div className={adminStyles.modal} role="dialog" aria-modal="true">
         <h3 className={adminStyles.modalTitle}>
           {fase === 'escaneando'
             ? (pedidoId ? `Escanear QR — Pedido #${pedidoId}` : 'Escanear QR del cliente')

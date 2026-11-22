@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1148.6 864" width="1148.6" height="864">
+<defs><marker id="lleno" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#000"/></marker><marker id="abierto" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#000" stroke-width="1.4"/></marker></defs>
+<rect width="1148.6" height="864" fill="#fff"/>
+<text x="20" y="24" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:15px;font-weight:bold">sd Hilo 1 — CU-06 Registro de cliente</text>
+<rect x="150.0" y="38" width="144.79999999999998" height="46" fill="#fff" stroke="#000" stroke-width="1.2"/><text x="222.39999999999998" y="55" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:11px">«pipe»</text><text x="222.39999999999998" y="73" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:13px;font-weight:bold;text-decoration:underline">:ValidationPipe</text>
+<line x1="222.39999999999998" y1="84" x2="222.39999999999998" y2="844" stroke="#000" stroke-dasharray="5 4" stroke-width="1"/>
+<rect x="339.79999999999995" y="38" width="144.79999999999998" height="46" fill="#fff" stroke="#000" stroke-width="1.2"/><text x="412.19999999999993" y="55" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:11px">«control»</text><text x="412.19999999999993" y="73" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:13px;font-weight:bold;text-decoration:underline">:AuthController</text>
+<line x1="412.19999999999993" y1="84" x2="412.19999999999993" y2="844" stroke="#000" stroke-dasharray="5 4" stroke-width="1"/>
+<rect x="529.5999999999999" y="38" width="130" height="46" fill="#fff" stroke="#000" stroke-width="1.2"/><text x="594.5999999999999" y="55" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:11px">«service»</text><text x="594.5999999999999" y="73" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:13px;font-weight:bold;text-decoration:underline">:AuthService</text>
+<line x1="594.5999999999999" y1="84" x2="594.5999999999999" y2="844" stroke="#000" stroke-dasharray="5 4" stroke-width="1"/>
+<rect x="704.5999999999999" y="38" width="194.0" height="46" fill="#fff" stroke="#000" stroke-width="1.2"/><text x="801.5999999999999" y="55" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:11px">«service»</text><text x="801.5999999999999" y="73" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:13px;font-weight:bold;text-decoration:underline">:SupabaseAdminService</text>
+<line x1="801.5999999999999" y1="84" x2="801.5999999999999" y2="844" stroke="#000" stroke-dasharray="5 4" stroke-width="1"/>
+<path d="M963.5999999999999,44 v40 a45,8 0 0 0 90,0 v-40" fill="#eef3f8" stroke="#000" stroke-width="1.2"/><ellipse cx="1008.5999999999999" cy="44" rx="45" ry="8" fill="#eef3f8" stroke="#000" stroke-width="1.2"/><text x="1008.5999999999999" y="66" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:11px">«BD»</text><text x="1008.5999999999999" y="81" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12.5px;font-weight:bold">PostgreSQL</text>
+<line x1="1008.5999999999999" y1="92" x2="1008.5999999999999" y2="844" stroke="#000" stroke-dasharray="5 4" stroke-width="1"/>
+<circle cx="34" cy="120" r="5" fill="#000"/>
+<line x1="34" y1="120" x2="220.39999999999998" y2="120" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="44" y="115" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">1. POST /api/auth/registro (nombre, correo, contraseña)</text>
+<path d="M222.39999999999998,148 h34 v16 h-31" fill="none" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="262.4" y="160" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">2. validate(RegistroClienteDto)</text>
+<line x1="222.39999999999998" y1="226" x2="36" y2="226" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<circle cx="34" cy="226" r="5" fill="none" stroke="#000"/>
+<text x="44" y="221" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">3. 400 Bad Request con los mensajes</text>
+<rect x="20" y="176" width="1108.6" height="70" fill="none" stroke="#555" stroke-width="1.1"/>
+<path d="M20,176 h58 v12 l-8,8 h-50 z" fill="#f2f2f2" stroke="#555" stroke-width="1.1"/>
+<text x="28" y="191" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">break</text>
+<text x="88" y="191" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">[datos no válidos]</text>
+<line x1="222.39999999999998" y1="276" x2="410.19999999999993" y2="276" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="317.29999999999995" y="271" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">4. registroCliente(dto)</text>
+<line x1="412.19999999999993" y1="310" x2="592.5999999999999" y2="310" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="503.3999999999999" y="305" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">5. registroCliente(dto)</text>
+<line x1="594.5999999999999" y1="344" x2="1006.5999999999999" y2="344" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="801.5999999999999" y="339" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">6. SELECT clientes WHERE correo</text>
+<line x1="1008.5999999999999" y1="378" x2="596.5999999999999" y2="378" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="801.5999999999999" y="373" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">7. cliente | null</text>
+<line x1="594.5999999999999" y1="442" x2="414.19999999999993" y2="442" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="503.3999999999999" y="437" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">8. BadRequestException</text>
+<line x1="412.19999999999993" y1="476" x2="36" y2="476" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<circle cx="34" cy="476" r="5" fill="none" stroke="#000"/>
+<text x="44" y="471" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">9. 400 «El correo ya está registrado»</text>
+<rect x="20" y="392" width="1108.6" height="104" fill="none" stroke="#555" stroke-width="1.1"/>
+<path d="M20,392 h58 v12 l-8,8 h-50 z" fill="#f2f2f2" stroke="#555" stroke-width="1.1"/>
+<text x="28" y="407" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">break</text>
+<text x="88" y="407" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">[correo ya registrado]</text>
+<line x1="594.5999999999999" y1="526" x2="799.5999999999999" y2="526" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="698.0999999999999" y="521" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">10. admin.createUser(correo, contraseña)</text>
+<line x1="801.5999999999999" y1="560" x2="596.5999999999999" y2="560" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="698.0999999999999" y="555" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">11. user.id | error</text>
+<line x1="594.5999999999999" y1="624" x2="414.19999999999993" y2="624" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="503.3999999999999" y="619" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">12. BadRequestException(error)</text>
+<line x1="412.19999999999993" y1="658" x2="36" y2="658" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<circle cx="34" cy="658" r="5" fill="none" stroke="#000"/>
+<text x="44" y="653" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">13. 400 con el mensaje de Supabase</text>
+<rect x="20" y="574" width="1108.6" height="104" fill="none" stroke="#555" stroke-width="1.1"/>
+<path d="M20,574 h58 v12 l-8,8 h-50 z" fill="#f2f2f2" stroke="#555" stroke-width="1.1"/>
+<text x="28" y="589" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">break</text>
+<text x="88" y="589" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px;font-weight:bold">[Supabase Auth responde con error]</text>
+<line x1="594.5999999999999" y1="708" x2="1006.5999999999999" y2="708" stroke="#000" stroke-width="1.2" marker-end="url(#lleno)"/>
+<text x="801.5999999999999" y="703" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">14. INSERT INTO clientes (supabase_uid, nombre, correo)</text>
+<line x1="1008.5999999999999" y1="742" x2="596.5999999999999" y2="742" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="801.5999999999999" y="737" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">15. cliente</text>
+<line x1="594.5999999999999" y1="776" x2="414.19999999999993" y2="776" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<text x="503.3999999999999" y="771" text-anchor="middle" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">16. cliente</text>
+<line x1="412.19999999999993" y1="810" x2="36" y2="810" stroke="#000" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#abierto)"/>
+<circle cx="34" cy="810" r="5" fill="none" stroke="#000"/>
+<text x="44" y="805" style="font-family:Arial,Helvetica,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round;font-size:12px">17. 201 Created</text>
+</svg>

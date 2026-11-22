@@ -1,0 +1,50 @@
+# Plan de OWASP ZAP (Automation Framework) — pruebas de sistema, octubre 2026.
+# API: importa el OpenAPI de Swagger y ejecuta el escaneo activo.
+# Frontend: rastreo (spider) y escaneo pasivo de la SPA compilada.
+# Se excluyen las rutas que llaman a servicios externos de pago (Groq, Mercado Pago).
+env:
+  contexts:
+  - name: api
+    urls:
+    - http://host.docker.internal:3000/api
+    excludePaths:
+    - http://host.docker.internal:3000/api/asistente.*
+    - http://host.docker.internal:3000/api/pagos/(generar|confirmar).*
+  - name: frontend
+    urls:
+    - http://host.docker.internal:4173/
+  parameters:
+    failOnError: false
+    progressToStdout: true
+jobs:
+- type: openapi
+  parameters:
+    apiUrl: http://host.docker.internal:3000/docs-json
+    targetUrl: http://host.docker.internal:3000
+    context: api
+- type: spider
+  parameters:
+    context: frontend
+    url: http://host.docker.internal:4173/
+    maxDuration: 2
+- type: passiveScan-wait
+  parameters:
+    maxDuration: 5
+- type: activeScan
+  parameters:
+    context: api
+    maxScanDurationInMins: 30
+- type: passiveScan-wait
+  parameters:
+    maxDuration: 5
+- type: report
+  parameters:
+    template: traditional-html
+    reportDir: /zap/wrk/final/
+    reportFile: zap-reporte.html
+    reportTitle: Operacion Remi - OWASP ZAP
+- type: report
+  parameters:
+    template: traditional-json
+    reportDir: /zap/wrk/final/
+    reportFile: zap-reporte.json

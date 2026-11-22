@@ -89,7 +89,7 @@ const Navbar: React.FC = () => {
     <header className="navbar">
       <nav className="navbar__inner">
         <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-          <a href="#" className="navbar__logo">
+          <a href="/" className="navbar__logo">
             <Icon name="restaurant_menu" filled />
             Remi
           </a>
@@ -406,30 +406,30 @@ const Footer: React.FC = () => (
       <div>
         <p className="footer__col-title">Empresa</p>
         <ul className="footer__links">
-          <li><a href="#">Nosotros</a></li>
-          <li><a href="#">Ubicaciones</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Carreras</a></li>
+          <li><a href="#nosotros">Nosotros</a></li>
+          <li><a href="#ubicaciones">Ubicaciones</a></li>
+          <li><a href="#filosofia">Filosofía</a></li>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
         </ul>
       </div>
 
       <div>
         <p className="footer__col-title">Menú</p>
         <ul className="footer__links">
-          <li><a href="#">Desayunos</a></li>
-          <li><a href="#">Almuerzos</a></li>
-          <li><a href="#">Cenas</a></li>
-          <li><a href="#">Especiales</a></li>
+          <li><a href="/menu">Entradas</a></li>
+          <li><a href="/menu">Platos fuertes</a></li>
+          <li><a href="/menu">Bebidas</a></li>
+          <li><a href="/menu">Postres</a></li>
         </ul>
       </div>
 
       <div>
         <p className="footer__col-title">Soporte</p>
         <ul className="footer__links">
-          <li><a href="#">Contacto</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Términos</a></li>
-          <li><a href="#">Privacidad</a></li>
+          <li><a href="#como-funciona">Cómo pedir</a></li>
+          <li><a href="/registro">Crear cuenta</a></li>
+          <li><a href="/login">Iniciar sesión</a></li>
+          <li><a href="#ubicaciones">Dónde estamos</a></li>
         </ul>
       </div>
     </div>

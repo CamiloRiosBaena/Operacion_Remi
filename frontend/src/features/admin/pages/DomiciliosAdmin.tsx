@@ -30,8 +30,6 @@ const CHIP_CLASS: Record<EstadoEntrega, string> = {
 function formatHora(iso: string) { return new Date(iso).toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); }
 function formatPrecio(n: number) { return `$${Number(n).toLocaleString('es-CO')}`; }
 
-const ESTADOS_DOM: EstadoEntrega[] = ['pendiente','listo','en_camino','entregado','cancelado'];
-
 export function DomiciliosAdmin() {
   const [pedidos,       setPedidos      ] = useState<ApiPedido[]>([]);
   const [domiciliarios, setDomiciliarios] = useState<ApiStaff[]>([]);

@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AdminLayout } from '../components/AdminLayout';
-import { PlatoImage } from '@/shared/components/PlatoImage';
-import { usePlatos } from '@/features/menu/context/PlatosContext';
 import { fetchPedidos, type ApiPedido } from '../services/admin.service';
 import {
   RANGOS_EXPORT,
@@ -95,13 +93,6 @@ export function EstadisticasPage() {
   const [exportRango,   setExportRango  ] = useState(1);
   const [exportando,    setExportando   ] = useState(false);
   const exportWrapRef = useRef<HTMLDivElement>(null);
-  const { platos } = usePlatos();
-
-  const platoMeta = useMemo(() => {
-    const map = new Map<string, { imageUrl?: string; categoria: string }>();
-    for (const p of platos) map.set(p.nombre, { imageUrl: p.imageUrl, categoria: p.categoria });
-    return map;
-  }, [platos]);
 
   useEffect(() => {
     fetchPedidos()
@@ -180,7 +171,6 @@ export function EstadisticasPage() {
     .sort((a, b) => b[1].pedidos - a[1].pedidos)
     .slice(0, 5)
     .map(([nombre, info]) => ({ nombre, ...info }));
-  const maxPlato = platosTop[0]?.pedidos ?? 1;
 
   // ── Tipos de pedido ────────────────────────────────────────────────────
   const totalTipos = pedidosMes.length || 1;

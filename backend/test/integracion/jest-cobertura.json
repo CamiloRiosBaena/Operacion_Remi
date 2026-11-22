@@ -1,0 +1,15 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../..",
+  "roots": ["<rootDir>/test/integracion"],
+  "testEnvironment": "node",
+  "testRegex": ".int-spec.ts$",
+  "transform": { "^.+\\.(t|j)s$": "ts-jest" },
+  "moduleNameMapper": {
+    "^jose$": "<rootDir>/src/test-mocks/jose.ts",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "testTimeout": 30000,
+  "collectCoverageFrom": ["src/**/*.ts", "!src/**/*.spec.ts", "!src/pruebas-taller/**"],
+  "coverageDirectory": "<rootDir>/coverage-integracion"
+}

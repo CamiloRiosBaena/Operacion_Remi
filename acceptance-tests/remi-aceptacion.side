@@ -1,0 +1,1204 @@
+{
+  "id": "c5fbe054-6749-4599-b30a-487b59e3e780",
+  "version": "2.0",
+  "name": "Operación Remi - Pruebas de aceptación",
+  "url": "http://localhost:3001",
+  "tests": [
+    {
+      "id": "94e39c76-3cba-4fc9-9273-76b58ab5effa",
+      "name": "INICIO Sesión del administrador",
+      "commands": [
+        {
+          "id": "48101601-cda5-4679-bbda-53c2d16a2bd5",
+          "comment": "Selenium IDE 4 usa su propio navegador, sin la sesión de Chrome",
+          "command": "open",
+          "target": "/login",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "c30d5b42-d462-4bdc-8307-6a2971fd2d08",
+          "comment": "",
+          "command": "setWindowSize",
+          "target": "1366x900",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "5545d4e6-9a30-4bbd-ac64-7e448b99f2cc",
+          "comment": "Inicia sesión a mano como admin@remi.local en esta ventana; la contraseña no queda en el archivo",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[@aria-label='Cerrar sesión']",
+          "targets": [],
+          "value": "120000"
+        }
+      ]
+    },
+    {
+      "id": "132467f7-8096-4a4a-9627-c335ef6befcf",
+      "name": "PREPARACIÓN Borrar restos de corridas anteriores",
+      "commands": [
+        {
+          "id": "55ba0008-d45f-4213-9fba-57c3a6e08f0c",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/mesas",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "e07844df-de96-4f94-918b-ed04542a1182",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nueva mesa')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "705b5184-7f14-4daf-b9b3-94b01e06a234",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99'])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayMesa"
+        },
+        {
+          "id": "da12a650-c11b-42a8-a273-c625f383aab5",
+          "comment": "",
+          "command": "if",
+          "target": "${hayMesa} > 0",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "58d09e34-3641-4c7c-80e0-25d66bd239db",
+          "comment": "Acepta la confirmación \"¿Eliminar…?\" de la pantalla",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "c78d5dce-2773-46c9-afd2-90c1939a1f03",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']/ancestor::div[.//button[@title='Eliminar']][1]//button[@title='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "25cec8ae-5618-488f-a573-75ed9b171f27",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "2e6c3dde-da36-44d8-8323-6ba32cb13122",
+          "comment": "",
+          "command": "end",
+          "target": "",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "16f643ee-9233-4072-8128-d8469fe6303c",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/usuarios",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "0d4489b7-5d31-4157-b9dd-be5fe590efcc",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo staff')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "ca6c36a9-69a5-4811-97fb-a20c6ab3fca5",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Cocinero Aceptacion']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayStaff"
+        },
+        {
+          "id": "534e2886-0e32-4982-8c8e-334ea1ef00e5",
+          "comment": "",
+          "command": "while",
+          "target": "${hayStaff} > 0",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "fb9114a6-e2c6-4294-b02f-351f5084f554",
+          "comment": "Acepta la confirmación \"¿Eliminar…?\" de la pantalla",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "232ed80d-73c7-49f5-a8c7-959c635ac3d3",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=(//tr[.//*[normalize-space()='Cocinero Aceptacion']]//button[@title='Eliminar'])[1]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "17e2f49e-dec3-41e2-b9d2-72f76508b858",
+          "comment": "",
+          "command": "pause",
+          "target": "1500",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "a9e6a285-d87d-40ac-a8b9-54ee277d4838",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Cocinero Aceptacion']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayStaff"
+        },
+        {
+          "id": "43f653a1-7b07-4a45-81c6-fc23f0281d19",
+          "comment": "",
+          "command": "end",
+          "target": "",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "5b055904-5f32-45d6-9ac7-5d279967a032",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/ingredientes",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9519b244-2211-4e8c-833b-5d2b873ec9e9",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo ingrediente')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "23d73569-ff96-4630-ba6f-84599cd42147",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Aceptación ingrediente']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayIngrediente"
+        },
+        {
+          "id": "1cf14421-3540-47fd-b678-b57d004bcbdf",
+          "comment": "",
+          "command": "while",
+          "target": "${hayIngrediente} > 0",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "0f12e736-b365-4cf7-aa0f-cbbea357f655",
+          "comment": "",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "18f85405-2b5d-4513-99d1-c44ed2133eb4",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=(//tr[.//*[normalize-space()='Aceptación ingrediente']]//button[@title='Eliminar'])[1]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d1e0a2d1-0eb0-4202-8245-02533092dfa8",
+          "comment": "",
+          "command": "pause",
+          "target": "1500",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "1ccfdf7a-f456-4288-987c-1549dff1928c",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Aceptación ingrediente']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayIngrediente"
+        },
+        {
+          "id": "19efbfc4-95a1-4eb0-b277-5a41b9dbceb7",
+          "comment": "",
+          "command": "end",
+          "target": "",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "2fd5eeba-fcca-4406-bd3c-03af06b53c24",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/menu",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "e31c6109-54fc-45a6-819d-ba0ebb9ccf92",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo plato')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "b7650367-64c4-4ee1-9b4e-c30f3beb630d",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Aceptación plato prueba']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayPlato"
+        },
+        {
+          "id": "a06dfd7e-44c4-41f9-985c-4f68d1f19082",
+          "comment": "",
+          "command": "while",
+          "target": "${hayPlato} > 0",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "a08a3806-f6cf-41d7-a9e0-aa71eb7d9416",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=(//tr[.//*[normalize-space()='Aceptación plato prueba']]//button[@title='Eliminar'])[1]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "dde7745a-2c44-44a6-8ab1-af489bc149d5",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]//button[normalize-space()='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "48c93709-4f14-4a61-8278-c4164acadfff",
+          "comment": "",
+          "command": "pause",
+          "target": "1500",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "8d1effe4-46ca-4697-9a85-b20c2cbb400d",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return document.evaluate(\"count(//tr[.//*[normalize-space()='Aceptación plato prueba']])\", document, null, XPathResult.NUMBER_TYPE, null).numberValue;",
+          "targets": [],
+          "value": "hayPlato"
+        },
+        {
+          "id": "1fa2e4b0-4140-42b4-b46f-2fbea23fae23",
+          "comment": "",
+          "command": "end",
+          "target": "",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "d6647037-9eba-4f37-b540-ccd386267707",
+      "name": "CA-04 Crear usuario cocinero",
+      "commands": [
+        {
+          "id": "7a47dd53-3cad-492c-b13e-748e3b9b7650",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/usuarios",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "3a681767-df90-4d68-b118-d10176d5b4af",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return 'cocinero.' + Date.now() + '@remi.test'",
+          "targets": [],
+          "value": "correoStaff"
+        },
+        {
+          "id": "e0b44228-0e7c-4d97-9ef1-f02aa09a5575",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo staff')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "fb3d76a1-a943-41a3-b24f-73fbec330acf",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo staff')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "a1774b3a-d500-42df-a71a-855db0a44502",
+          "comment": "",
+          "command": "type",
+          "target": "id=usuario-nombre-completo",
+          "targets": [],
+          "value": "Cocinero Aceptacion"
+        },
+        {
+          "id": "b7903c12-02fd-4b59-b95f-e52d3a8f40ed",
+          "comment": "",
+          "command": "type",
+          "target": "id=usuario-correo-electronico",
+          "targets": [],
+          "value": "${correoStaff}"
+        },
+        {
+          "id": "1f205917-5743-4beb-a597-226103040894",
+          "comment": "",
+          "command": "select",
+          "target": "id=usuario-rol",
+          "targets": [],
+          "value": "label=Cocinero"
+        },
+        {
+          "id": "d789be0d-366a-4ddc-adcf-08d61ee96fd0",
+          "comment": "Contraseña de una cuenta de prueba que se borra al final",
+          "command": "type",
+          "target": "id=usuario-contrasena",
+          "targets": [],
+          "value": "Aceptacion123"
+        },
+        {
+          "id": "23bf8d4f-1823-41bb-926c-7358156a910a",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]//button[normalize-space()='Crear']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "df804e82-6e12-4762-ae12-f6da41efee8e",
+          "comment": "El nuevo usuario aparece en la lista",
+          "command": "waitForElementVisible",
+          "target": "xpath=//td[normalize-space()='${correoStaff}']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "58e1cc59-d89a-4ee7-a67e-d0c160038c68",
+          "comment": "",
+          "command": "assertText",
+          "target": "xpath=//td[normalize-space()='${correoStaff}']/ancestor::tr//span[contains(@class,'adm-chip')]",
+          "targets": [],
+          "value": "Cocinero"
+        }
+      ]
+    },
+    {
+      "id": "f6ae4474-0ee2-4b1b-aa6a-c841e18e70ee",
+      "name": "CA-05 Crear plato",
+      "commands": [
+        {
+          "id": "a3be0344-e41c-4dd9-a00b-f034a49ed05f",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/menu",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "bc43cb35-e307-4cd6-81ce-5302b208a94c",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo plato')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "41d3ea57-b9b7-43ae-b2a9-c2bff916c196",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo plato')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d92954e2-dbf8-4537-84a2-502b7f1b3cf2",
+          "comment": "",
+          "command": "type",
+          "target": "id=plato-nombre-del-plato",
+          "targets": [],
+          "value": "Aceptación plato prueba"
+        },
+        {
+          "id": "73b84147-206a-4e8a-a9c3-56d3e437b69f",
+          "comment": "",
+          "command": "type",
+          "target": "id=plato-precio-cop",
+          "targets": [],
+          "value": "12000"
+        },
+        {
+          "id": "478fa83f-a7c3-468b-91d0-939ef03fd362",
+          "comment": "",
+          "command": "select",
+          "target": "id=plato-iva",
+          "targets": [],
+          "value": "value=19"
+        },
+        {
+          "id": "4f78a066-fc45-4608-80f5-14ccf96d2a1b",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Crear plato')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "4765c7c9-5a20-4c72-9202-632e371fdd1a",
+          "comment": "El plato aparece en la tabla",
+          "command": "waitForElementVisible",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación plato prueba']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "c29f3696-eb95-4d50-8a4f-f1270caf8729",
+          "comment": "",
+          "command": "assertElementPresent",
+          "target": "xpath=//button[@aria-label='Disponible: Aceptación plato prueba' and @aria-pressed='true']",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "ad486c44-099c-4af9-93ee-7d64fe945147",
+      "name": "CA-06 Registrar ingrediente",
+      "commands": [
+        {
+          "id": "1f4afee0-d7b9-4a84-96f4-372983d19b3b",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/ingredientes",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "2cdcf947-8902-4b9b-b58e-5f681848c2f3",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo ingrediente')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "98689d59-b67e-4e70-bcaa-8c1b45329121",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Nuevo ingrediente')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d7efc84c-7063-4a6c-98af-092bed443abe",
+          "comment": "",
+          "command": "type",
+          "target": "id=ingrediente-nombre-del-ingrediente",
+          "targets": [],
+          "value": "Aceptación ingrediente"
+        },
+        {
+          "id": "40a681f2-143d-446e-97bf-65846374c68c",
+          "comment": "",
+          "command": "select",
+          "target": "id=ingrediente-unidad-de-compra",
+          "targets": [],
+          "value": "label=Kg"
+        },
+        {
+          "id": "b31c3b80-b2fc-46dd-8a3a-6a430cf1fdb2",
+          "comment": "",
+          "command": "type",
+          "target": "id=ingrediente-gramos-por",
+          "targets": [],
+          "value": "1000"
+        },
+        {
+          "id": "c468bf19-9b64-4390-bfef-63d81d7e1abd",
+          "comment": "",
+          "command": "type",
+          "target": "id=ingrediente-stock-actual",
+          "targets": [],
+          "value": "5"
+        },
+        {
+          "id": "8151e85a-72c7-4956-a3cf-09e516f6a521",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Crear ingrediente')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "0900a2aa-8757-4bc7-8d69-0c6bcb7e7313",
+          "comment": "El ingrediente aparece en el inventario",
+          "command": "waitForElementVisible",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación ingrediente']]",
+          "targets": [],
+          "value": "15000"
+        }
+      ]
+    },
+    {
+      "id": "c9842b8d-0b1d-4b1f-aee5-7d31d5736e7a",
+      "name": "CA-07 Crear mesa con su QR",
+      "commands": [
+        {
+          "id": "bbbb2aac-750b-443b-b2e6-aa7c03c5030e",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/mesas",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "8ba46b2e-8b36-451d-862d-c6f7795ced10",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Nueva mesa')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "dc220695-0518-4287-a4d6-aa0f887b7789",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Nueva mesa')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "3a3b2a88-183b-4a15-8b60-acbbae74626a",
+          "comment": "",
+          "command": "type",
+          "target": "id=mesa-numero-de-mesa",
+          "targets": [],
+          "value": "99"
+        },
+        {
+          "id": "5565d105-cdd9-42bc-8ebc-80c6c603d18d",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Agregar mesa')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "0390675a-518a-4c0e-b768-1a0f8588cfce",
+          "comment": "La mesa aparece en la lista",
+          "command": "waitForElementPresent",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "d7574f0f-ed7e-49db-b2a3-df890080479a",
+          "comment": "",
+          "command": "assertText",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']",
+          "targets": [],
+          "value": "Mesa 99"
+        },
+        {
+          "id": "096389c1-b714-4cf1-be65-b14293473486",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']/ancestor::div[.//button[@title='Eliminar']][1]//button[contains(normalize-space(),'Ver QR')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "bfc540bf-478a-4a42-86ad-e6b97a06f508",
+          "comment": "Se muestra el código QR de la mesa",
+          "command": "waitForElementVisible",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]//*[name()='svg' or name()='canvas']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "9b389f2e-de82-44fc-9e63-bdfc1e7a186d",
+          "comment": "Se cierra el modal del QR",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]//button[contains(normalize-space(),'Cerrar')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "de77cbe8-f1a7-4690-830a-bff9fb5e50d2",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]",
+          "targets": [],
+          "value": "15000"
+        }
+      ]
+    },
+    {
+      "id": "fb0dddc8-6113-421a-8762-cea91c524cfb",
+      "name": "CA-08 Plato agotado en el menú del cliente",
+      "commands": [
+        {
+          "id": "db0f0b90-78de-4932-b4ff-506a39d9a8c0",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/menu",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "a4fd0e63-28e6-4042-832c-188eebfcb8d4",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[@aria-label='Disponible: Aceptación plato prueba']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "5983b051-28c9-495f-b4f8-798c51c8c2d5",
+          "comment": "El administrador marca el plato como agotado",
+          "command": "click",
+          "target": "xpath=//button[@aria-label='Disponible: Aceptación plato prueba']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "efc49805-b558-4492-9e33-7e7f45fff558",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[@aria-label='Disponible: Aceptación plato prueba' and @aria-pressed='false']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "b0efc4f7-49ee-4ee3-be34-25bb490eb84a",
+          "comment": "El cliente abre el menú desde el QR de la mesa 1",
+          "command": "open",
+          "target": "/menu?mesa=1",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "5bb742cb-990a-496b-87f0-0ff3f0eb0290",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(.,'Aceptación plato prueba')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "7a21e47b-6a83-4161-b19f-e915b677d0b9",
+          "comment": "Aparece agotado y no se puede agregar",
+          "command": "assertElementPresent",
+          "target": "xpath=//button[contains(.,'Aceptación plato prueba') and @disabled]",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "1d867e25-bbf9-420a-b09a-8bc622f5245c",
+      "name": "LIMPIEZA Borrar los datos de prueba",
+      "commands": [
+        {
+          "id": "d5bd6dab-d497-41cb-955d-2c081453cbf7",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/menu",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "041ddb56-5b3a-4a96-9b49-f23e0bb1c944",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación plato prueba']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "fdd4d6d8-fce8-425f-b351-522c77213838",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación plato prueba']]//button[@title='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9bd1c464-7d88-4b90-b0a0-da98a42fd5cf",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'adm-modal-box')]//button[normalize-space()='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9a6bceeb-3816-4c0d-815b-f4c73bd8725e",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación plato prueba']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "9bc1f64e-8b90-405b-8cdc-fe37d18f89a1",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/ingredientes",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9edf84aa-63d2-4984-8f47-4880e0ed01c6",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación ingrediente']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "56b11e3b-74d9-4946-9d27-0577570e96ed",
+          "comment": "Acepta la confirmación \"¿Eliminar…?\" de la pantalla",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "ffd03f03-9d07-44a5-8a87-7be6e1ef0a30",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación ingrediente']]//button[@title='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "566fc9d9-bdce-4648-b675-57de2a919d4c",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//tr[.//*[normalize-space()='Aceptación ingrediente']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "7f535349-19b9-48fe-810a-9078f65cd845",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/mesas",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d4f5270e-e10d-4ad1-88ee-8eb65141ce3c",
+          "comment": "",
+          "command": "waitForElementPresent",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "b1983273-aa8a-4e11-a092-5c9bc193d0fc",
+          "comment": "Acepta la confirmación \"¿Eliminar…?\" de la pantalla",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "5967ab25-783b-47d6-8a74-c98ad7449a44",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']/ancestor::div[.//button[@title='Eliminar']][1]//button[@title='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d2a8ab92-5522-48ff-b000-d3e583e7e401",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//div[contains(@class,'mesaNum') and normalize-space()='Mesa 99']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "c903a756-873c-4435-bd7a-01be7d145dbf",
+          "comment": "",
+          "command": "open",
+          "target": "/admin/usuarios",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "fc33fae1-7bae-43f4-9c5b-27069d3374d1",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//tr[.//*[normalize-space()='Cocinero Aceptacion']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "4e681442-c8c9-441b-9725-97ebeeec3e15",
+          "comment": "Acepta la confirmación \"¿Eliminar…?\" de la pantalla",
+          "command": "executeScript",
+          "target": "window.confirm = () => true;",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "3104cc96-afab-4e6f-a0f6-e732b9566793",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//tr[.//*[normalize-space()='Cocinero Aceptacion']]//button[@title='Eliminar']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "7dfd2351-4cf8-46ab-a3a5-be6eaf7959c4",
+          "comment": "",
+          "command": "waitForElementNotPresent",
+          "target": "xpath=//tr[.//*[normalize-space()='Cocinero Aceptacion']]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "65eab5b3-73ff-4709-97b6-0bf8b81ee222",
+          "comment": "Cierra la sesión del administrador para los casos del cliente",
+          "command": "click",
+          "target": "xpath=//button[@aria-label='Cerrar sesión']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9fee2958-b54f-4557-a110-2ae3f8b9964b",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "id=correo",
+          "targets": [],
+          "value": "15000"
+        }
+      ]
+    },
+    {
+      "id": "aa3b00aa-579b-4409-9416-aabbd728c1f1",
+      "name": "CA-02 Registro rechazado por nombre corto",
+      "commands": [
+        {
+          "id": "5b938ead-6a93-40cf-8881-321b373f22d8",
+          "comment": "",
+          "command": "open",
+          "target": "/registro",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "d02a19b0-e785-48d3-9b92-6d747842540c",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "id=nombre",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "4edd2f32-9e50-47f9-9e43-c92557c6ff44",
+          "comment": "",
+          "command": "type",
+          "target": "id=nombre",
+          "targets": [],
+          "value": "Ana"
+        },
+        {
+          "id": "a339a2a1-6053-433f-afc8-ddca56e46850",
+          "comment": "",
+          "command": "type",
+          "target": "id=correo",
+          "targets": [],
+          "value": "ana@remi.test"
+        },
+        {
+          "id": "5fea0a8c-0760-4886-ad23-8bb79e29e929",
+          "comment": "",
+          "command": "type",
+          "target": "id=contrasena",
+          "targets": [],
+          "value": "Aceptacion123"
+        },
+        {
+          "id": "eb6a01b5-31f0-4d58-bd59-e26e1f47fb26",
+          "comment": "",
+          "command": "type",
+          "target": "id=confirmar",
+          "targets": [],
+          "value": "Aceptacion123"
+        },
+        {
+          "id": "60cb4793-4802-4256-b1ea-591e459e434d",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Crear cuenta gratis')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "dd3d1573-c82e-4d98-91ca-9f6926994e9e",
+          "comment": "Se explica el error y no se crea la cuenta",
+          "command": "waitForElementVisible",
+          "target": "xpath=//*[normalize-space()='El nombre debe tener entre 10 y 30 caracteres']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "2c5951d4-38c9-455f-8e13-c4c07f0a3555",
+          "comment": "Sigue en el formulario de registro",
+          "command": "assertElementPresent",
+          "target": "id=nombre",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "5d600276-3f1c-4230-b797-cb756f78c3c3",
+      "name": "CA-03 Pedido desde el QR de la mesa",
+      "commands": [
+        {
+          "id": "e7b1a795-2793-4526-aa96-7f502e8d8791",
+          "comment": "",
+          "command": "open",
+          "target": "/menu?mesa=1",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "9ade6b38-bfee-4493-ac30-be80c2f8be81",
+          "comment": "El menú reconoce la mesa del QR",
+          "command": "waitForElementVisible",
+          "target": "xpath=//*[contains(normalize-space(),'Estás en')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "c2f18cf5-c271-4c0f-940a-ec2b574059fb",
+          "comment": "El cliente elige el primer plato disponible",
+          "command": "click",
+          "target": "xpath=(//button[contains(.,'$') and not(@disabled)])[1]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "0cf93f33-f17f-4bac-9059-e44a981c5cac",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//button[contains(normalize-space(),'Agregar al pedido')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "ae4d02a0-0bed-41a7-9165-92eace4f8485",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Agregar al pedido')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "db0aa86b-d411-453e-b285-ca74d3511949",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[starts-with(@aria-label,'Carrito — 1')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "3ca845bd-9bc4-40aa-9a74-6e251bfe071f",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Proceder al pago')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "1f178516-0e00-4492-86e7-dda8e10cb1c7",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "xpath=//h2[normalize-space()='Finalizar pedido']",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "417f3806-3dae-4aca-b6c7-1cd2429c68d1",
+          "comment": "El pedido queda asociado a la mesa 1",
+          "command": "assertElementPresent",
+          "target": "xpath=//*[contains(normalize-space(),'Mesa 1')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "aa7674f0-3d94-45e1-b38c-63f43219131a",
+          "comment": "",
+          "command": "assertElementPresent",
+          "target": "xpath=//*[contains(normalize-space(),'Total (IVA inc.)')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "eb020f41-c740-48bd-97ea-abfb201ff2ca",
+          "comment": "No se confirma el pedido",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Volver')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "3a1635f1-b13a-4678-ab32-49348f3fe8af",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Vaciar')]",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "3dd48ed3-93b9-4281-aba8-78460e7929fa",
+      "name": "CA-01 Registro de cliente",
+      "commands": [
+        {
+          "id": "2a519e38-c417-4e9d-b32d-cb67965fd967",
+          "comment": "",
+          "command": "open",
+          "target": "/registro",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "51f717ad-7ae4-492e-8542-3c9af1f8d151",
+          "comment": "",
+          "command": "executeScript",
+          "target": "return 'cliente.' + Date.now() + '@remi.test'",
+          "targets": [],
+          "value": "correoCliente"
+        },
+        {
+          "id": "ccf05c80-e488-45b8-9e84-4cb71ba9317d",
+          "comment": "",
+          "command": "waitForElementVisible",
+          "target": "id=nombre",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "eba149ae-4851-41dd-9ab7-ee031f8c9910",
+          "comment": "",
+          "command": "type",
+          "target": "id=nombre",
+          "targets": [],
+          "value": "Cliente Aceptacion"
+        },
+        {
+          "id": "57b2e86c-14cd-4f73-bc40-7199bed923f8",
+          "comment": "",
+          "command": "type",
+          "target": "id=correo",
+          "targets": [],
+          "value": "${correoCliente}"
+        },
+        {
+          "id": "2e8fe324-a2e4-4cf4-8894-6cbb5ff26336",
+          "comment": "Contraseña de una cuenta de prueba",
+          "command": "type",
+          "target": "id=contrasena",
+          "targets": [],
+          "value": "Aceptacion123"
+        },
+        {
+          "id": "f9a2dc74-a1d0-43eb-b6bc-b5afc3be3214",
+          "comment": "",
+          "command": "type",
+          "target": "id=confirmar",
+          "targets": [],
+          "value": "Aceptacion123"
+        },
+        {
+          "id": "638dc898-58da-4d1f-8222-763c80972b48",
+          "comment": "",
+          "command": "click",
+          "target": "xpath=//button[contains(normalize-space(),'Crear cuenta gratis')]",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "26001662-242f-48ae-b90c-74a581f61969",
+          "comment": "La cuenta se crea y el cliente entra al menú",
+          "command": "waitForElementVisible",
+          "target": "xpath=//*[contains(normalize-space(),'Platos fuertes')]",
+          "targets": [],
+          "value": "15000"
+        },
+        {
+          "id": "8cacb121-2943-40b2-86dd-776b2c14f9c6",
+          "comment": "Está en el menú del cliente",
+          "command": "assertElementPresent",
+          "target": "xpath=//button[starts-with(@aria-label,'Carrito')]",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "17c8644f-1ac6-4cb7-9fc6-dfd6a7904685",
+      "name": "Aceptación Operación Remi",
+      "persistSession": true,
+      "parallel": false,
+      "timeout": 300,
+      "tests": [
+        "94e39c76-3cba-4fc9-9273-76b58ab5effa",
+        "132467f7-8096-4a4a-9627-c335ef6befcf",
+        "d6647037-9eba-4f37-b540-ccd386267707",
+        "f6ae4474-0ee2-4b1b-aa6a-c841e18e70ee",
+        "ad486c44-099c-4af9-93ee-7d64fe945147",
+        "c9842b8d-0b1d-4b1f-aee5-7d31d5736e7a",
+        "fb0dddc8-6113-421a-8762-cea91c524cfb",
+        "1d867e25-bbf9-420a-b09a-8bc622f5245c",
+        "aa3b00aa-579b-4409-9416-aabbd728c1f1",
+        "5d600276-3f1c-4230-b797-cb756f78c3c3",
+        "3dd48ed3-93b9-4281-aba8-78460e7929fa"
+      ]
+    }
+  ],
+  "urls": [
+    "http://localhost:3001"
+  ],
+  "plugins": []
+}

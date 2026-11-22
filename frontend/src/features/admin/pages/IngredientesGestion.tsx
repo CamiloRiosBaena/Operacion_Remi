@@ -36,7 +36,8 @@ const STOCK_CHIP: Record<Stock, string> = {
 };
 const STOCK_LABEL: Record<Stock, string> = { ok: 'OK', bajo: 'Bajo', agotado: 'Crítico' };
 const STOCK_COL: Record<Stock, string> = { ok: 'var(--adm-ok)', bajo: 'var(--adm-warn)', agotado: 'var(--adm-bad)' };
-const UNIDADES_COMPRA = ['bulto','caja','kg','litro','racimo','paca','unidad'];
+const UNIDADES_COMPRA = ['Kg','Caja','Bulto'];
+const plural = (u: string) => (u === 'Kg' ? u : `${u}s`);
 
 function mapApi(a: ApiIngrediente): Ingrediente {
   return { id:a.id, nombre:a.nombre, unidadCompra:a.unidadCompra, gramosPorUnidad:Number(a.gramosPorUnidad),
@@ -54,7 +55,7 @@ interface FormRelacion { platoId:number; gramos:string; activo:boolean; }
 interface FormState { nombre:string; unidadCompra:string; gramosPorUnidad:string; stockUnidades:string; stockMinimoPorciones:string; eliminable:boolean; relaciones:FormRelacion[]; }
 
 function buildEmptyForm(ids: number[]): FormState {
-  return { nombre:'', unidadCompra:'kg', gramosPorUnidad:'1000', stockUnidades:'0', stockMinimoPorciones:'10', eliminable:true,
+  return { nombre:'', unidadCompra:'Kg', gramosPorUnidad:'1000', stockUnidades:'0', stockMinimoPorciones:'10', eliminable:true,
     relaciones: ids.map(id => ({ platoId:id, gramos:'', activo:false })) };
 }
 function buildEditForm(ing: Ingrediente, rels: PlatoIngrediente[], ids: number[]): FormState {
@@ -94,17 +95,21 @@ export function IngredientesGestion() {
   function openEditar(ing: Ingrediente) { setForm(buildEditForm(ing, relaciones, platos.map(p => p.id))); setErrorMsg(''); setModal({ mode:'editar', id:ing.id }); }
 
   async function handleGuardar() {
-    const gpu = parseFloat(form.gramosPorUnidad), su = parseFloat(form.stockUnidades), smp = parseInt(form.stockMinimoPorciones);
-    if (!form.nombre.trim() || isNaN(gpu) || isNaN(su)) return;
+    const gpu = Number.parseFloat(form.gramosPorUnidad), su = Number.parseFloat(form.stockUnidades), smp = Number.parseInt(form.stockMinimoPorciones);
+    const nombre = form.nombre.trim();
+    if (nombre.length < 5 || nombre.length > 50) { setErrorMsg('El nombre debe tener entre 5 y 50 caracteres'); return; }
+    if (Number.isNaN(gpu) || gpu <= 0) { setErrorMsg('Los gramos por unidad deben ser mayores que 0'); return; }
+    if (Number.isNaN(su) || su < 0) { setErrorMsg('El stock actual no puede ser negativo'); return; }
+    if (!Number.isNaN(smp) && smp < 0) { setErrorMsg('El stock mínimo no puede ser negativo'); return; }
     setSaving(true); setErrorMsg('');
     try {
-      const body = { nombre:form.nombre, unidadCompra:form.unidadCompra, gramosPorUnidad:gpu, stockUnidades:su, stockMinimoPorciones:isNaN(smp)?10:smp, eliminable:form.eliminable };
+      const body = { nombre, unidadCompra:form.unidadCompra, gramosPorUnidad:gpu, stockUnidades:su, stockMinimoPorciones:Number.isNaN(smp)?10:smp, eliminable:form.eliminable };
       let ingId: number;
       if (modal?.mode === 'crear') { const c = await createIngrediente(body); ingId = c.id; setIngredientes(prev => [...prev, mapApi(c)]); }
       else { ingId = modal!.id; const a = await updateIngrediente(modal!.id, body); setIngredientes(prev => prev.map(i => i.id === modal!.id ? mapApi(a) : i)); }
       const prevRels = relaciones.filter(r => r.ingredienteId === ingId);
       await Promise.all(form.relaciones.map(async rel => {
-        const g = parseFloat(rel.gramos); const era = prevRels.some(r => r.platoId === rel.platoId);
+        const g = Number.parseFloat(rel.gramos); const era = prevRels.some(r => r.platoId === rel.platoId);
         if (rel.activo && g > 0) await upsertPlatoIngrediente(rel.platoId, { ingredienteId:ingId, gramosPorPorcion:g });
         else if (!rel.activo && era) await deletePlatoIngrediente(rel.platoId, ingId);
       }));
@@ -122,10 +127,10 @@ export function IngredientesGestion() {
   function toggleRelacion(pid: number) { setForm(f => ({ ...f, relaciones: f.relaciones.map(r => r.platoId === pid ? { ...r, activo:!r.activo, gramos:r.activo?'':r.gramos } : r) })); }
   function setGramos(pid: number, gramos: string) { setForm(f => ({ ...f, relaciones: f.relaciones.map(r => r.platoId === pid ? { ...r, gramos } : r) })); }
 
-  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null));
-  const convG = parseFloat(form.gramosPorUnidad)||0, convS = parseFloat(form.stockUnidades)||0, convT = convS*convG;
-  const convRes = form.relaciones.filter(r => r.activo && parseFloat(r.gramos)>0).map(r => {
-    const p = platos.find(x => x.id === r.platoId); const g = parseFloat(r.gramos);
+  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null), modal !== null);
+  const convG = Number.parseFloat(form.gramosPorUnidad)||0, convS = Number.parseFloat(form.stockUnidades)||0, convT = convS*convG;
+  const convRes = form.relaciones.filter(r => r.activo && Number.parseFloat(r.gramos)>0).map(r => {
+    const p = platos.find(x => x.id === r.platoId); const g = Number.parseFloat(r.gramos);
     return { nombre:p?.nombre??`Plato ${r.platoId}`, gramosPorP:g, porciones:g>0?Math.floor(convT/g):0 };
   });
 
@@ -264,7 +269,7 @@ export function IngredientesGestion() {
                       {/* Disponible — gramos totales */}
                       <td>
                         <span className={styles.gramosDisp}>{fmtGramos(g)}</span>
-                        <div className="adm-cell-sub">{fmtNum(ing.stockUnidades)} {ing.unidadCompra}{ing.stockUnidades !== 1 ? 's' : ''}</div>
+                        <div className="adm-cell-sub">{fmtNum(ing.stockUnidades)} {ing.stockUnidades !== 1 ? plural(ing.unidadCompra) : ing.unidadCompra}</div>
                       </td>
 
                       {/* Nivel de stock — barra + texto */}
@@ -318,38 +323,38 @@ export function IngredientesGestion() {
       {/* Modal */}
       {modal && (
         <div className="adm-overlay" {...modalBdProps}>
-          <div className="adm-modal-box lg" onClick={e => e.stopPropagation()} style={{ maxHeight:'85vh', overflowY:'auto' }}>
+          <div className="adm-modal-box lg" role="dialog" aria-modal="true" style={{ maxHeight:'85vh', overflowY:'auto' }}>
             <div className="adm-modal-title">{modal.mode==='crear'?'Nuevo ingrediente':'Editar ingrediente'}</div>
             <div className="adm-modal-form">
               <div className="adm-modal-field">
-                <label>Nombre del ingrediente</label>
-                <input type="text" className="adm-input" value={form.nombre}
+                <label htmlFor="ingrediente-nombre-del-ingrediente">Nombre del ingrediente</label>
+                <input id="ingrediente-nombre-del-ingrediente" type="text" className="adm-input" value={form.nombre}
                   onChange={e => setForm({ ...form, nombre:e.target.value })} placeholder="Ej: Fríjoles rojos" />
               </div>
               <div className="adm-modal-row">
                 <div className="adm-modal-field">
-                  <label>Unidad de compra</label>
-                  <select className="adm-input" value={form.unidadCompra}
+                  <label htmlFor="ingrediente-unidad-de-compra">Unidad de compra</label>
+                  <select id="ingrediente-unidad-de-compra" className="adm-input" value={form.unidadCompra}
                     onChange={e => setForm({ ...form, unidadCompra:e.target.value })}>
                     {UNIDADES_COMPRA.map(u => <option key={u}>{u}</option>)}
                   </select>
                 </div>
                 <div className="adm-modal-field">
-                  <label>Gramos por {form.unidadCompra}</label>
-                  <input type="number" className="adm-input" value={form.gramosPorUnidad}
+                  <label htmlFor="ingrediente-gramos-por">Gramos por {form.unidadCompra}</label>
+                  <input id="ingrediente-gramos-por" type="number" className="adm-input" value={form.gramosPorUnidad}
                     onChange={e => setForm({ ...form, gramosPorUnidad:e.target.value })} min={1} />
                 </div>
               </div>
               <div className="adm-modal-row">
                 <div className="adm-modal-field">
-                  <label>Stock actual ({form.unidadCompra}s)</label>
-                  <input type="number" className="adm-input" value={form.stockUnidades}
+                  <label htmlFor="ingrediente-stock-actual">Stock actual ({plural(form.unidadCompra)})</label>
+                  <input id="ingrediente-stock-actual" type="number" className="adm-input" value={form.stockUnidades}
                     onChange={e => setForm({ ...form, stockUnidades:e.target.value })} min={0} step={0.5} />
                 </div>
                 <div className="adm-modal-field">
-                  <label>Alerta si quedan menos de</label>
+                  <label htmlFor="ingrediente-alerta-minimo">Alerta si quedan menos de</label>
                   <div className={styles.inputSuffix}>
-                    <input type="number" className="adm-input" value={form.stockMinimoPorciones}
+                    <input id="ingrediente-alerta-minimo" type="number" className="adm-input" value={form.stockMinimoPorciones}
                       onChange={e => setForm({ ...form, stockMinimoPorciones:e.target.value })} min={1} />
                     <span className={styles.suffix}>porciones</span>
                   </div>
@@ -358,7 +363,7 @@ export function IngredientesGestion() {
               <label className="adm-check-label">
                 <input type="checkbox" checked={form.eliminable}
                   onChange={e => setForm({ ...form, eliminable:e.target.checked })} />
-                El cliente puede pedir que se lo quiten del plato
+                <span>El cliente puede pedir que se lo quiten del plato</span>
               </label>
               {convT > 0 && (
                 <div className={styles.conversor}>
@@ -386,8 +391,8 @@ export function IngredientesGestion() {
                   )}
                 </div>
               )}
-              <div className="adm-modal-field">
-                <label>Platos que usan este ingrediente</label>
+              <div className="adm-modal-field" role="group" aria-labelledby="ingrediente-platos-titulo">
+                <span id="ingrediente-platos-titulo" className="adm-field-title">Platos que usan este ingrediente</span>
                 <p className={styles.fieldHint}>Marca los platos y especifica cuántos gramos usa cada porción.</p>
                 <div className={styles.platosGramosGrid}>
                   {platos.map(plato => {

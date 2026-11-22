@@ -62,7 +62,7 @@
 .btnDismiss {
   width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--m-line, oklch(0.905 0.012 70));
   background: none; cursor: pointer; display: grid; place-items: center;
-  color: var(--m-muted, oklch(0.585 0.018 60)); transition: all .15s;
+  color: var(--m-muted, oklch(0.52 0.018 60)); transition: all .15s;
 }
 .btnDismiss:hover { background: var(--m-bg, oklch(0.962 0.012 74)); color: var(--m-ink, oklch(0.285 0.022 52)); }
 .btnDismiss svg { width: 14px; height: 14px; }
@@ -87,7 +87,7 @@
 .stepDot {
   width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
   background: var(--m-card, #fff); border: 2px solid var(--m-line-2, oklch(0.86 0.014 68));
-  color: var(--m-muted, oklch(0.585 0.018 60)); transition: all .35s;
+  color: var(--m-muted, oklch(0.52 0.018 60)); transition: all .35s;
   position: relative; flex-shrink: 0;
 }
 .stepDot svg { width: 20px; height: 20px; }
@@ -114,7 +114,7 @@
   100% { transform: scale(1.6); opacity: 0; }
 }
 .stepLabel {
-  font-size: 12px; font-weight: 600; color: var(--m-muted, oklch(0.585 0.018 60));
+  font-size: 12px; font-weight: 600; color: var(--m-muted, oklch(0.52 0.018 60));
   white-space: nowrap; transition: color .3s;
 }
 .stepLabelActive { color: var(--m-accent, oklch(0.585 0.155 45)); font-weight: 700; }
@@ -216,7 +216,7 @@
   font-family: var(--m-font-ui, sans-serif);
 }
 .canceladoText {
-  font-size: 15px; font-weight: 600; color: var(--m-muted, oklch(0.585 0.018 60)); margin: 0;
+  font-size: 15px; font-weight: 600; color: var(--m-muted, oklch(0.52 0.018 60)); margin: 0;
 }
 .btnDismiss2 {
   padding: 9px 22px; border-radius: 999px; cursor: pointer;
@@ -256,7 +256,7 @@
   color: var(--m-ink, oklch(0.285 0.022 52)); margin: 0;
 }
 .qrCardSub {
-  font-size: 13px; color: var(--m-muted, oklch(0.585 0.018 60)); margin: 0;
+  font-size: 13px; color: var(--m-muted, oklch(0.52 0.018 60)); margin: 0;
 }
 .qrBox {
   padding: 16px; border-radius: 18px;
@@ -264,7 +264,7 @@
   box-shadow: var(--m-shadow-sm, 0 1px 3px oklch(0.3 0.02 50 / 0.06));
 }
 .qrValidity {
-  font-size: 12px; font-weight: 600; color: var(--m-muted, oklch(0.585 0.018 60));
+  font-size: 12px; font-weight: 600; color: var(--m-muted, oklch(0.52 0.018 60));
   display: inline-flex; align-items: center; gap: 6px;
 }
 .qrValidity svg { width: 14px; height: 14px; }
@@ -278,7 +278,7 @@
 }
 .btnQrClose:hover { background: var(--m-line, oklch(0.905 0.012 70)); }
 .qrLoading {
-  font-size: 14px; color: var(--m-muted, oklch(0.585 0.018 60));
+  font-size: 14px; color: var(--m-muted, oklch(0.52 0.018 60));
   padding: 24px 0; display: flex; align-items: center; gap: 10px;
 }
 .qrError {

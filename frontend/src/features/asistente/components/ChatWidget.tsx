@@ -90,7 +90,7 @@ export function ChatWidget({ hidden = false }: { hidden?: boolean }) {
               <p className={styles.headerName}>Remi — Asistente</p>
               <p className={styles.headerStatus}>
                 <span className={styles.statusDot} />
-                En línea
+                <span>En línea</span>
               </p>
             </div>
             <button

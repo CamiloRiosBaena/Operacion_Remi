@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
 import { chatWithAsistente } from '../services/asistente.service';
 import type { CartAction, ChatMessage } from '../types/chat.types';
@@ -14,7 +14,6 @@ export function useChatbot() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const carrito = useCarrito();
-  const abortRef = useRef<AbortController | null>(null);
 
   const addToCart = useCallback(
     (action: CartAction) => {

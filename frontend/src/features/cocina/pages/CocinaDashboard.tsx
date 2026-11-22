@@ -79,12 +79,8 @@ const TIPO_META: Record<string, { cls: string; icon: keyof typeof Ic; label: str
   domicilio: { cls: styles.tagDomicilio, icon: 'delivery', label: 'Domicilio'     },
 };
 
-function formatHora(iso: string) {
-  return new Date(iso).toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-}
-
 function tiempoTranscurrido(iso: string): { texto: string; mins: number } {
-  const fecha = /Z|[+-]\d{2}:\d{2}$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
+  const fecha = /(?:Z|[+-]\d{2}:\d{2})$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
   const s = Math.max(0, Math.floor((Date.now() - fecha.getTime()) / 1000));
   const m = Math.floor(s / 60);
   const ss = String(s % 60).padStart(2, '0');
@@ -92,7 +88,7 @@ function tiempoTranscurrido(iso: string): { texto: string; mins: number } {
 }
 
 function minutosDespacho(iso: string) {
-  const fecha = /Z|[+-]\d{2}:\d{2}$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
+  const fecha = /(?:Z|[+-]\d{2}:\d{2})$/.test(iso) ? new Date(iso) : new Date(iso + 'Z');
   return Math.floor((Date.now() - fecha.getTime()) / 60000);
 }
 
@@ -407,7 +403,16 @@ export function CocinaDashboard() {
                       <div
                         key={p.id}
                         className={`${styles.dispCard} ${sel ? styles.dispCardSel : ''}`}
+                        role="checkbox"
+                        aria-checked={sel}
+                        tabIndex={0}
                         onClick={() => toggleSeleccion(p.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggleSeleccion(p.id);
+                          }
+                        }}
                       >
                         <div className={styles.dispCheck}>{sel && Ic.check}</div>
                         <div className={styles.dispMain}>
@@ -431,8 +436,8 @@ export function CocinaDashboard() {
               </div>
 
               <div className={styles.dispField}>
-                <label>Asignar a</label>
-                <select
+                <label htmlFor="despacho-asignar-a">Asignar a</label>
+                <select id="despacho-asignar-a"
                   className={styles.dispSelect}
                   value={domiciliarioId}
                   onChange={(e) => setDomiciliarioId(e.target.value ? Number(e.target.value) : '')}

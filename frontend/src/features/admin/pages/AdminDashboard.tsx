@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '../components/AdminLayout';
 import { usePlatos } from '@/features/menu/context/PlatosContext';
@@ -49,7 +49,8 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
   ]);
   const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join(' ');
   const area = `${line} L${w} ${h} L0 ${h} Z`;
-  const id = `sg${Math.random().toString(36).slice(2, 7)}`;
+  // useId es estable entre renderizados; se quitan los caracteres que no sirven en url(#id)
+  const id = `sg${useId().replace(/[^\w-]/g, '')}`;
   return (
     <svg className="adm-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
       <defs>
@@ -213,7 +214,7 @@ export function AdminDashboard() {
       label:`Pedidos ${rangoSufijo}`, tile:'peach', icon:'orders',
       value: loadingStats ? '…' : String(pedidosRangoCount),
       delta:0, up:true, deltaLabel:rangoSufijo,
-      spark:[...Array(7)].map((_,i) => {
+      spark:Array.from({ length: 7 }, (_, i) => {
         const d = new Date(); d.setDate(d.getDate()-(6-i));
         return pedidos.filter(p=>new Date(p.fechaHora).toDateString()===d.toDateString()).length;
       }),
@@ -222,7 +223,7 @@ export function AdminDashboard() {
       label:`Ingresos ${rangoSufijo}`, tile:'sage', icon:'money',
       value: loadingStats ? '…' : formatPrecio(ingresosRango),
       delta:0, up:true, deltaLabel:rangoSufijo,
-      spark:[...Array(7)].map((_,i) => {
+      spark:Array.from({ length: 7 }, (_, i) => {
         const d = new Date(); d.setDate(d.getDate()-(6-i));
         return pedidos.filter(p=>new Date(p.fechaHora).toDateString()===d.toDateString()&&p.estado!=='cancelado').reduce((s,p)=>s+Number(p.total),0);
       }),
@@ -231,13 +232,13 @@ export function AdminDashboard() {
       label:'Platos activos', tile:'amber', icon:'dish',
       value: String(platosActivos),
       delta:0, up:false, deltaLabel:`${platos.filter(p=>!p.disponible).length} agotados`,
-      spark:[...Array(7)].fill(platosActivos),
+      spark:new Array<number>(7).fill(platosActivos),
     },
     {
       label:'Usuarios', tile:'lilac', icon:'users',
       value: loadingStats ? '…' : String(stats.totalUsuarios),
       delta:0, up:true, deltaLabel:'total',
-      spark:[...Array(7)].fill(stats.totalUsuarios || 1),
+      spark:new Array<number>(7).fill(stats.totalUsuarios || 1),
     },
   ];
 
@@ -269,7 +270,7 @@ export function AdminDashboard() {
             <div className={styles.bannerDateRest}>{wd}, {day} de {month}</div>
             <div className={styles.bannerLive}>
               <span className={styles.liveDot} />
-              Restaurante abierto
+              <span>Restaurante abierto</span>
             </div>
           </div>
         </div>

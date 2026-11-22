@@ -1,0 +1,34 @@
+(node:6208) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ PASS  test/integracion/incremental.int-spec.ts
+  INTEGRACIÓN ASCENDENTE
+    Nivel 1 — Repositorio + PostgreSQL
+      √ INC-A01 - La BD rechaza dos mesas con el mismo número (restricción única) (72 ms)
+      √ INC-A02 - Un ingrediente guardado sin unidad toma "Kg" por defecto (13 ms)
+    Nivel 2 — Servicio + Repositorio + PostgreSQL
+      √ INC-A03 - PedidosService.createMesa guarda la mesa y rechaza un número repetido (13 ms)
+      √ INC-A04 - MenuService.createPlato guarda el plato con su categoría y rechaza una categoría inexistente (29 ms)
+      √ INC-A05 - AuthService.registroCliente crea la cuenta en Auth y el perfil en la BD (10 ms)
+    Nivel 3 — + Controlador y ValidationPipe (HTTP)
+      √ INC-A06 - POST /api/auth/registro: 201 con datos válidos y 400 con mensajes en español (53 ms)
+      √ INC-A07 - POST /api/menu/ingredientes: rechaza la unidad "kg" en minúscula (11 ms)
+    Nivel 4 — + SupabaseGuard (autenticación y autorización)
+      √ INC-A08 - POST /api/auth/staff: sin token 401 y con token de administrador 201 (27 ms)
+      √ INC-A09 - POST /api/auth/staff: un cliente autenticado no puede crear staff (403) (7 ms)
+      √ INC-A10 - POST /api/menu/platos sin token responde 401 (5 ms)
+      √ INC-A11 - POST /api/menu/ingredientes sin token responde 401 (6 ms)
+      √ INC-A12 - POST /api/pedidos/mesas sin token responde 401 (6 ms)
+  INTEGRACIÓN DESCENDENTE
+    Nivel 1 — Controlador, ValidationPipe y Guard con servicios simulados
+      √ INC-D01 - POST /api/pedidos/mesas convierte el número y llama al servicio (7 ms)
+      √ INC-D02 - POST /api/pedidos/mesas con número 0: 400 y el servicio no se llama (5 ms)
+      √ INC-D03 - POST /api/auth/staff con rol inválido: 400 y el servicio no se llama (5 ms)
+    Nivel 2 — Servicios reales, repositorios y PostgreSQL
+      √ INC-D04 - POST /api/auth/staff guarda el staff con su rol en la BD (17 ms)
+      √ INC-D05 - POST /api/menu/platos y GET /api/menu/platos/:id devuelven el plato con su categoría (34 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       17 passed, 17 total
+Snapshots:   0 total
+Time:        3.482 s, estimated 4 s
+Ran all test suites matching test/integracion/incremental.int-spec.ts.

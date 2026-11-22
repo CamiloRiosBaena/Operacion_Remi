@@ -46,7 +46,7 @@ describe('CAJA NEGRA — RegistroClienteDto', () => {
     expect(err.some((e) => e.property === 'nombre')).toBe(true);
   });
 
-  it('CP03 - Clase no válida: nombre 33 caracteres, correo sin dominio, contraseña 21 caracteres', async () => {
+  it('CP03 - Clase no válida: nombre de 31 caracteres, correo sin dominio, contraseña 21 caracteres', async () => {
     const err = await errores({
       nombre: 'CamiloRiosXxXxXxXxXxXxXxXxXxXxX',
       correo: 'camilo@',

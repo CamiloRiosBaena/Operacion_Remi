@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import {
   BadRequestException,
   Injectable,
@@ -43,6 +44,11 @@ function mapMetodo(mpMethod?: string): MetodoPago | null {
     case 'mp_wallet':    return MetodoPago.NEQUI; // billetera MP
     default:             return null;
   }
+}
+
+/** Referencia única del pago: marca de tiempo y 8 caracteres hexadecimales criptográficamente aleatorios. */
+function referenciaPago(prefijo: string): string {
+  return `${prefijo}-${Date.now()}-${randomBytes(4).toString('hex').toUpperCase()}`;
 }
 
 @Injectable()
@@ -119,7 +125,7 @@ export class PagosService {
     const total = Math.round(totalSinIva + ivaTotal); // COP entero (MP no usa centavos)
 
     // Referencia única
-    const referencia = `REMI-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    const referencia = referenciaPago('REMI');
 
     // Crear preferencia en Mercado Pago
     const preference = {
@@ -292,7 +298,7 @@ export class PagosService {
     }
 
     const total = Math.round(totalSinIva + ivaTotal);
-    const referencia = `REMI-EF-${Date.now()}-${Math.random().toString(36).slice(2, 7).toUpperCase()}`;
+    const referencia = referenciaPago('REMI-EF');
 
     const pedido = await this.pedidosService.createPedido({
       tipo: dto.tipo,

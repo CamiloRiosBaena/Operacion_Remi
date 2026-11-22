@@ -1,0 +1,4714 @@
+﻿[
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/styles/admin.css",
+        "name":  "admin.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/styles/admin.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "700"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/services/admin.service.ts",
+        "name":  "admin.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/services/admin.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "33"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "30"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "200"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/AdminDashboard.module.css",
+        "name":  "AdminDashboard.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/AdminDashboard.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "157"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/AdminDashboard.tsx",
+        "name":  "AdminDashboard.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/AdminDashboard.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "52",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "97"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "51"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "417"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/components/AdminLayout.module.css",
+        "name":  "AdminLayout.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/components/AdminLayout.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "280"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/components/AdminLayout.tsx",
+        "name":  "AdminLayout.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/components/AdminLayout.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "17"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "9"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "162"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/aleatorio.ts",
+        "name":  "aleatorio.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/aleatorio.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/components/AnimatedBg.module.css",
+        "name":  "AnimatedBg.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/components/AnimatedBg.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "100"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/components/AnimatedBg.tsx",
+        "name":  "AnimatedBg.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/components/AnimatedBg.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "60"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/api.ts",
+        "name":  "api.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/api.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "10",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "35"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/app.controller.ts",
+        "name":  "app.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/app.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "90.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "10"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/App.css",
+        "name":  "App.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/App.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "156"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/app.module.ts",
+        "name":  "app.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/app.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "67"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/app.service.ts",
+        "name":  "app.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/app.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "7"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/App.tsx",
+        "name":  "App.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/App.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "5"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/AppShell.module.css",
+        "name":  "AppShell.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/AppShell.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "164"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/AppShell.tsx",
+        "name":  "AppShell.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/AppShell.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "82"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/asistente/asistente.controller.ts",
+        "name":  "asistente.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/asistente/asistente.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "13"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/asistente/asistente.module.ts",
+        "name":  "asistente.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/asistente/asistente.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "11"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/asistente/asistente.service.ts",
+        "name":  "asistente.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/asistente/asistente.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "41",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "46"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "16"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "229"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/asistente/services/asistente.service.ts",
+        "name":  "asistente.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/asistente/services/asistente.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/auth.controller.ts",
+        "name":  "auth.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/auth.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "17"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "64.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "13"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "106"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/auth.module.ts",
+        "name":  "auth.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/auth.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "20"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/auth.service.ts",
+        "name":  "auth.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/auth.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "15",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "30"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "46.8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "15"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "153"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/services/auth.service.ts",
+        "name":  "auth.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/services/auth.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "40"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/types/auth.types.ts",
+        "name":  "auth.types.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/types/auth.types.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "22"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/context/AuthContext.tsx",
+        "name":  "AuthContext.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/context/AuthContext.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "23"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "82"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/common/filtros/base-datos-no-disponible.filter.ts",
+        "name":  "base-datos-no-disponible.filter.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/common/filtros/base-datos-no-disponible.filter.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "11",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "19"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "90.8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "78"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/common/cabeceras-seguridad.ts",
+        "name":  "cabeceras-seguridad.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/common/cabeceras-seguridad.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "30"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/cache-menu.ts",
+        "name":  "cache-menu.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/cache-menu.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "96.7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "47"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/dto/cambiar-estado.dto.ts",
+        "name":  "cambiar-estado.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/dto/cambiar-estado.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "88.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "10"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/carrito/types/carrito.types.ts",
+        "name":  "carrito.types.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/carrito/types/carrito.types.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "30"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/carrito/context/CarritoContext.tsx",
+        "name":  "CarritoContext.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/carrito/context/CarritoContext.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "15",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "37"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "25"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "110"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/carrito/components/CartDrawer.module.css",
+        "name":  "CartDrawer.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/carrito/components/CartDrawer.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "11",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "771"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/carrito/components/CartDrawer.tsx",
+        "name":  "CartDrawer.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/carrito/components/CartDrawer.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "65",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "139"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "46"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "635"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/categoria.entity.ts",
+        "name":  "categoria.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/categoria.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "11"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/asistente/dto/chat.dto.ts",
+        "name":  "chat.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/asistente/dto/chat.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "30"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/asistente/types/chat.types.ts",
+        "name":  "chat.types.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/asistente/types/chat.types.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "21"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/asistente/components/ChatWidget.module.css",
+        "name":  "ChatWidget.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/asistente/components/ChatWidget.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "326"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/asistente/components/ChatWidget.tsx",
+        "name":  "ChatWidget.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/asistente/components/ChatWidget.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "28"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "14"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "160"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/entities/cliente.entity.ts",
+        "name":  "cliente.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/entities/cliente.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "95.8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "33"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/cocina/cocina.controller.ts",
+        "name":  "cocina.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/cocina/cocina.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "69.6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "42"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/cocina/cocina.module.ts",
+        "name":  "cocina.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/cocina/cocina.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "17"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/cocina/cocina.service.ts",
+        "name":  "cocina.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/cocina/cocina.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "60.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "41"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/cocina/services/cocina.service.ts",
+        "name":  "cocina.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/cocina/services/cocina.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "23"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/cocina/pages/CocinaDashboard.module.css",
+        "name":  "CocinaDashboard.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/cocina/pages/CocinaDashboard.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "586"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/cocina/pages/CocinaDashboard.tsx",
+        "name":  "CocinaDashboard.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/cocina/pages/CocinaDashboard.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "60",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "97"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "44"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "425"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pagos/dto/confirmar-pago.dto.ts",
+        "name":  "confirmar-pago.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pagos/dto/confirmar-pago.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "5"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.module.css",
+        "name":  "ConfirmarEntregaPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "109"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.tsx",
+        "name":  "ConfirmarEntregaPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/confirmar-entrega/ConfirmarEntregaPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "15",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "28"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "106"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/crear-sesion.dto.ts",
+        "name":  "crear-sesion.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/crear-sesion.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "7"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/create-categoria.dto.ts",
+        "name":  "create-categoria.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/create-categoria.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "6"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/create-extra.dto.ts",
+        "name":  "create-extra.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/create-extra.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "12"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/create-ingrediente.dto.ts",
+        "name":  "create-ingrediente.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/create-ingrediente.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "42"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/dto/create-mesa.dto.ts",
+        "name":  "create-mesa.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/dto/create-mesa.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "6"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/dto/create-pedido.dto.ts",
+        "name":  "create-pedido.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/dto/create-pedido.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "90.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "52"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/create-plato.dto.ts",
+        "name":  "create-plato.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/create-plato.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "38"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/create-staff.dto.ts",
+        "name":  "create-staff.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/create-staff.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "90.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "21"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/entities/detalle-pedido.entity.ts",
+        "name":  "detalle-pedido.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/entities/detalle-pedido.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "24"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/domicilios/domicilios.controller.ts",
+        "name":  "domicilios.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/domicilios/domicilios.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "19"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/domicilios/domicilios.module.ts",
+        "name":  "domicilios.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/domicilios/domicilios.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "11"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/domicilios/domicilios.service.ts",
+        "name":  "domicilios.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/domicilios/domicilios.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "16"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/domicilios/services/domicilios.service.tsx",
+        "name":  "domicilios.service.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/domicilios/services/domicilios.service.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/DomiciliosAdmin.module.css",
+        "name":  "DomiciliosAdmin.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/DomiciliosAdmin.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "35"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/DomiciliosAdmin.tsx",
+        "name":  "DomiciliosAdmin.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/DomiciliosAdmin.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "51",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "68"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "35"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "222"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/domicilios/pages/DomiciliosDashboard.module.css",
+        "name":  "DomiciliosDashboard.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/domicilios/pages/DomiciliosDashboard.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "370"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx",
+        "name":  "DomiciliosDashboard.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/domicilios/pages/DomiciliosDashboard.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "26",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "50"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "20"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "240"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/EntregaLocalAdminPage.module.css",
+        "name":  "EntregaLocalAdminPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/EntregaLocalAdminPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "269"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/EntregaLocalAdminPage.tsx",
+        "name":  "EntregaLocalAdminPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/EntregaLocalAdminPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "5",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "103",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "118"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "57"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "480"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/entrega-local/EntregaLocalPage.module.css",
+        "name":  "EntregaLocalPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/entrega-local/EntregaLocalPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "307"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/entrega-local/EntregaLocalPage.tsx",
+        "name":  "EntregaLocalPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/entrega-local/EntregaLocalPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "78",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "90"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "39"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "368"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/utils/estadisticasExport.ts",
+        "name":  "estadisticasExport.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/utils/estadisticasExport.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "33",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "69"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "43"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "353"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/EstadisticasPage.module.css",
+        "name":  "EstadisticasPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/EstadisticasPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "165"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/EstadisticasPage.tsx",
+        "name":  "EstadisticasPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/EstadisticasPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "36",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "104"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "62"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "485"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/extra.entity.ts",
+        "name":  "extra.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/extra.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "83.3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "14"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pagos/dto/generar-pago.dto.ts",
+        "name":  "generar-pago.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pagos/dto/generar-pago.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "41"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/guestSession.ts",
+        "name":  "guestSession.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/guestSession.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "12"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "48"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/entities/historial-estado.entity.ts",
+        "name":  "historial-estado.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/entities/historial-estado.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "94.7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "18"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/index.css",
+        "name":  "index.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/index.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "53"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/index.tsx",
+        "name":  "index.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/index.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "0"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pedido/index.tsx",
+        "name":  "index.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pedido/index.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "0"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/ingrediente.entity.ts",
+        "name":  "ingrediente.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/ingrediente.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "21"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/IngredientesGestion.module.css",
+        "name":  "IngredientesGestion.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/IngredientesGestion.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "57"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/IngredientesGestion.tsx",
+        "name":  "IngredientesGestion.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/IngredientesGestion.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "88",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "149"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "79"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "415"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/login.dto.ts",
+        "name":  "login.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/login.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/pages/LoginPage.module.css",
+        "name":  "LoginPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/pages/LoginPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "248"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/pages/LoginPage.tsx",
+        "name":  "LoginPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/pages/LoginPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "16"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "126"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/main.ts",
+        "name":  "main.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/main.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "41"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/main.tsx",
+        "name":  "main.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/main.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "22"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/menu.controller.ts",
+        "name":  "menu.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/menu.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "29"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "73.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "29"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "186"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/menu.module.ts",
+        "name":  "menu.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/menu.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "22"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/menu.service.ts",
+        "name":  "menu.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/menu.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "28",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "72"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "59.4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "36"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "302"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/services/menu.service.ts",
+        "name":  "menu.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/services/menu.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "20"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "14"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "102"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/MenuBackground.tsx",
+        "name":  "MenuBackground.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/MenuBackground.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "12"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/MenuBanner.module.css",
+        "name":  "MenuBanner.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/MenuBanner.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "139"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/MenuBanner.tsx",
+        "name":  "MenuBanner.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/MenuBanner.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "23",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "39"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "19"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "141"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/MenuGestion.module.css",
+        "name":  "MenuGestion.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/MenuGestion.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "69"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/MenuGestion.tsx",
+        "name":  "MenuGestion.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/MenuGestion.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "53",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "146"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "75"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "515"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/pages/MenuPage.module.css",
+        "name":  "MenuPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/pages/MenuPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "322"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/pages/MenuPage.tsx",
+        "name":  "MenuPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/pages/MenuPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "39",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "78"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "41"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "418"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/mesas/entities/mesa.entity.ts",
+        "name":  "mesa.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/mesas/entities/mesa.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "20"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/mesas/mesas.module.ts",
+        "name":  "mesas.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/mesas/mesas.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/MesasAdmin.module.css",
+        "name":  "MesasAdmin.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/MesasAdmin.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "88"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/MesasAdmin.tsx",
+        "name":  "MesasAdmin.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/MesasAdmin.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "62",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "82"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "40"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "330"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pedido/MiPedidoPage.module.css",
+        "name":  "MiPedidoPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pedido/MiPedidoPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "48"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pedido/MiPedidoPage.tsx",
+        "name":  "MiPedidoPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pedido/MiPedidoPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "51"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/notificaciones.service.ts",
+        "name":  "notificaciones.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/notificaciones.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "11",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "13"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "34.7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "105"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/OrderTracker.module.css",
+        "name":  "OrderTracker.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/OrderTracker.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "270"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/OrderTracker.tsx",
+        "name":  "OrderTracker.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/OrderTracker.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "37",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "77"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "25"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "259"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/entities/pago.entity.ts",
+        "name":  "pago.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/entities/pago.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "96.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "44"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pago/pages/PagoResultadoPage.module.css",
+        "name":  "PagoResultadoPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pago/pages/PagoResultadoPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "150"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pago/pages/PagoResultadoPage.tsx",
+        "name":  "PagoResultadoPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pago/pages/PagoResultadoPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "10",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "24"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "186"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pagos/pagos.controller.ts",
+        "name":  "pagos.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pagos/pagos.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "20"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pagos/pagos.module.ts",
+        "name":  "pagos.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pagos/pagos.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "17"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pagos/pagos.service.ts",
+        "name":  "pagos.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pagos/pagos.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "45",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "55"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "10"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "284"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pago/services/pagos.service.ts",
+        "name":  "pagos.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pago/services/pagos.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "12"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "64"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/common/pipes/parse-id.pipe.ts",
+        "name":  "parse-id.pipe.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/common/pipes/parse-id.pipe.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "24"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/entities/pedido.entity.ts",
+        "name":  "pedido.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/entities/pedido.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "12"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "98.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "12"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "67"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/pedidos.controller.ts",
+        "name":  "pedidos.controller.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/pedidos.controller.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "15"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "71.7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "15"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "104"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/pedidos.module.ts",
+        "name":  "pedidos.module.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/pedidos.module.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "28"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/pedidos.service.ts",
+        "name":  "pedidos.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/pedidos.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "5",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "67",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "97"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "18.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "28"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "401"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/pedidos/services/pedidos.service.ts",
+        "name":  "pedidos.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/pedidos/services/pedidos.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "44"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/PedidosAdmin.module.css",
+        "name":  "PedidosAdmin.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/PedidosAdmin.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "95"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/PedidosAdmin.tsx",
+        "name":  "PedidosAdmin.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/PedidosAdmin.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "53",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "105"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "49"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "356"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/PersonalizedSection.module.css",
+        "name":  "PersonalizedSection.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/PersonalizedSection.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "123"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/PersonalizedSection.tsx",
+        "name":  "PersonalizedSection.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/PersonalizedSection.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "99"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/plato-ingrediente.entity.ts",
+        "name":  "plato-ingrediente.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/plato-ingrediente.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "83.3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "16"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/plato.entity.ts",
+        "name":  "plato.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/plato.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "38"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/types/plato.types.ts",
+        "name":  "plato.types.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/types/plato.types.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "18"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/PlatoImage.module.css",
+        "name":  "PlatoImage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/PlatoImage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "41"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/PlatoImage.tsx",
+        "name":  "PlatoImage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/PlatoImage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "89"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/PlatoModal.module.css",
+        "name":  "PlatoModal.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/PlatoModal.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "256"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/components/PlatoModal.tsx",
+        "name":  "PlatoModal.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/components/PlatoModal.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "5",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "35"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "22"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "208"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/context/PlatosContext.tsx",
+        "name":  "PlatosContext.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/context/PlatosContext.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "13",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "22"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "15"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "90"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/promo.dto.ts",
+        "name":  "promo.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/promo.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "91.4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "76"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/entities/promo.entity.ts",
+        "name":  "promo.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/entities/promo.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "34"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/services/promo.service.ts",
+        "name":  "promo.service.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/services/promo.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "8"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/types/promo.types.ts",
+        "name":  "promo.types.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/types/promo.types.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "41"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/PromosAdmin.module.css",
+        "name":  "PromosAdmin.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/PromosAdmin.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "168"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/PromosAdmin.tsx",
+        "name":  "PromosAdmin.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/PromosAdmin.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "60",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "117"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "59"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "555"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/menu/context/PromosContext.tsx",
+        "name":  "PromosContext.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/menu/context/PromosContext.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "28"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/ProtectedRoute.tsx",
+        "name":  "ProtectedRoute.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/ProtectedRoute.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "5",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "30"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/push-suscripcion.dto.ts",
+        "name":  "push-suscripcion.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/push-suscripcion.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "12"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/components/QRScannerModal.module.css",
+        "name":  "QRScannerModal.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/components/QRScannerModal.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "29"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/domicilios/components/QrScannerModal.module.css",
+        "name":  "QrScannerModal.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/domicilios/components/QrScannerModal.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "85"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/components/QRScannerModal.tsx",
+        "name":  "QRScannerModal.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/components/QRScannerModal.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "24",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "41"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "19"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "174"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/domicilios/components/QrScannerModal.tsx",
+        "name":  "QrScannerModal.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/domicilios/components/QrScannerModal.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "20",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "37"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "19"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "167"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/registro-cliente.dto.ts",
+        "name":  "registro-cliente.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/registro-cliente.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "16"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/pages/RegistroPage.module.css",
+        "name":  "RegistroPage.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/pages/RegistroPage.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "112"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/auth/pages/RegistroPage.tsx",
+        "name":  "RegistroPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/auth/pages/RegistroPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "12",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "22"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "148"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/landingpages/Pages/RemiLandingPage.css",
+        "name":  "RemiLandingPage.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/landingpages/Pages/RemiLandingPage.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "1018"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/landingpages/Pages/RemiLandingPage.tsx",
+        "name":  "RemiLandingPage.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/landingpages/Pages/RemiLandingPage.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "27"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "25"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "442"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/components/RemiLogo.tsx",
+        "name":  "RemiLogo.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/components/RemiLogo.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "16"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/app/RoleRedirect.tsx",
+        "name":  "RoleRedirect.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/app/RoleRedirect.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "14"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/roles.guard.ts",
+        "name":  "roles.guard.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/roles.guard.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "94.4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "47"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/app/router.tsx",
+        "name":  "router.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/app/router.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "59"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/entities/sesion-cliente.entity.ts",
+        "name":  "sesion-cliente.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/entities/sesion-cliente.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "92.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "18"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/storage.ts",
+        "name":  "storage.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/storage.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "1",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "1"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "13"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/supabase-admin.service.ts",
+        "name":  "supabase-admin.service.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/supabase-admin.service.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "34.8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "33"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/supabase.guard.ts",
+        "name":  "supabase.guard.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/supabase.guard.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "90.9",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "3"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "28"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/supabase.ts",
+        "name":  "supabase.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/supabase.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "4"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/sync-perfil.dto.ts",
+        "name":  "sync-perfil.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/sync-perfil.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "9"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/pedidos/entities/token-qr.entity.ts",
+        "name":  "token-qr.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/pedidos/entities/token-qr.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "81.3",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "14"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/update-extra.dto.ts",
+        "name":  "update-extra.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/update-extra.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "11"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/update-ingrediente.dto.ts",
+        "name":  "update-ingrediente.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/update-ingrediente.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "3"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/update-plato.dto.ts",
+        "name":  "update-plato.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/update-plato.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "3"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/dto/update-staff.dto.ts",
+        "name":  "update-staff.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/dto/update-staff.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "86.7",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "22"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/menu/dto/upsert-plato-ingrediente.dto.ts",
+        "name":  "upsert-plato-ingrediente.dto.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/menu/dto/upsert-plato-ingrediente.dto.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "0"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "9"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/asistente/hooks/useChatbot.ts",
+        "name":  "useChatbot.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/asistente/hooks/useChatbot.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "4",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "17"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "9"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "82"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/hooks/useModalClose.ts",
+        "name":  "useModalClose.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/hooks/useModalClose.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "5",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "11"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "7"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "28"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/hooks/useOrderTracking.ts",
+        "name":  "useOrderTracking.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/hooks/useOrderTracking.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "8",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "12"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "6"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "82"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/hooks/usePushNotifications.ts",
+        "name":  "usePushNotifications.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/hooks/usePushNotifications.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "16"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "8"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "64"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:backend/src/modules/auth/entities/user-staff.entity.ts",
+        "name":  "user-staff.entity.ts",
+        "qualifier":  "FIL",
+        "path":  "backend/src/modules/auth/entities/user-staff.entity.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "100.0",
+                             "bestValue":  true
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "2"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "28"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/hooks/useRealtimePedidos.ts",
+        "name":  "useRealtimePedidos.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/hooks/useRealtimePedidos.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "complexity",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "5"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "26"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/UsuariosGestion.module.css",
+        "name":  "UsuariosGestion.module.css",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/UsuariosGestion.module.css",
+        "language":  "css",
+        "measures":  [
+                         {
+                             "metric":  "ncloc",
+                             "value":  "16"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/features/admin/pages/UsuariosGestion.tsx",
+        "name":  "UsuariosGestion.tsx",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/features/admin/pages/UsuariosGestion.tsx",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "code_smells",
+                             "value":  "2",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "54",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "84"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "40"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "266"
+                         }
+                     ]
+    },
+    {
+        "key":  "operacion-remi:frontend/src/shared/lib/validaciones.ts",
+        "name":  "validaciones.ts",
+        "qualifier":  "FIL",
+        "path":  "frontend/src/shared/lib/validaciones.ts",
+        "language":  "ts",
+        "measures":  [
+                         {
+                             "metric":  "cognitive_complexity",
+                             "value":  "6",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "complexity",
+                             "value":  "13"
+                         },
+                         {
+                             "metric":  "coverage",
+                             "value":  "0.0",
+                             "bestValue":  false
+                         },
+                         {
+                             "metric":  "functions",
+                             "value":  "4"
+                         },
+                         {
+                             "metric":  "ncloc",
+                             "value":  "21"
+                         }
+                     ]
+    }
+]

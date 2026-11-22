@@ -13,10 +13,12 @@ const CarritoContext = createContext<CarritoContextValue | null>(null);
 const STORAGE_KEY = 'remi_cart';
 
 function makeKey(item: Omit<CartItem, 'cartItemKey' | 'cantidad'>): string {
-  const removidos = [...(item.ingredientesRemovidos ?? [])].sort().join(',');
+  const removidos = [...(item.ingredientesRemovidos ?? [])]
+    .sort((a, b) => a.localeCompare(b))
+    .join(',');
   const extras = (item.extras ?? [])
     .map((e) => `${e.nombre}:${e.cantidad}`)
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .join(',');
   return `${item.platoId}|${removidos}|${extras}|${item.nota ?? ''}`;
 }

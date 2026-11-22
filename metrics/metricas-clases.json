@@ -1,0 +1,1315 @@
+[
+  {
+    "clase": "AppService",
+    "archivo": "src/app.service.ts",
+    "tipo": "Servicio",
+    "metodos": 1,
+    "atributos": 0,
+    "wmc": 1,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AppController",
+      "AppModule"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AppController",
+    "archivo": "src/app.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 1,
+    "atributos": 1,
+    "wmc": 2,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AppModule",
+      "AppService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Ingrediente",
+    "archivo": "src/modules/menu/entities/ingrediente.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 8,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AppModule",
+      "MenuModule",
+      "MenuService",
+      "PlatoIngrediente"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PlatoIngrediente",
+    "archivo": "src/modules/menu/entities/plato-ingrediente.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 4,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "Ingrediente",
+      "MenuModule",
+      "MenuService",
+      "Plato"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Extra",
+    "archivo": "src/modules/menu/entities/extra.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 4,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AppModule",
+      "MenuModule",
+      "MenuService",
+      "Plato"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "SesionCliente",
+    "archivo": "src/modules/auth/entities/sesion-cliente.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 6,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "AuthService",
+      "Cliente",
+      "NotificacionesService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Cliente",
+    "archivo": "src/modules/auth/entities/cliente.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 8,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 7,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "AuthService",
+      "Pedido",
+      "PedidosModule",
+      "PedidosService",
+      "SesionCliente"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Mesa",
+    "archivo": "src/modules/mesas/entities/mesa.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 5,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "MesasModule",
+      "Pedido",
+      "PedidosModule",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Pago",
+    "archivo": "src/modules/pedidos/entities/pago.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 9,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "PagosModule",
+      "PagosService",
+      "Pedido",
+      "PedidosModule"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UserStaff",
+    "archivo": "src/modules/auth/entities/user-staff.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 7,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 8,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "AuthService",
+      "CocinaModule",
+      "CocinaService",
+      "HistorialEstado",
+      "PedidosModule",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "HistorialEstado",
+    "archivo": "src/modules/pedidos/entities/historial-estado.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 5,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "Pedido",
+      "PedidosModule",
+      "PedidosService",
+      "UserStaff"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "TokenQr",
+    "archivo": "src/modules/pedidos/entities/token-qr.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 4,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AppModule",
+      "Pedido",
+      "PedidosModule",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Pedido",
+    "archivo": "src/modules/pedidos/entities/pedido.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 17,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 9,
+    "acopladas": [
+      "AppModule",
+      "Cliente",
+      "DetallePedido",
+      "HistorialEstado",
+      "Mesa",
+      "Pago",
+      "PedidosModule",
+      "PedidosService",
+      "TokenQr"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "DetallePedido",
+    "archivo": "src/modules/pedidos/entities/detalle-pedido.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 8,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 7,
+    "acopladas": [
+      "AppModule",
+      "MenuModule",
+      "MenuService",
+      "Pedido",
+      "PedidosModule",
+      "PedidosService",
+      "Plato"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Plato",
+    "archivo": "src/modules/menu/entities/plato.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 11,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 11,
+    "acopladas": [
+      "AppModule",
+      "Categoria",
+      "DetallePedido",
+      "Extra",
+      "MenuModule",
+      "MenuService",
+      "PagosModule",
+      "PagosService",
+      "PedidosModule",
+      "PedidosService",
+      "PlatoIngrediente"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Categoria",
+    "archivo": "src/modules/menu/entities/categoria.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AppModule",
+      "MenuModule",
+      "MenuService",
+      "Plato"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreateCategoriaDto",
+    "archivo": "src/modules/menu/dto/create-categoria.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 1,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreatePlatoDto",
+    "archivo": "src/modules/menu/dto/create-plato.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 7,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "MenuController",
+      "MenuService",
+      "UpdatePlatoDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpdatePlatoDto",
+    "archivo": "src/modules/menu/dto/update-plato.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 2,
+    "cbo": 3,
+    "acopladas": [
+      "CreatePlatoDto",
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreateIngredienteDto",
+    "archivo": "src/modules/menu/dto/create-ingrediente.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 6,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "MenuController",
+      "MenuService",
+      "UpdateIngredienteDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpdateIngredienteDto",
+    "archivo": "src/modules/menu/dto/update-ingrediente.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 2,
+    "cbo": 3,
+    "acopladas": [
+      "CreateIngredienteDto",
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreateExtraDto",
+    "archivo": "src/modules/menu/dto/create-extra.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpdateExtraDto",
+    "archivo": "src/modules/menu/dto/update-extra.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpsertPlatoIngredienteDto",
+    "archivo": "src/modules/menu/dto/upsert-plato-ingrediente.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "Promo",
+    "archivo": "src/modules/menu/entities/promo.entity.ts",
+    "tipo": "Entidad",
+    "metodos": 0,
+    "atributos": 15,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 7,
+    "acopladas": [
+      "AppModule",
+      "MenuModule",
+      "MenuService",
+      "PagosModule",
+      "PagosService",
+      "PedidosModule",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreatePromoDto",
+    "archivo": "src/modules/menu/dto/promo.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 14,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpdatePromoDto",
+    "archivo": "src/modules/menu/dto/promo.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 14,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "MenuController",
+      "MenuService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CacheMenu",
+    "archivo": "src/modules/menu/cache-menu.ts",
+    "tipo": "Otra (guard, pipe, filtro, caché)",
+    "metodos": 2,
+    "atributos": 3,
+    "wmc": 6,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "MenuService"
+    ],
+    "lcom": 0.6666666666666667
+  },
+  {
+    "clase": "MenuService",
+    "archivo": "src/modules/menu/menu.service.ts",
+    "tipo": "Servicio",
+    "metodos": 28,
+    "atributos": 8,
+    "wmc": 65,
+    "dit": 0,
+    "cbo": 21,
+    "acopladas": [
+      "AsistenteService",
+      "CacheMenu",
+      "Categoria",
+      "CreateCategoriaDto",
+      "CreateExtraDto",
+      "CreateIngredienteDto",
+      "CreatePlatoDto",
+      "CreatePromoDto",
+      "DetallePedido",
+      "Extra",
+      "Ingrediente",
+      "MenuController",
+      "MenuModule",
+      "Plato",
+      "PlatoIngrediente",
+      "Promo",
+      "UpdateExtraDto",
+      "UpdateIngredienteDto",
+      "UpdatePlatoDto",
+      "UpdatePromoDto",
+      "UpsertPlatoIngredienteDto"
+    ],
+    "lcom": 0.8564814814814815
+  },
+  {
+    "clase": "SupabaseAdminService",
+    "archivo": "src/modules/auth/supabase-admin.service.ts",
+    "tipo": "Servicio",
+    "metodos": 3,
+    "atributos": 4,
+    "wmc": 6,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "AuthModule",
+      "AuthService",
+      "SupabaseGuard"
+    ],
+    "lcom": 0.625
+  },
+  {
+    "clase": "CreateStaffDto",
+    "archivo": "src/modules/auth/dto/create-staff.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 4,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AuthController",
+      "AuthService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "UpdateStaffDto",
+    "archivo": "src/modules/auth/dto/update-staff.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 4,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AuthController",
+      "AuthService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "SyncPerfilDto",
+    "archivo": "src/modules/auth/dto/sync-perfil.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "AuthService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "RegistroClienteDto",
+    "archivo": "src/modules/auth/dto/registro-cliente.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AuthController",
+      "AuthService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AuthService",
+    "archivo": "src/modules/auth/auth.service.ts",
+    "tipo": "Servicio",
+    "metodos": 11,
+    "atributos": 4,
+    "wmc": 28,
+    "dit": 0,
+    "cbo": 11,
+    "acopladas": [
+      "AuthController",
+      "AuthModule",
+      "Cliente",
+      "CreateStaffDto",
+      "RegistroClienteDto",
+      "RolesGuard",
+      "SesionCliente",
+      "SupabaseAdminService",
+      "SyncPerfilDto",
+      "UpdateStaffDto",
+      "UserStaff"
+    ],
+    "lcom": 0.725
+  },
+  {
+    "clase": "SupabaseGuard",
+    "archivo": "src/modules/auth/supabase.guard.ts",
+    "tipo": "Otra (guard, pipe, filtro, caché)",
+    "metodos": 2,
+    "atributos": 1,
+    "wmc": 6,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AsistenteController",
+      "AuthController",
+      "AuthModule",
+      "SupabaseAdminService"
+    ],
+    "lcom": 1
+  },
+  {
+    "clase": "RolesGuard",
+    "archivo": "src/modules/auth/roles.guard.ts",
+    "tipo": "Otra (guard, pipe, filtro, caché)",
+    "metodos": 1,
+    "atributos": 2,
+    "wmc": 6,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AuthModule",
+      "AuthService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "ParseIdPipe",
+    "archivo": "src/common/pipes/parse-id.pipe.ts",
+    "tipo": "Otra (guard, pipe, filtro, caché)",
+    "metodos": 1,
+    "atributos": 0,
+    "wmc": 4,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AuthController",
+      "CocinaController",
+      "DomiciliosController",
+      "MenuController",
+      "PedidosController"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "MenuController",
+    "archivo": "src/modules/menu/menu.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 28,
+    "atributos": 1,
+    "wmc": 29,
+    "dit": 0,
+    "cbo": 13,
+    "acopladas": [
+      "CreateCategoriaDto",
+      "CreateExtraDto",
+      "CreateIngredienteDto",
+      "CreatePlatoDto",
+      "CreatePromoDto",
+      "MenuModule",
+      "MenuService",
+      "ParseIdPipe",
+      "UpdateExtraDto",
+      "UpdateIngredienteDto",
+      "UpdatePlatoDto",
+      "UpdatePromoDto",
+      "UpsertPlatoIngredienteDto"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "NotificacionesService",
+    "archivo": "src/modules/auth/notificaciones.service.ts",
+    "tipo": "Servicio",
+    "metodos": 5,
+    "atributos": 4,
+    "wmc": 15,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AuthController",
+      "AuthModule",
+      "PedidosService",
+      "SesionCliente"
+    ],
+    "lcom": 0.8125
+  },
+  {
+    "clase": "CrearSesionDto",
+    "archivo": "src/modules/auth/dto/crear-sesion.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 1,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "AuthController"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PushSuscripcionDto",
+    "archivo": "src/modules/auth/dto/push-suscripcion.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "AuthController"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AuthController",
+    "archivo": "src/modules/auth/auth.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 12,
+    "atributos": 2,
+    "wmc": 17,
+    "dit": 0,
+    "cbo": 10,
+    "acopladas": [
+      "AuthModule",
+      "AuthService",
+      "CrearSesionDto",
+      "CreateStaffDto",
+      "NotificacionesService",
+      "ParseIdPipe",
+      "PushSuscripcionDto",
+      "RegistroClienteDto",
+      "SupabaseGuard",
+      "UpdateStaffDto"
+    ],
+    "lcom": 0.5454545454545454
+  },
+  {
+    "clase": "AuthModule",
+    "archivo": "src/modules/auth/auth.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 15,
+    "acopladas": [
+      "AppModule",
+      "AsistenteModule",
+      "AuthController",
+      "AuthService",
+      "Cliente",
+      "CocinaModule",
+      "DomiciliosModule",
+      "MenuModule",
+      "NotificacionesService",
+      "PedidosModule",
+      "RolesGuard",
+      "SesionCliente",
+      "SupabaseAdminService",
+      "SupabaseGuard",
+      "UserStaff"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "MenuModule",
+    "archivo": "src/modules/menu/menu.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 12,
+    "acopladas": [
+      "AppModule",
+      "AsistenteModule",
+      "AuthModule",
+      "Categoria",
+      "DetallePedido",
+      "Extra",
+      "Ingrediente",
+      "MenuController",
+      "MenuService",
+      "Plato",
+      "PlatoIngrediente",
+      "Promo"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreateDetalleDto",
+    "archivo": "src/modules/pedidos/dto/create-pedido.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "CreatePedidoDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CreatePedidoDto",
+    "archivo": "src/modules/pedidos/dto/create-pedido.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 7,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "CreateDetalleDto",
+      "PedidosController",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CambiarEstadoDto",
+    "archivo": "src/modules/pedidos/dto/cambiar-estado.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "PedidosController",
+      "PedidosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PedidosService",
+    "archivo": "src/modules/pedidos/pedidos.service.ts",
+    "tipo": "Servicio",
+    "metodos": 19,
+    "atributos": 10,
+    "wmc": 90,
+    "dit": 0,
+    "cbo": 17,
+    "acopladas": [
+      "CambiarEstadoDto",
+      "Cliente",
+      "CocinaService",
+      "CreatePedidoDto",
+      "DetallePedido",
+      "DomiciliosService",
+      "HistorialEstado",
+      "Mesa",
+      "NotificacionesService",
+      "PagosService",
+      "Pedido",
+      "PedidosController",
+      "PedidosModule",
+      "Plato",
+      "Promo",
+      "TokenQr",
+      "UserStaff"
+    ],
+    "lcom": 0.8888888888888888
+  },
+  {
+    "clase": "CreateMesaDto",
+    "archivo": "src/modules/pedidos/dto/create-mesa.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 1,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "PedidosController"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PedidosController",
+    "archivo": "src/modules/pedidos/pedidos.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 14,
+    "atributos": 1,
+    "wmc": 15,
+    "dit": 0,
+    "cbo": 6,
+    "acopladas": [
+      "CambiarEstadoDto",
+      "CreateMesaDto",
+      "CreatePedidoDto",
+      "ParseIdPipe",
+      "PedidosModule",
+      "PedidosService"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "PedidosModule",
+    "archivo": "src/modules/pedidos/pedidos.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 17,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "Cliente",
+      "CocinaModule",
+      "DetallePedido",
+      "DomiciliosModule",
+      "HistorialEstado",
+      "Mesa",
+      "Pago",
+      "PagosModule",
+      "Pedido",
+      "PedidosController",
+      "PedidosService",
+      "Plato",
+      "Promo",
+      "TokenQr",
+      "UserStaff"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "CocinaService",
+    "archivo": "src/modules/cocina/cocina.service.ts",
+    "tipo": "Servicio",
+    "metodos": 6,
+    "atributos": 2,
+    "wmc": 7,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "CocinaController",
+      "CocinaModule",
+      "PedidosService",
+      "UserStaff"
+    ],
+    "lcom": 0.6
+  },
+  {
+    "clase": "CocinaController",
+    "archivo": "src/modules/cocina/cocina.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 6,
+    "atributos": 1,
+    "wmc": 7,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "CocinaModule",
+      "CocinaService",
+      "ParseIdPipe"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "CocinaModule",
+    "archivo": "src/modules/cocina/cocina.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 6,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "CocinaController",
+      "CocinaService",
+      "PedidosModule",
+      "UserStaff"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "DomiciliosService",
+    "archivo": "src/modules/domicilios/domicilios.service.ts",
+    "tipo": "Servicio",
+    "metodos": 2,
+    "atributos": 1,
+    "wmc": 3,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "DomiciliosController",
+      "DomiciliosModule",
+      "PedidosService"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "DomiciliosController",
+    "archivo": "src/modules/domicilios/domicilios.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 2,
+    "atributos": 1,
+    "wmc": 3,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "DomiciliosModule",
+      "DomiciliosService",
+      "ParseIdPipe"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "DomiciliosModule",
+    "archivo": "src/modules/domicilios/domicilios.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "AuthModule",
+      "DomiciliosController",
+      "DomiciliosService",
+      "PedidosModule"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "MesasModule",
+    "archivo": "src/modules/mesas/mesas.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AppModule",
+      "Mesa"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "DetalleGenerarDto",
+    "archivo": "src/modules/pagos/dto/generar-pago.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 3,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "GenerarPagoDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "GenerarPagoDto",
+    "archivo": "src/modules/pagos/dto/generar-pago.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 7,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 3,
+    "acopladas": [
+      "DetalleGenerarDto",
+      "PagosController",
+      "PagosService"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PagosService",
+    "archivo": "src/modules/pagos/pagos.service.ts",
+    "tipo": "Servicio",
+    "metodos": 4,
+    "atributos": 9,
+    "wmc": 44,
+    "dit": 0,
+    "cbo": 7,
+    "acopladas": [
+      "GenerarPagoDto",
+      "Pago",
+      "PagosController",
+      "PagosModule",
+      "PedidosService",
+      "Plato",
+      "Promo"
+    ],
+    "lcom": 0.7037037037037037
+  },
+  {
+    "clase": "ConfirmarPagoDto",
+    "archivo": "src/modules/pagos/dto/confirmar-pago.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 1,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 1,
+    "acopladas": [
+      "PagosController"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "PagosController",
+    "archivo": "src/modules/pagos/pagos.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 3,
+    "atributos": 1,
+    "wmc": 4,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "ConfirmarPagoDto",
+      "GenerarPagoDto",
+      "PagosModule",
+      "PagosService"
+    ],
+    "lcom": 0
+  },
+  {
+    "clase": "PagosModule",
+    "archivo": "src/modules/pagos/pagos.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 7,
+    "acopladas": [
+      "AppModule",
+      "Pago",
+      "PagosController",
+      "PagosService",
+      "PedidosModule",
+      "Plato",
+      "Promo"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "ChatMessageDto",
+    "archivo": "src/modules/asistente/dto/chat.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AsistenteService",
+      "ChatRequestDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "ChatRequestDto",
+    "archivo": "src/modules/asistente/dto/chat.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 1,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 2,
+    "acopladas": [
+      "AsistenteController",
+      "ChatMessageDto"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AsistenteService",
+    "archivo": "src/modules/asistente/asistente.service.ts",
+    "tipo": "Servicio",
+    "metodos": 4,
+    "atributos": 3,
+    "wmc": 36,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AsistenteController",
+      "AsistenteModule",
+      "ChatMessageDto",
+      "MenuService"
+    ],
+    "lcom": 1
+  },
+  {
+    "clase": "AsistenteController",
+    "archivo": "src/modules/asistente/asistente.controller.ts",
+    "tipo": "Controlador",
+    "metodos": 1,
+    "atributos": 1,
+    "wmc": 2,
+    "dit": 0,
+    "cbo": 4,
+    "acopladas": [
+      "AsistenteModule",
+      "AsistenteService",
+      "ChatRequestDto",
+      "SupabaseGuard"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AsistenteModule",
+    "archivo": "src/modules/asistente/asistente.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 5,
+    "acopladas": [
+      "AppModule",
+      "AsistenteController",
+      "AsistenteService",
+      "AuthModule",
+      "MenuModule"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "AppModule",
+    "archivo": "src/app.module.ts",
+    "tipo": "Módulo Nest",
+    "metodos": 0,
+    "atributos": 0,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 25,
+    "acopladas": [
+      "AppController",
+      "AppService",
+      "AsistenteModule",
+      "AuthModule",
+      "Categoria",
+      "Cliente",
+      "CocinaModule",
+      "DetallePedido",
+      "DomiciliosModule",
+      "Extra",
+      "HistorialEstado",
+      "Ingrediente",
+      "MenuModule",
+      "Mesa",
+      "MesasModule",
+      "Pago",
+      "PagosModule",
+      "Pedido",
+      "PedidosModule",
+      "Plato",
+      "PlatoIngrediente",
+      "Promo",
+      "SesionCliente",
+      "TokenQr",
+      "UserStaff"
+    ],
+    "lcom": null
+  },
+  {
+    "clase": "BaseDatosNoDisponibleFilter",
+    "archivo": "src/common/filtros/base-datos-no-disponible.filter.ts",
+    "tipo": "Otra (guard, pipe, filtro, caché)",
+    "metodos": 2,
+    "atributos": 3,
+    "wmc": 8,
+    "dit": 1,
+    "cbo": 0,
+    "acopladas": [],
+    "lcom": 1
+  },
+  {
+    "clase": "LoginDto",
+    "archivo": "src/modules/auth/dto/login.dto.ts",
+    "tipo": "DTO",
+    "metodos": 0,
+    "atributos": 2,
+    "wmc": 0,
+    "dit": 0,
+    "cbo": 0,
+    "acopladas": [],
+    "lcom": null
+  }
+]

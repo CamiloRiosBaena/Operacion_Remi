@@ -1,0 +1,117 @@
+(node:20460) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ FAIL  test/integracion/hilos.int-spec.ts
+  HILO 1 — CU-06 Registro de cliente
+    √ HIL-01a - Datos válidos: 201, cuenta en Auth y perfil guardado (correo libre → registrado) (51 ms)
+    √ HIL-01b - Correo ya registrado: 400 y no se crea otra cuenta (8 ms)
+    √ HIL-01c - Supabase Auth falla: 400 con su mensaje y no se guarda el perfil (8 ms)
+    √ HIL-01d - Datos no válidos: 400 con los tres mensajes y Auth no se llama (5 ms)
+  HILO 2 — CU-13 Creación de usuario staff
+    √ HIL-02a - El administrador crea un cocinero: 201 y fila con rol cocinero y estado activo (12 ms)
+    √ HIL-02b - Correo repetido: 400 (6 ms)
+    √ HIL-02c - Sin token: 401 (4 ms)
+    × HIL-02d - Un cliente autenticado intenta crear un administrador: 403 (9 ms)
+  HILO 3 — CU-11 Creación de plato
+    √ HIL-03a - El administrador crea un plato con IVA 5 %: 201 y el detalle trae la categoría (26 ms)
+    √ HIL-03b - IVA de 3 %: 400 con mensaje en español (5 ms)
+    √ HIL-03c - Categoría inexistente: 400 (5 ms)
+    × HIL-03d - Sin token: 401 (14 ms)
+  HILO 4 — CU-12 Creación de ingrediente
+    √ HIL-04a - El administrador crea un ingrediente en Kg: 201 y aparece en el inventario (16 ms)
+    √ HIL-04b - Unidad "kg" en minúscula y stock negativo: 400 y no se guarda (5 ms)
+    × HIL-04c - Sin token: 401 (8 ms)
+  HILO 5 — CU-14 Creación de mesa
+    √ HIL-05a - El administrador crea la mesa 7: 201 y queda en estado libre (10 ms)
+    √ HIL-05b - Mesa repetida: 400 "La mesa 7 ya existe" y sigue habiendo una sola (7 ms)
+    √ HIL-05c - Número 0: 400 (4 ms)
+    × HIL-05d - Sin token: 401 (8 ms)
+
+  ● HILO 2 — CU-13 Creación de usuario staff › HIL-02d - Un cliente autenticado intenta crear un administrador: 403
+
+    expected 403 "Forbidden", got 201 "Created"
+
+      84 |       .set(cliente)
+      85 |       .send({ ...datos, correo: 'x2@remi.test', rol: 'admin' })
+    > 86 |       .expect(403);
+         |        ^
+      87 |   });
+      88 | });
+      89 |
+
+      at Object.<anonymous> (hilos.int-spec.ts:86:8)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● HILO 3 — CU-11 Creación de plato › HIL-03d - Sin token: 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      118 |
+      119 |   it('HIL-03d - Sin token: 401', async () => {
+    > 120 |     await request(http).post('/api/menu/platos').send({ nombre: 'Plato sin token', precio: 1000, categoriaId }).expect(401);
+          |                                                                                                                 ^
+      121 |   });
+      122 | });
+      123 |
+
+      at Object.<anonymous> (hilos.int-spec.ts:120:113)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● HILO 4 — CU-12 Creación de ingrediente › HIL-04c - Sin token: 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      146 |       .post('/api/menu/ingredientes')
+      147 |       .send({ nombre: 'Ingrediente sin token', unidadCompra: 'Kg', gramosPorUnidad: 1000 })
+    > 148 |       .expect(401);
+          |        ^
+      149 |   });
+      150 | });
+      151 |
+
+      at Object.<anonymous> (hilos.int-spec.ts:148:8)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● HILO 5 — CU-14 Creación de mesa › HIL-05d - Sin token: 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      167 |
+      168 |   it('HIL-05d - Sin token: 401', async () => {
+    > 169 |     await request(http).post('/api/pedidos/mesas').send({ numero: 8 }).expect(401);
+          |                                                                        ^
+      170 |   });
+      171 | });
+      172 |
+
+      at Object.<anonymous> (hilos.int-spec.ts:169:72)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 15 passed, 19 total
+Snapshots:   0 total
+Time:        2.426 s, estimated 3 s
+Ran all test suites matching test/integracion/hilos.int-spec.ts.

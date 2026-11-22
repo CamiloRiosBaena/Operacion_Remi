@@ -1,9 +1,10 @@
 import { type FormEvent, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedBg } from '../components/AnimatedBg';
 import { RemiLogo } from '@/shared/components/RemiLogo';
 import type { UserRole } from '../types/auth.types';
+import type { DesdeState } from '@/shared/components/ProtectedRoute';
 import styles from './LoginPage.module.css';
 
 const ROLE_HOME: Record<UserRole, string> = {
@@ -13,19 +14,32 @@ const ROLE_HOME: Record<UserRole, string> = {
   cliente: '/menu',
 };
 
+/** Prefijo de las rutas que cada rol puede abrir: solo a esas se vuelve después del login. */
+const ROLE_PREFIJO: Record<UserRole, string> = {
+  admin: '/admin',
+  cocinero: '/cocina',
+  domiciliario: '/domicilios',
+  cliente: '/menu',
+};
+
+function destino(rol: UserRole, desde?: string): string {
+  return desde?.startsWith(ROLE_PREFIJO[rol]) ? desde : ROLE_HOME[rol];
+}
+
 
 export function LoginPage() {
   const { login, isLoading, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+  const desde = (useLocation().state as DesdeState | null)?.desde;
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      navigate(ROLE_HOME[user.rol], { replace: true });
+      navigate(destino(user.rol, desde), { replace: true });
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, desde]);
 
   if (isAuthenticated && user) {
     return null;

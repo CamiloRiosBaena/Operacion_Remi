@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { textoAleatorio } from './aleatorio';
 
 const BUCKET = 'platos';
 
@@ -8,7 +9,7 @@ const BUCKET = 'platos';
  */
 export async function uploadPlatoImage(file: File): Promise<string> {
   const ext  = file.name.split('.').pop()?.toLowerCase() ?? 'jpg';
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const path = `${Date.now()}-${textoAleatorio(10)}.${ext}`;
 
   const { error } = await supabase.storage
     .from(BUCKET)

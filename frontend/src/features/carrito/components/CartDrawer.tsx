@@ -393,8 +393,8 @@ async function handlePagarEfectivo() {
               <div className={styles.checkoutForm}>
 
                 {/* Tipo de pedido */}
-                <div className={styles.checkoutField}>
-                  <label className={styles.checkoutLabel}>¿Cómo recibes tu pedido?</label>
+                <div className={styles.checkoutField} role="group" aria-labelledby="pedido-tipo-titulo">
+                  <span id="pedido-tipo-titulo" className={styles.checkoutLabel}>¿Cómo recibes tu pedido?</span>
                   {mesaQr ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: '0.5rem', padding: '0.625rem 0.875rem', fontSize: '0.875rem', color: '#9a3412', fontWeight: 500 }}>
                       🪑 Pedido en mesa — Mesa {mesaQr}
@@ -423,8 +423,8 @@ async function handlePagarEfectivo() {
                 {/* Domicilio */}
                 {tipo === 'domicilio' && (
                   <div className={styles.checkoutField}>
-                    <label className={styles.checkoutLabel}>Dirección de entrega</label>
-                    <input
+                    <label htmlFor="pedido-direccion-de-entrega" className={styles.checkoutLabel}>Dirección de entrega</label>
+                    <input id="pedido-direccion-de-entrega"
                       type="text"
                       className={styles.checkoutInput}
                       placeholder="Calle 123 # 45-67, Barrio..."

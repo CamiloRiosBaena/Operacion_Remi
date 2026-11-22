@@ -7,7 +7,11 @@ describe('MenuController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [MenuController],
-    }).compile();
+    })
+      // Las dependencias (repositorios, Supabase, otros servicios) se simulan: aquí solo
+      // se verifica que la clase se construye; la lógica se prueba en src/pruebas-taller.
+      .useMocker(() => ({}))
+      .compile();
 
     controller = module.get<MenuController>(MenuController);
   });

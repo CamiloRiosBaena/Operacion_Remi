@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UserStaff, RolStaff } from './entities/user-staff.entity';
+import { EstadoStaff, UserStaff } from './entities/user-staff.entity';
 import { Cliente, EstadoCliente } from './entities/cliente.entity';
 import { SesionCliente } from './entities/sesion-cliente.entity';
 import { SupabaseAdminService } from './supabase-admin.service';
@@ -67,13 +67,31 @@ export class AuthService {
     });
     if (error) throw new BadRequestException(error.message);
 
-    return this.clienteRepo.save(
-      this.clienteRepo.create({
-        supabase_uid: data.user.id,
-        nombre: dto.nombre,
-        correo: dto.correo,
-      }),
+    return this.guardarOEliminarAuth(data.user.id, () =>
+      this.clienteRepo.save(
+        this.clienteRepo.create({
+          supabase_uid: data.user.id,
+          nombre: dto.nombre,
+          correo: dto.correo,
+        }),
+      ),
     );
+  }
+
+  /**
+   * Guarda el perfil en Postgres; si falla, borra el usuario recién creado en
+   * Supabase Auth para no dejar una cuenta huérfana que bloquee el correo.
+   */
+  private async guardarOEliminarAuth<T>(
+    supabaseUid: string,
+    guardar: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await guardar();
+    } catch (e) {
+      await this.supabase.admin.deleteUser(supabaseUid).catch(() => undefined);
+      throw e;
+    }
   }
 
   // ─────────────────────────────────────────
@@ -82,6 +100,13 @@ export class AuthService {
 
   async findAllStaff(): Promise<UserStaff[]> {
     return this.staffRepo.find({ order: { nombre: 'ASC' } });
+  }
+
+  findStaffActivoPorUid(supabaseUid: string): Promise<UserStaff | null> {
+    return this.staffRepo.findOneBy({
+      supabase_uid: supabaseUid,
+      estado: EstadoStaff.ACTIVO,
+    });
   }
 
   async findOneStaff(id: number): Promise<UserStaff> {
@@ -106,13 +131,15 @@ export class AuthService {
     });
     if (error) throw new BadRequestException(error.message);
 
-    return this.staffRepo.save(
-      this.staffRepo.create({
-        supabase_uid: data.user.id,
-        nombre: dto.nombre,
-        correo: dto.correo,
-        rol: dto.rol as RolStaff,
-      }),
+    return this.guardarOEliminarAuth(data.user.id, () =>
+      this.staffRepo.save(
+        this.staffRepo.create({
+          supabase_uid: data.user.id,
+          nombre: dto.nombre,
+          correo: dto.correo,
+          rol: dto.rol,
+        }),
+      ),
     );
   }
 

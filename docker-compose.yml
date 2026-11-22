@@ -1,0 +1,26 @@
+# Contenedores que usan las pruebas de Operación Remi (ver PRUEBAS.md).
+#   docker compose up -d db          base de datos PostgreSQL de prueba (puerto 55432)
+#   docker compose up -d sonarqube   SonarQube Community en http://localhost:9000
+# Los nombres de los contenedores son los que esperan los guiones de las pruebas.
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: remi-test-db
+    environment:
+      POSTGRES_PASSWORD: remi_test
+      POSTGRES_DB: remi_test
+    ports:
+      - "55432:5432"
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:

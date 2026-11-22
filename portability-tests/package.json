@@ -1,0 +1,13 @@
+{
+  "name": "remi-portability-tests",
+  "private": true,
+  "description": "Pruebas de portabilidad (adaptabilidad) de Operación Remi en varios navegadores con Playwright",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

@@ -189,7 +189,7 @@ export class AsistenteService {
     let msg = raw;
 
     // Eliminar bloques de código (```json ... ``` o ``` ... ```)
-    msg = msg.replace(/```(?:json)?\s*[\s\S]*?```/g, '');
+    msg = msg.replace(/```(?:json)?[\s\S]*?```/g, '');
 
     // Eliminar objetos JSON que parecen argumentos de tool call o respuestas técnicas
     msg = msg.replace(/\{\s*"(?:platoId|success|error|nombre|precio|cantidad|id)[\s\S]*?\}/g, '');

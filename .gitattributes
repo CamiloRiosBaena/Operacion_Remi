@@ -1,0 +1,2 @@
+# Los guiones de shell se ejecutan dentro de contenedores Linux: siempre con saltos de linea LF
+*.sh text eol=lf

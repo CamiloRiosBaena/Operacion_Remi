@@ -108,7 +108,6 @@
   gap: 16px;
 }
 .modCard {
-  background: var(--adm-card); border: 1px solid var(--adm-line);
   border-radius: var(--adm-r-lg); padding: 18px;
   box-shadow: var(--adm-shadow-sm);
   display: flex; align-items: center; gap: 15px;

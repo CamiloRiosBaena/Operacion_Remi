@@ -174,7 +174,7 @@ export function EntregaLocalAdminPage() {
       }
     };
 
-    const startWith = async (mode: ConstrainDOMStringParameters) =>
+    const startWith = async (mode: MediaTrackConstraints) =>
       scanner.start(mode, cfg, onDecode, () => {});
 
     try { await startWith({ facingMode: 'environment' }); }

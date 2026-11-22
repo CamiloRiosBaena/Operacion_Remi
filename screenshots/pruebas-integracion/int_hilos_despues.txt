@@ -1,0 +1,33 @@
+(node:20332) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ PASS  test/integracion/hilos.int-spec.ts
+  HILO 1 — CU-06 Registro de cliente
+    √ HIL-01a - Datos válidos: 201, cuenta en Auth y perfil guardado (correo libre → registrado) (47 ms)
+    √ HIL-01b - Correo ya registrado: 400 y no se crea otra cuenta (7 ms)
+    √ HIL-01c - Supabase Auth falla: 400 con su mensaje y no se guarda el perfil (8 ms)
+    √ HIL-01d - Datos no válidos: 400 con los tres mensajes y Auth no se llama (5 ms)
+  HILO 2 — CU-13 Creación de usuario staff
+    √ HIL-02a - El administrador crea un cocinero: 201 y fila con rol cocinero y estado activo (19 ms)
+    √ HIL-02b - Correo repetido: 400 (11 ms)
+    √ HIL-02c - Sin token: 401 (5 ms)
+    √ HIL-02d - Un cliente autenticado intenta crear un administrador: 403 (9 ms)
+  HILO 3 — CU-11 Creación de plato
+    √ HIL-03a - El administrador crea un plato con IVA 5 %: 201 y el detalle trae la categoría (32 ms)
+    √ HIL-03b - IVA de 3 %: 400 con mensaje en español (8 ms)
+    √ HIL-03c - Categoría inexistente: 400 (7 ms)
+    √ HIL-03d - Sin token: 401 (4 ms)
+  HILO 4 — CU-12 Creación de ingrediente
+    √ HIL-04a - El administrador crea un ingrediente en Kg: 201 y aparece en el inventario (21 ms)
+    √ HIL-04b - Unidad "kg" en minúscula y stock negativo: 400 y no se guarda (9 ms)
+    √ HIL-04c - Sin token: 401 (4 ms)
+  HILO 5 — CU-14 Creación de mesa
+    √ HIL-05a - El administrador crea la mesa 7: 201 y queda en estado libre (12 ms)
+    √ HIL-05b - Mesa repetida: 400 "La mesa 7 ya existe" y sigue habiendo una sola (9 ms)
+    √ HIL-05c - Número 0: 400 (6 ms)
+    √ HIL-05d - Sin token: 401 (4 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       19 passed, 19 total
+Snapshots:   0 total
+Time:        2.528 s
+Ran all test suites matching test/integracion/hilos.int-spec.ts.

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 810 768" width="810" height="768">
+  <style>
+    .bg { fill:#fdfbf5; }
+    .box.depth-0 { fill:#cf4520; stroke:#cf4520; stroke-width:1.6; }
+    .box.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1.4; }
+    .box.depth-2, .box.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1.3; }
+    .box.probada { fill:#fbe3d8; stroke:#cf4520; stroke-width:2.6; }
+    .box.contiene { stroke:#cf4520; stroke-width:2.6; }
+    .icon.depth-0 { fill:#cf4520; stroke:#fffdf8; stroke-width:1; }
+    .icon.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1; }
+    .icon.depth-2, .icon.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1; }
+    .label { font-family:'IBM Plex Mono','Consolas','SFMono-Regular',monospace; text-anchor:middle; fill:#211d16; font-size:11.5px; }
+    .label.depth-0 { fill:#fffdf8; font-weight:700; font-size:15px; }
+    .label.depth-1 { font-weight:600; font-size:12.5px; }
+    .label.depth-2 { font-weight:500; }
+    .label.probada { font-weight:700; }
+    .tag { font-family:'IBM Plex Mono','Consolas',monospace; font-size:9px; fill:#8a7e63; }
+    .tag.depth-0 { fill:#fffdf8; }
+    .grande .label { font-size:14px; }
+    .grande .label.depth-1 { font-size:15px; }
+    .grande .tag { font-size:10.5px; }
+    .edge { fill:none; stroke:#8a7e63; stroke-width:1.3; }
+    .hdr-title { font-family:'IBM Plex Mono','Consolas',monospace; font-size:20px; font-weight:700; fill:#211d16; }
+    .hdr-sub { font-family:'IBM Plex Mono','Consolas',monospace; font-size:12px; fill:#8a7e63; }
+    .lg-text { font-family:'IBM Plex Mono','Consolas',monospace; font-size:11px; fill:#4a4436; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a7e63"/>
+    </marker>
+  </defs>
+<rect class="bg" x="0" y="0" width="810" height="768"/>
+<text class="hdr-title" x="40" y="34">ÁRBOL FUNCIONAL — MÓDULOS SIN FUNCIONES PROBADAS</text><text class="hdr-sub" x="40" y="54">Módulos Cocina (KDS) (E), Domicilios (F), Pagos (G), Asistente IA (H)</text>
+<g class="grande"><g transform="translate(40, 74)"><rect x="0" y="0" width="14" height="11" fill="#cf4520" stroke="#cf4520"/><text class="lg-text" x="20" y="10">Sistema</text><rect x="90" y="0" width="14" height="11" fill="#efe7d2" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="110" y="10">Módulo (controller)</text><rect x="270" y="0" width="14" height="11" fill="#ffffff" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="290" y="10">Sub-recurso / función</text></g>
+<g><rect class="box depth-2" x="300.0" y="100.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="107.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="119.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="120.5">Consultar pedidos</tspan><tspan x="405.0" y="137.5">activos</tspan></text><text class="tag depth-2" x="504.0" y="113.0" text-anchor="end">U</text></g>
+<g><rect class="box depth-2" x="300.0" y="160.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="167.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="179.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="189.0">Marcar en cocina</tspan></text><text class="tag depth-2" x="504.0" y="173.0" text-anchor="end">V</text></g>
+<g><rect class="box depth-2" x="300.0" y="220.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="227.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="239.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="249.0">Marcar listo</tspan></text><text class="tag depth-2" x="504.0" y="233.0" text-anchor="end">W</text></g>
+<g><rect class="box depth-2" x="300.0" y="280.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="287.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="299.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="309.0">Despachar ruta</tspan></text><text class="tag depth-2" x="504.0" y="293.0" text-anchor="end">X</text></g>
+<path class="edge" d="M250,214.0 L275.0,214.0"/>
+<path class="edge" d="M275.0,124.0 L275.0,304.0"/>
+<path class="edge" d="M275.0,124.0 L291,124.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,184.0 L291,184.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,244.0 L291,244.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,304.0 L291,304.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="40.0" y="190.0" width="210" height="48"/><rect class="icon depth-1" x="35.0" y="197.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="209.0" width="11" height="7"/><text class="label depth-1"><tspan x="145.0" y="219.0">Cocina (KDS)</tspan></text><text class="tag depth-1" x="244.0" y="203.0" text-anchor="end">E</text></g>
+<g><rect class="box depth-2" x="300.0" y="356.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="363.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="375.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="376.5">Consultar pedidos</tspan><tspan x="405.0" y="393.5">en camino</tspan></text><text class="tag depth-2" x="504.0" y="369.0" text-anchor="end">Y</text></g>
+<g><rect class="box depth-2" x="300.0" y="416.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="423.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="435.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="445.0">Confirmar entrega</tspan></text><text class="tag depth-2" x="504.0" y="429.0" text-anchor="end">Z</text></g>
+<path class="edge" d="M250,410.0 L275.0,410.0"/>
+<path class="edge" d="M275.0,380.0 L275.0,440.0"/>
+<path class="edge" d="M275.0,380.0 L291,380.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,440.0 L291,440.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="40.0" y="386.0" width="210" height="48"/><rect class="icon depth-1" x="35.0" y="393.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="405.0" width="11" height="7"/><text class="label depth-1"><tspan x="145.0" y="415.0">Domicilios</tspan></text><text class="tag depth-1" x="244.0" y="399.0" text-anchor="end">F</text></g>
+<g><rect class="box depth-2" x="300.0" y="492.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="499.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="511.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="512.5">Generar pago</tspan><tspan x="405.0" y="529.5">(Mercado Pago)</tspan></text><text class="tag depth-2" x="504.0" y="505.0" text-anchor="end">AA</text></g>
+<g><rect class="box depth-2" x="300.0" y="552.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="559.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="571.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="581.0">Confirmar pago</tspan></text><text class="tag depth-2" x="504.0" y="565.0" text-anchor="end">AB</text></g>
+<g><rect class="box depth-2" x="300.0" y="612.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="619.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="631.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="632.5">Registrar pago</tspan><tspan x="405.0" y="649.5">en efectivo</tspan></text><text class="tag depth-2" x="504.0" y="625.0" text-anchor="end">AC</text></g>
+<path class="edge" d="M250,576.0 L275.0,576.0"/>
+<path class="edge" d="M275.0,516.0 L275.0,636.0"/>
+<path class="edge" d="M275.0,516.0 L291,516.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,576.0 L291,576.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,636.0 L291,636.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="40.0" y="552.0" width="210" height="48"/><rect class="icon depth-1" x="35.0" y="559.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="571.0" width="11" height="7"/><text class="label depth-1"><tspan x="145.0" y="581.0">Pagos</tspan></text><text class="tag depth-1" x="244.0" y="565.0" text-anchor="end">G</text></g>
+<g><rect class="box depth-2" x="300.0" y="688.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="695.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="707.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="708.5">Consultar respuesta</tspan><tspan x="405.0" y="725.5">del asistente</tspan></text><text class="tag depth-2" x="504.0" y="701.0" text-anchor="end">AD</text></g>
+<path class="edge" d="M250,712.0 L275.0,712.0"/>
+<path class="edge" d="M275.0,712.0 L275.0,712.0"/>
+<path class="edge" d="M275.0,712.0 L291,712.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="40.0" y="688.0" width="210" height="48"/><rect class="icon depth-1" x="35.0" y="695.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="707.0" width="11" height="7"/><text class="label depth-1"><tspan x="145.0" y="717.0">Asistente IA</tspan></text><text class="tag depth-1" x="244.0" y="701.0" text-anchor="end">H</text></g></g>
+</svg>

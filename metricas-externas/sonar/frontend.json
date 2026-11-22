@@ -1,0 +1,70 @@
+﻿{
+    "component":  {
+                      "key":  "operacion-remi:frontend/src",
+                      "name":  "frontend/src",
+                      "qualifier":  "DIR",
+                      "path":  "frontend/src",
+                      "measures":  [
+                                       {
+                                           "metric":  "coverage",
+                                           "value":  "0.0",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "complexity",
+                                           "value":  "2325"
+                                       },
+                                       {
+                                           "metric":  "code_smells",
+                                           "value":  "148",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "functions",
+                                           "value":  "1165"
+                                       },
+                                       {
+                                           "metric":  "sqale_debt_ratio",
+                                           "value":  "0.1",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "sqale_index",
+                                           "value":  "796",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "sqale_rating",
+                                           "value":  "1.0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "lines_to_cover",
+                                           "value":  "2468"
+                                       },
+                                       {
+                                           "metric":  "uncovered_lines",
+                                           "value":  "2468",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "cognitive_complexity",
+                                           "value":  "1193",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "ncloc",
+                                           "value":  "18530"
+                                       },
+                                       {
+                                           "metric":  "files",
+                                           "value":  "106"
+                                       },
+                                       {
+                                           "metric":  "line_coverage",
+                                           "value":  "0.0",
+                                           "bestValue":  false
+                                       }
+                                   ]
+                  }
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1356 330" width="1356" height="330">
+  <style>
+    .bg { fill:#fdfbf5; }
+    .box.depth-0 { fill:#cf4520; stroke:#cf4520; stroke-width:1.6; }
+    .box.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1.4; }
+    .box.depth-2, .box.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1.3; }
+    .box.probada { fill:#fbe3d8; stroke:#cf4520; stroke-width:2.6; }
+    .box.contiene { stroke:#cf4520; stroke-width:2.6; }
+    .icon.depth-0 { fill:#cf4520; stroke:#fffdf8; stroke-width:1; }
+    .icon.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1; }
+    .icon.depth-2, .icon.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1; }
+    .label { font-family:'IBM Plex Mono','Consolas','SFMono-Regular',monospace; text-anchor:middle; fill:#211d16; font-size:11.5px; }
+    .label.depth-0 { fill:#fffdf8; font-weight:700; font-size:15px; }
+    .label.depth-1 { font-weight:600; font-size:12.5px; }
+    .label.depth-2 { font-weight:500; }
+    .label.probada { font-weight:700; }
+    .tag { font-family:'IBM Plex Mono','Consolas',monospace; font-size:9px; fill:#8a7e63; }
+    .tag.depth-0 { fill:#fffdf8; }
+    .grande .label { font-size:14px; }
+    .grande .label.depth-1 { font-size:15px; }
+    .grande .tag { font-size:10.5px; }
+    .edge { fill:none; stroke:#8a7e63; stroke-width:1.3; }
+    .hdr-title { font-family:'IBM Plex Mono','Consolas',monospace; font-size:20px; font-weight:700; fill:#211d16; }
+    .hdr-sub { font-family:'IBM Plex Mono','Consolas',monospace; font-size:12px; fill:#8a7e63; }
+    .lg-text { font-family:'IBM Plex Mono','Consolas',monospace; font-size:11px; fill:#4a4436; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a7e63"/>
+    </marker>
+  </defs>
+<rect class="bg" x="0" y="0" width="1356" height="330"/>
+<text class="hdr-title" x="40" y="34">OPERACIÓN REMI — ÁRBOL FUNCIONAL (VISTA GENERAL)</text><text class="hdr-sub" x="40" y="54">58 nodos · 4 niveles · backend NestJS (7 controllers)</text>
+<g class=""><g transform="translate(40, 74)"><rect x="0" y="0" width="14" height="11" fill="#cf4520" stroke="#cf4520"/><text class="lg-text" x="20" y="10">Sistema</text><rect x="90" y="0" width="14" height="11" fill="#efe7d2" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="110" y="10">Módulo (controller)</text><rect x="270" y="0" width="14" height="11" fill="#ffffff" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="290" y="10">Sub-recurso / función</text><rect x="470" y="0" width="14" height="11" fill="#efe7d2" stroke="#cf4520" stroke-width="2"/><text class="lg-text" x="490" y="10">Módulo con funciones probadas</text></g>
+<g><rect class="box depth-0" x="563.0" y="110.0" width="230" height="56"/><rect class="icon depth-0" x="558.0" y="117.0" width="11" height="7"/><rect class="icon depth-0" x="558.0" y="129.0" width="11" height="7"/><text class="label depth-0"><tspan x="678.0" y="143.0">Sistema Operación Remi</tspan></text><text class="tag depth-0" x="787.0" y="123.0" text-anchor="end">A</text></g>
+<path class="edge" d="M678.0,166 L678.0,204"/><path class="edge" d="M120.0,204 L1236.0,204"/>
+<path class="edge" d="M120.0,204 L120.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1 contiene" x="40.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="35.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="120.0" y="268.0">Autenticación</tspan></text><text class="tag depth-1" x="194.0" y="255.0" text-anchor="end">B</text></g>
+<text class="lg-text" x="120.0" y="304" text-anchor="middle">5 nodos debajo</text>
+<path class="edge" d="M306.0,204 L306.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1 contiene" x="226.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="221.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="221.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="306.0" y="268.0">Menú</tspan></text><text class="tag depth-1" x="380.0" y="255.0" text-anchor="end">C</text></g>
+<text class="lg-text" x="306.0" y="304" text-anchor="middle">26 nodos debajo</text>
+<path class="edge" d="M492.0,204 L492.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1 contiene" x="412.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="407.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="407.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="492.0" y="268.0">Pedidos y Mesas</tspan></text><text class="tag depth-1" x="566.0" y="255.0" text-anchor="end">D</text></g>
+<text class="lg-text" x="492.0" y="304" text-anchor="middle">9 nodos debajo</text>
+<path class="edge" d="M678.0,204 L678.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="598.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="593.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="593.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="678.0" y="268.0">Cocina (KDS)</tspan></text><text class="tag depth-1" x="752.0" y="255.0" text-anchor="end">E</text></g>
+<text class="lg-text" x="678.0" y="304" text-anchor="middle">4 nodos debajo</text>
+<path class="edge" d="M864.0,204 L864.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="784.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="779.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="779.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="864.0" y="268.0">Domicilios</tspan></text><text class="tag depth-1" x="938.0" y="255.0" text-anchor="end">F</text></g>
+<text class="lg-text" x="864.0" y="304" text-anchor="middle">2 nodos debajo</text>
+<path class="edge" d="M1050.0,204 L1050.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="970.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="965.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="965.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="1050.0" y="268.0">Pagos</tspan></text><text class="tag depth-1" x="1124.0" y="255.0" text-anchor="end">G</text></g>
+<text class="lg-text" x="1050.0" y="304" text-anchor="middle">3 nodos debajo</text>
+<path class="edge" d="M1236.0,204 L1236.0,242" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="1156.0" y="242.0" width="160" height="42"/><rect class="icon depth-1" x="1151.0" y="249.0" width="11" height="7"/><rect class="icon depth-1" x="1151.0" y="261.0" width="11" height="7"/><text class="label depth-1"><tspan x="1236.0" y="268.0">Asistente IA</tspan></text><text class="tag depth-1" x="1310.0" y="255.0" text-anchor="end">H</text></g>
+<text class="lg-text" x="1236.0" y="304" text-anchor="middle">1 nodo debajo</text></g>
+</svg>

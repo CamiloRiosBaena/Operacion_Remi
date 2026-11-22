@@ -13,7 +13,7 @@ export class Ingrediente {
    * Unidad con la que el gerente compra el ingrediente.
    * Ejemplos: 'bulto', 'caja', 'kg', 'litro', 'racimo', 'paca', 'unidad'
    */
-  @Column({ length: 50, default: 'kg' })
+  @Column({ length: 50, default: 'Kg' })
   unidadCompra: string;
 
   /**

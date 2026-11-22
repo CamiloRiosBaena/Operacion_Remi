@@ -124,6 +124,11 @@ describe('CAJA NEGRA — CreatePlatoDto', () => {
     expect(err.some((e) => e.property === 'precio')).toBe(true);
   });
 
+  it('CP19 - Clase no válida: IVA 3 %, fuera de las opciones 0 %, 5 % y 19 % (clase 17)', async () => {
+    const err = await errores({ ...base, disponible: true, tasaIva: 0.03, categoriaId: 3 });
+    expect(err.some((e) => e.property === 'tasaIva')).toBe(true);
+  });
+
   it('CP08 - Valor límite: nombre "Plato1234" (9), justo debajo del mínimo → Error', async () => {
     const err = await errores({ ...base, nombre: 'Plato1234', categoriaId: 1 });
     expect(err.some((e) => e.property === 'nombre')).toBe(true);
@@ -196,7 +201,7 @@ describe('CAJA BLANCA — MenuService.createPlato (camino básico)', () => {
       precio: 15000,
       descripcion: '',
       disponible: true,
-      tasaIva: 0.03,
+      tasaIva: 0.05,
       categoriaId: 1,
     } as any);
     expect(platoRepo.save).toHaveBeenCalled();

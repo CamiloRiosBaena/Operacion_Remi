@@ -177,7 +177,7 @@ describe('CAJA BLANCA — MenuService.createIngrediente (camino único)', () => 
   it('CP17 - Camino único: ingrediente creado y guardado exitosamente', async () => {
     const { service, ingredienteRepo } = buildService();
     const resultado = await service.createIngrediente({
-      nombre: 'Papa',
+      nombre: 'Papa criolla',
       unidadCompra: 'Kg',
       gramosPorUnidad: 20,
       stockUnidades: 10,
@@ -185,13 +185,13 @@ describe('CAJA BLANCA — MenuService.createIngrediente (camino único)', () => 
     } as any);
     expect(ingredienteRepo.save).toHaveBeenCalledWith(
       expect.objectContaining({
-        nombre: 'Papa',
+        nombre: 'Papa criolla',
         unidadCompra: 'Kg',
         gramosPorUnidad: 20,
         stockUnidades: 10,
         stockMinimoPorciones: 10,
       }),
     );
-    expect(resultado).toEqual(expect.objectContaining({ nombre: 'Papa' }));
+    expect(resultado).toEqual(expect.objectContaining({ nombre: 'Papa criolla' }));
   });
 });

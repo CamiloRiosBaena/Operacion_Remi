@@ -1,0 +1,118 @@
+(node:5880) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ FAIL  test/integracion/incremental.int-spec.ts
+  INTEGRACIÓN ASCENDENTE
+    Nivel 1 — Repositorio + PostgreSQL
+      √ INC-A01 - La BD rechaza dos mesas con el mismo número (restricción única) (58 ms)
+      √ INC-A02 - Un ingrediente guardado sin unidad toma "Kg" por defecto (11 ms)
+    Nivel 2 — Servicio + Repositorio + PostgreSQL
+      √ INC-A03 - PedidosService.createMesa guarda la mesa y rechaza un número repetido (7 ms)
+      √ INC-A04 - MenuService.createPlato guarda el plato con su categoría y rechaza una categoría inexistente (16 ms)
+      √ INC-A05 - AuthService.registroCliente crea la cuenta en Auth y el perfil en la BD (8 ms)
+    Nivel 3 — + Controlador y ValidationPipe (HTTP)
+      √ INC-A06 - POST /api/auth/registro: 201 con datos válidos y 400 con mensajes en español (39 ms)
+      √ INC-A07 - POST /api/menu/ingredientes: rechaza la unidad "kg" en minúscula (4 ms)
+    Nivel 4 — + SupabaseGuard (autenticación y autorización)
+      √ INC-A08 - POST /api/auth/staff: sin token 401 y con token de administrador 201 (12 ms)
+      × INC-A09 - POST /api/auth/staff: un cliente autenticado no puede crear staff (403) (9 ms)
+      × INC-A10 - POST /api/menu/platos sin token responde 401 (14 ms)
+      × INC-A11 - POST /api/menu/ingredientes sin token responde 401 (8 ms)
+      × INC-A12 - POST /api/pedidos/mesas sin token responde 401 (9 ms)
+  INTEGRACIÓN DESCENDENTE
+    Nivel 1 — Controlador, ValidationPipe y Guard con servicios simulados
+      √ INC-D01 - POST /api/pedidos/mesas convierte el número y llama al servicio (5 ms)
+      √ INC-D02 - POST /api/pedidos/mesas con número 0: 400 y el servicio no se llama (3 ms)
+      √ INC-D03 - POST /api/auth/staff con rol inválido: 400 y el servicio no se llama (3 ms)
+    Nivel 2 — Servicios reales, repositorios y PostgreSQL
+      √ INC-D04 - POST /api/auth/staff guarda el staff con su rol en la BD (12 ms)
+      √ INC-D05 - POST /api/menu/platos y GET /api/menu/platos/:id devuelven el plato con su categoría (22 ms)
+
+  ● INTEGRACIÓN ASCENDENTE › Nivel 4 — + SupabaseGuard (autenticación y autorización) › INC-A09 - POST /api/auth/staff: un cliente autenticado no puede crear staff (403)
+
+    expected 403 "Forbidden", got 201 "Created"
+
+      110 |         .set(cliente)
+      111 |         .send({ nombre: 'Intruso Admin', correo: 'intruso@remi.test', contrasena: 'Clave1234', rol: 'admin' })
+    > 112 |         .expect(403);
+          |          ^
+      113 |     });
+      114 |
+      115 |     it('INC-A10 - POST /api/menu/platos sin token responde 401', async () => {
+
+      at Object.<anonymous> (incremental.int-spec.ts:112:10)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● INTEGRACIÓN ASCENDENTE › Nivel 4 — + SupabaseGuard (autenticación y autorización) › INC-A10 - POST /api/menu/platos sin token responde 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      117 |         .post('/api/menu/platos')
+      118 |         .send({ nombre: 'Plato sin token', precio: 1000, categoriaId })
+    > 119 |         .expect(401);
+          |          ^
+      120 |     });
+      121 |
+      122 |     it('INC-A11 - POST /api/menu/ingredientes sin token responde 401', async () => {
+
+      at Object.<anonymous> (incremental.int-spec.ts:119:10)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● INTEGRACIÓN ASCENDENTE › Nivel 4 — + SupabaseGuard (autenticación y autorización) › INC-A11 - POST /api/menu/ingredientes sin token responde 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      124 |         .post('/api/menu/ingredientes')
+      125 |         .send({ nombre: 'Ingrediente sin token', unidadCompra: 'Kg', gramosPorUnidad: 1000 })
+    > 126 |         .expect(401);
+          |          ^
+      127 |     });
+      128 |
+      129 |     it('INC-A12 - POST /api/pedidos/mesas sin token responde 401', async () => {
+
+      at Object.<anonymous> (incremental.int-spec.ts:126:10)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+  ● INTEGRACIÓN ASCENDENTE › Nivel 4 — + SupabaseGuard (autenticación y autorización) › INC-A12 - POST /api/pedidos/mesas sin token responde 401
+
+    expected 401 "Unauthorized", got 201 "Created"
+
+      128 |
+      129 |     it('INC-A12 - POST /api/pedidos/mesas sin token responde 401', async () => {
+    > 130 |       await request(http).post('/api/pedidos/mesas').send({ numero: 77 }).expect(401);
+          |                                                                           ^
+      131 |     });
+      132 |   });
+      133 | });
+
+      at Object.<anonymous> (incremental.int-spec.ts:130:75)
+      ----
+      at Test._assertStatus (../../node_modules/supertest/lib/test.js:309:14)
+      at ../../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../../node_modules/supertest/lib/test.js:152:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       4 failed, 13 passed, 17 total
+Snapshots:   0 total
+Time:        2.932 s, estimated 3 s
+Ran all test suites matching test/integracion/incremental.int-spec.ts.

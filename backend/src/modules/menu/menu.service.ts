@@ -24,9 +24,13 @@ import { UpdateExtraDto } from './dto/update-extra.dto';
 import { UpsertPlatoIngredienteDto } from './dto/upsert-plato-ingrediente.dto';
 import { Promo } from './entities/promo.entity';
 import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { CacheMenu, InvalidaCacheMenu } from './cache-menu';
 
 @Injectable()
 export class MenuService {
+  /** Menú público, categorías y platos: sus datos solo cambian desde este servicio. */
+  readonly cacheMenu = new CacheMenu();
+
   constructor(
     @InjectRepository(Categoria)
     private readonly categoriaRepo: Repository<Categoria>,
@@ -49,15 +53,19 @@ export class MenuService {
   // ─────────────────────────────────────────
 
   findAllCategorias(): Promise<Categoria[]> {
-    return this.categoriaRepo.find({ order: { nombre: 'ASC' } });
+    return this.cacheMenu.obtener('categorias', () =>
+      this.categoriaRepo.find({ order: { nombre: 'ASC' } }),
+    );
   }
 
+  @InvalidaCacheMenu()
   async createCategoria(dto: CreateCategoriaDto): Promise<Categoria> {
     const existe = await this.categoriaRepo.findOneBy({ nombre: dto.nombre });
     if (existe) throw new BadRequestException(`Ya existe la categoría "${dto.nombre}"`);
     return this.categoriaRepo.save(this.categoriaRepo.create(dto));
   }
 
+  @InvalidaCacheMenu()
   async updateCategoria(id: number, dto: Partial<CreateCategoriaDto>): Promise<Categoria> {
     const cat = await this.categoriaRepo.findOneBy({ id });
     if (!cat) throw new NotFoundException(`Categoría ${id} no encontrada`);
@@ -65,6 +73,7 @@ export class MenuService {
     return this.categoriaRepo.save(cat);
   }
 
+  @InvalidaCacheMenu()
   async deleteCategoria(id: number): Promise<void> {
     const cat = await this.categoriaRepo.findOne({
       where: { id },
@@ -83,10 +92,12 @@ export class MenuService {
   // ─────────────────────────────────────────
 
   findAllPlatos(): Promise<Plato[]> {
-    return this.platoRepo.find({
-      relations: ['categoria', 'extras', 'platoIngredientes', 'platoIngredientes.ingrediente'],
-      order: { nombre: 'ASC' },
-    });
+    return this.cacheMenu.obtener('platos', () =>
+      this.platoRepo.find({
+        relations: ['categoria', 'extras', 'platoIngredientes', 'platoIngredientes.ingrediente'],
+        order: { nombre: 'ASC' },
+      }),
+    );
   }
 
   async findOneConDetalles(id: number): Promise<Plato> {
@@ -98,6 +109,7 @@ export class MenuService {
     return plato;
   }
 
+  @InvalidaCacheMenu()
   async createPlato(dto: CreatePlatoDto): Promise<Plato> {
     const categoria = await this.categoriaRepo.findOneBy({
       id: dto.categoriaId,
@@ -118,6 +130,7 @@ export class MenuService {
     return this.findOneConDetalles(saved.id);
   }
 
+  @InvalidaCacheMenu()
   async updatePlato(id: number, dto: UpdatePlatoDto): Promise<Plato> {
     const plato = await this.findOneConDetalles(id);
     const raw = dto as Record<string, unknown>;
@@ -134,6 +147,7 @@ export class MenuService {
     return this.platoRepo.save(plato);
   }
 
+  @InvalidaCacheMenu()
   async toggleDisponible(id: number): Promise<Plato> {
     const plato = await this.platoRepo.findOneBy({ id });
     if (!plato) throw new NotFoundException(`Plato ${id} no encontrado`);
@@ -141,6 +155,7 @@ export class MenuService {
     return this.platoRepo.save(plato);
   }
 
+  @InvalidaCacheMenu()
   async deletePlato(id: number): Promise<void> {
     const plato = await this.platoRepo.findOne({
       where: { id },
@@ -188,6 +203,7 @@ export class MenuService {
     return ing;
   }
 
+  @InvalidaCacheMenu()
   async createIngrediente(dto: CreateIngredienteDto): Promise<Ingrediente> {
     const ing = this.ingredienteRepo.create({
       nombre: dto.nombre,
@@ -200,6 +216,7 @@ export class MenuService {
     return this.ingredienteRepo.save(ing);
   }
 
+  @InvalidaCacheMenu()
   async updateIngrediente(id: number, dto: UpdateIngredienteDto): Promise<Ingrediente> {
     const ing = await this.ingredienteRepo.findOneBy({ id });
     if (!ing) throw new NotFoundException(`Ingrediente ${id} no encontrado`);
@@ -207,6 +224,7 @@ export class MenuService {
     return this.ingredienteRepo.save(ing);
   }
 
+  @InvalidaCacheMenu()
   async deleteIngrediente(id: number): Promise<void> {
     const ing = await this.ingredienteRepo.findOneBy({ id });
     if (!ing) throw new NotFoundException(`Ingrediente ${id} no encontrado`);
@@ -252,6 +270,7 @@ export class MenuService {
     return this.extraRepo.find({ where: { plato: { id: platoId } } });
   }
 
+  @InvalidaCacheMenu()
   async createExtra(dto: CreateExtraDto): Promise<Extra> {
     const plato = await this.platoRepo.findOneBy({ id: dto.platoId });
     if (!plato) throw new BadRequestException(`Plato ${dto.platoId} no encontrado`);
@@ -260,6 +279,7 @@ export class MenuService {
     );
   }
 
+  @InvalidaCacheMenu()
   async updateExtra(id: number, dto: UpdateExtraDto): Promise<Extra> {
     const extra = await this.extraRepo.findOneBy({ id });
     if (!extra) throw new NotFoundException(`Extra ${id} no encontrado`);
@@ -267,6 +287,7 @@ export class MenuService {
     return this.extraRepo.save(extra);
   }
 
+  @InvalidaCacheMenu()
   async deleteExtra(id: number): Promise<void> {
     const extra = await this.extraRepo.findOneBy({ id });
     if (!extra) throw new NotFoundException(`Extra ${id} no encontrado`);
@@ -277,6 +298,7 @@ export class MenuService {
   // PLATO-INGREDIENTES (relaciones)
   // ─────────────────────────────────────────
 
+  @InvalidaCacheMenu()
   async upsertPlatoIngrediente(platoId: number, dto: UpsertPlatoIngredienteDto): Promise<PlatoIngrediente> {
     const plato = await this.platoRepo.findOneBy({ id: platoId });
     if (!plato) throw new NotFoundException(`Plato ${platoId} no encontrado`);
@@ -297,6 +319,7 @@ export class MenuService {
     return this.piRepo.save(pi);
   }
 
+  @InvalidaCacheMenu()
   async deletePlatoIngrediente(platoId: number, ingredienteId: number): Promise<void> {
     const pi = await this.piRepo.findOne({
       where: { plato: { id: platoId }, ingrediente: { id: ingredienteId } },
@@ -310,12 +333,14 @@ export class MenuService {
   // ─────────────────────────────────────────
 
   /** Vista pública del menú — solo platos disponibles, agrupados por categoría */
-  async getMenuPublico(): Promise<Categoria[]> {
-    return this.categoriaRepo.find({
-      relations: ['platos', 'platos.extras'],
-      where: { platos: { disponible: true } },
-      order: { nombre: 'ASC' },
-    });
+  getMenuPublico(): Promise<Categoria[]> {
+    return this.cacheMenu.obtener('publico', () =>
+      this.categoriaRepo.find({
+        relations: ['platos', 'platos.extras'],
+        where: { platos: { disponible: true } },
+        order: { nombre: 'ASC' },
+      }),
+    );
   }
 
   // ─────────────────────────────────────────

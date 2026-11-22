@@ -1,0 +1,26 @@
+# Dependencias y archivos generados
+node_modules/
+dist/
+coverage/
+coverage-integracion/
+test-results/
+.VSCodeCounter/
+jmeter.log
+*.log
+
+# Resultados de cada corrida (se vuelven a generar al ejecutar las pruebas)
+*.jtl
+metricas-externas/recursos.csv
+reliability-tests/memoria.csv
+reliability-tests/eventos.csv
+
+# Configuracion local
+pruebas/.jmeter-ruta
+.env
+
+# Respaldos y archivos temporales de Word
+respaldo_*.docx
+~$*
+
+# Reportes generados por Playwright
+portability-tests/reporte/

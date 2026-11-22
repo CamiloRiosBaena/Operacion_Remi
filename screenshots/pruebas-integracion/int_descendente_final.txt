@@ -1,0 +1,28 @@
+(node:6208) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS test/integracion/descendente.int-spec.ts
+  INTEGRACIÓN DESCENDENTE (primero en profundidad)
+    #1 (A,B) (B,I) (B,K): Autenticación real; Menú y Mesas con los resguardos R-C y R-D (DES-1)
+      √ DES-1.1 - (A,B): el RolesGuard real de B autoriza al administrador y A entrega la petición a R-D (201) (45 ms)
+      √ DES-1.2 - (A,B): el RolesGuard real de B niega al cliente (403) y R-C no se llama (6 ms)
+      √ DES-1.3 - (B,I): el registro crea la cuenta en Auth y el cliente en PostgreSQL (201) (10 ms)
+      √ DES-1.4 - (B,K): el administrador crea el staff y se guarda con su rol (201) (11 ms)
+      √ DES-1.5 - (B,K): un cliente no puede crear staff (403) (5 ms)
+    #2 (A,C) (C,N) (N,AE) (C,O) (O,AI): se reemplaza R-C por el módulo Menú real (DES-2)
+      √ DES-2.1 - (A,C): A enruta /api/menu al módulo real: GET /api/menu/platos responde 200 con la lista vacía (9 ms)
+      √ DES-2.2 - (C,N) (N,AE): el plato se guarda y GET /api/menu/platos/:id lo devuelve (201 y 200) (25 ms)
+      √ DES-2.3 - (N,AE): con la categoría 999, que no existe, responde 400 (6 ms)
+      √ DES-2.4 - (C,O) (O,AI): el ingrediente válido se guarda en PostgreSQL (201) (9 ms)
+      √ DES-2.5 - (O,AI): la unidad "kg" en minúscula se rechaza (400) (5 ms)
+      √ DES-2.6 - Regresión de #1: B responde (201) y D sigue con su resguardo R-D (11 ms)
+    #3 (A,D) (D,T) (T,BD): se reemplaza R-D por el módulo Pedidos y Mesas real; ya no quedan resguardos (DES-3)
+      √ DES-3.1 - (A,D): A enruta /api/pedidos al módulo real: GET /api/pedidos/mesas/todas responde 200 con la lista vacía (4 ms)
+      √ DES-3.2 - (D,T) (T,BD): el número "4" se convierte y la mesa se guarda en PostgreSQL (201) (13 ms)
+      √ DES-3.3 - (T,BD): la mesa repetida se rechaza con "La mesa 4 ya existe" (400) (5 ms)
+      √ DES-3.4 - Regresión final: las cinco funciones responden con todos los módulos reales (49 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       15 passed, 15 total
+Snapshots:   0 total
+Time:        3.404 s, estimated 4 s
+Ran all test suites matching test/integracion/descendente.int-spec.ts.

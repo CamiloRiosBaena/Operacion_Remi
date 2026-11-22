@@ -1,0 +1,69 @@
+﻿{
+    "component":  {
+                      "key":  "operacion-remi",
+                      "name":  "Operacion Remi",
+                      "qualifier":  "TRK",
+                      "measures":  [
+                                       {
+                                           "metric":  "coverage",
+                                           "value":  "24.9",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "complexity",
+                                           "value":  "2848"
+                                       },
+                                       {
+                                           "metric":  "code_smells",
+                                           "value":  "163",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "functions",
+                                           "value":  "1447"
+                                       },
+                                       {
+                                           "metric":  "sqale_debt_ratio",
+                                           "value":  "0.1",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "sqale_index",
+                                           "value":  "882",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "sqale_rating",
+                                           "value":  "1.0",
+                                           "bestValue":  true
+                                       },
+                                       {
+                                           "metric":  "lines_to_cover",
+                                           "value":  "4019"
+                                       },
+                                       {
+                                           "metric":  "uncovered_lines",
+                                           "value":  "3196",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "cognitive_complexity",
+                                           "value":  "1425",
+                                           "bestValue":  false
+                                       },
+                                       {
+                                           "metric":  "ncloc",
+                                           "value":  "21936"
+                                       },
+                                       {
+                                           "metric":  "files",
+                                           "value":  "177"
+                                       },
+                                       {
+                                           "metric":  "line_coverage",
+                                           "value":  "20.5",
+                                           "bestValue":  false
+                                       }
+                                   ]
+                  }
+}

@@ -12,6 +12,7 @@ import { RemiLogo } from '@/shared/components/RemiLogo';
 import { getActivePedido, clearActivePedido } from '@/shared/lib/guestSession';
 import type { Plato } from '../types/plato.types';
 import { ChatWidget } from '@/features/asistente/components/ChatWidget';
+import { numeroAleatorio } from '@/shared/lib/aleatorio';
 import styles from './MenuPage.module.css';
 
 export type { Plato };
@@ -96,7 +97,7 @@ export function MenuPage() {
     resize();
     window.addEventListener('resize', resize);
 
-    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const rand = (a: number, b: number) => a + numeroAleatorio() * (b - a);
 
     // ── Hoja de albahaca / laurel ──
     function drawLeaf(
@@ -218,7 +219,7 @@ export function MenuPage() {
 
     function makeParticle(init: boolean): Particle {
       return {
-        type:       TYPES[Math.floor(Math.random() * TYPES.length)],
+        type:       TYPES[Math.floor(numeroAleatorio() * TYPES.length)],
         x:          rand(0, canvas.width),
         y:          init ? rand(0, canvas.height) : canvas.height + 20,
         size:       rand(5, 12),

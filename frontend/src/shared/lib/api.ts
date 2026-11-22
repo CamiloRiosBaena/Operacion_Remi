@@ -2,7 +2,8 @@ import { supabase } from './supabase';
 
 export const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
 
-interface RequestOptions extends RequestInit {
+/** Igual que RequestInit, pero el cuerpo es cualquier valor que se envía como JSON. */
+interface RequestOptions extends Omit<RequestInit, 'body'> {
   body?: unknown;
 }
 
@@ -13,16 +14,14 @@ export async function apiFetch<T = unknown>(
   const { body, headers, ...rest } = options;
 
   const { data: { session } } = await supabase.auth.getSession();
-  const authHeader = session?.access_token
-    ? { Authorization: `Bearer ${session.access_token}` }
-    : {};
+  const finalHeaders = new Headers(headers);
+  if (!finalHeaders.has('Content-Type')) finalHeaders.set('Content-Type', 'application/json');
+  if (session?.access_token && !finalHeaders.has('Authorization')) {
+    finalHeaders.set('Authorization', `Bearer ${session.access_token}`);
+  }
 
   const res = await fetch(`${API_URL}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeader,
-      ...(headers ?? {}),
-    },
+    headers: finalHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined,
     ...rest,
   });

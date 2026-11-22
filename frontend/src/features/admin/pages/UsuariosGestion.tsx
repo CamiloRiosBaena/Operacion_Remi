@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { useModalClose } from '@/shared/hooks/useModalClose';
+import { validarContrasena, validarCorreo, validarNombrePersona } from '@/shared/lib/validaciones';
 import {
   fetchStaff, fetchClientes,
   createStaff, updateStaff, deleteStaff, updateEstadoCliente,
@@ -14,7 +15,6 @@ const ROL_CHIP: Record<Rol, string> = {
   admin: 'adm-chip adm-chip-bad', cocinero: 'adm-chip adm-chip-warn',
   domiciliario: 'adm-chip adm-chip-info', cliente: 'adm-chip adm-chip-ok',
 };
-const ROL_TILE: Record<Rol, string> = { admin:'rose', cocinero:'peach', domiciliario:'sky', cliente:'sage' };
 
 interface UsuarioRow { id: string; nombre: string; correo: string; rol: Rol; estado: string; tipo: 'staff'|'cliente'; }
 const ROLES_FILTRO: (Rol|'todos')[] = ['todos','admin','cocinero','domiciliario','cliente'];
@@ -40,7 +40,7 @@ export function UsuariosGestion() {
     catch (err) { console.error(err); } finally { setLoading(false); }
   }, []);
   useEffect(() => { cargar(); }, [cargar]);
-  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null));
+  const { backdropProps: modalBdProps } = useModalClose(() => setModal(null), modal !== null);
 
   const usuarios: UsuarioRow[] = [
     ...staffList.map((s): UsuarioRow => ({ id:`s-${s.id}`, nombre:s.nombre, correo:s.correo, rol:s.rol, estado:s.estado, tipo:'staff' })),
@@ -50,18 +50,21 @@ export function UsuariosGestion() {
     (filtroRol === 'todos' || u.rol === filtroRol) &&
     (u.nombre.toLowerCase().includes(busqueda.toLowerCase()) || u.correo.toLowerCase().includes(busqueda.toLowerCase()))
   );
-  const conteoRol = (rol: Rol) => usuarios.filter(u => u.rol === rol && u.estado === 'activo').length;
 
   async function handleGuardar() {
-    if (!form.nombre.trim() || !form.correo.trim()) return;
+    const creando = modal?.mode === 'crear';
+    const invalido = validarNombrePersona(form.nombre)
+      ?? (creando ? validarCorreo(form.correo) : null)
+      ?? (creando || form.contrasena ? validarContrasena(form.contrasena) : null);
+    if (invalido) { setErrorMsg(invalido); return; }
+    const nombre = form.nombre.trim();
     setSaving(true); setErrorMsg('');
     try {
-      if (modal?.mode === 'crear') {
-        if (!form.contrasena || form.contrasena.length < 6) { setErrorMsg('La contraseña debe tener al menos 6 caracteres'); return; }
-        const nuevo = await createStaff(form); setStaffList(prev => [...prev, nuevo]);
+      if (creando) {
+        const nuevo = await createStaff({ ...form, nombre, correo: form.correo.trim() }); setStaffList(prev => [...prev, nuevo]);
       } else if (modal?.mode === 'editar' && modal.usuario.tipo === 'staff') {
         const id = Number(modal.usuario.id.replace('s-',''));
-        const act = await updateStaff(id, { nombre:form.nombre, rol:form.rol, ...(form.contrasena ? { contrasena:form.contrasena } : {}) });
+        const act = await updateStaff(id, { nombre, rol:form.rol, ...(form.contrasena ? { contrasena:form.contrasena } : {}) });
         setStaffList(prev => prev.map(s => s.id === id ? act : s));
       }
       setModal(null);
@@ -186,6 +189,7 @@ export function UsuariosGestion() {
                     <td><span className={ROL_CHIP[u.rol]}>{ROL_LABEL[u.rol]}</span></td>
                     <td>
                       <button className={`adm-toggle ${u.estado === 'activo' ? 'on' : ''}`}
+                        aria-label={`Activo: ${u.nombre}`} aria-pressed={u.estado === 'activo'}
                         onClick={() => handleToggleEstado(u)} disabled={u.estado === 'baneado'} />
                     </td>
                     <td>
@@ -222,26 +226,26 @@ export function UsuariosGestion() {
       {/* ── Modal ── */}
       {modal && (
         <div className="adm-overlay" {...modalBdProps}>
-          <div className="adm-modal-box sm" onClick={e => e.stopPropagation()}>
+          <div className="adm-modal-box sm" role="dialog" aria-modal="true">
             <div className="adm-modal-title">
               {modal.mode === 'crear' ? 'Nuevo usuario staff' : 'Editar usuario'}
             </div>
             <div className="adm-modal-form">
               <div className="adm-modal-field">
-                <label>Nombre completo</label>
-                <input type="text" className="adm-input" value={form.nombre}
+                <label htmlFor="usuario-nombre-completo">Nombre completo</label>
+                <input id="usuario-nombre-completo" type="text" className="adm-input" value={form.nombre}
                   onChange={e => setForm({ ...form, nombre:e.target.value })} />
               </div>
               {modal.mode === 'crear' && (
                 <div className="adm-modal-field">
-                  <label>Correo electrónico</label>
-                  <input type="email" className="adm-input" value={form.correo}
+                  <label htmlFor="usuario-correo-electronico">Correo electrónico</label>
+                  <input id="usuario-correo-electronico" type="email" className="adm-input" value={form.correo}
                     onChange={e => setForm({ ...form, correo:e.target.value })} />
                 </div>
               )}
               <div className="adm-modal-field">
-                <label>Rol</label>
-                <select className="adm-input" value={form.rol}
+                <label htmlFor="usuario-rol">Rol</label>
+                <select id="usuario-rol" className="adm-input" value={form.rol}
                   onChange={e => setForm({ ...form, rol:e.target.value as RolStaff })}>
                   <option value="admin">Administrador</option>
                   <option value="cocinero">Cocinero</option>
@@ -249,8 +253,8 @@ export function UsuariosGestion() {
                 </select>
               </div>
               <div className="adm-modal-field">
-                <label>{modal.mode === 'crear' ? 'Contraseña' : 'Nueva contraseña (opcional)'}</label>
-                <input type="password" className="adm-input" value={form.contrasena}
+                <label htmlFor="usuario-contrasena">{modal.mode === 'crear' ? 'Contraseña' : 'Nueva contraseña (opcional)'}</label>
+                <input id="usuario-contrasena" type="password" className="adm-input" value={form.contrasena}
                   onChange={e => setForm({ ...form, contrasena:e.target.value })}
                   placeholder={modal.mode === 'editar' ? 'Dejar vacío para no cambiar' : ''} />
               </div>

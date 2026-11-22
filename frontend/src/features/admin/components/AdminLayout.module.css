@@ -250,6 +250,7 @@
 }
 .overlay {
   position: fixed; inset: 0; z-index: 19;
+  border: 0; padding: 0; cursor: default;
   background: oklch(0.2 0.02 50 / 0.4);
   backdrop-filter: blur(2px);
 }

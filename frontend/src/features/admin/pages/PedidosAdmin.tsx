@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AdminLayout } from '../components/AdminLayout';
 import { useRealtimePedidos } from '@/shared/hooks/useRealtimePedidos';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import {
   fetchPedidos, cambiarEstadoPedido, cancelarPedido,
   type ApiPedido, type EstadoPedidoApi, type TipoPedidoApi,
@@ -41,9 +42,6 @@ const CHIP_CLASS: Record<EstadoPedidoApi, string> = {
   listo: 'adm-chip adm-chip-ok', en_camino: 'adm-chip adm-chip-info',
   entregado: 'adm-chip adm-chip-ok', cancelado: 'adm-chip adm-chip-bad',
 };
-const TIPO_CHIP: Record<string, string> = {
-  mesa: 'adm-chip adm-chip-warn', domicilio: 'adm-chip adm-chip-info', llevar: 'adm-chip adm-chip-neutral',
-};
 const TIPO_LABEL: Record<string, string> = { mesa: 'Mesa', domicilio: 'Domicilio', llevar: 'Llevar' };
 
 function tiempoRelativo(iso: string) {
@@ -79,6 +77,7 @@ export function PedidosAdmin() {
   const [monthOffset,  setMonthOffset ] = useState(0);
   const [accionando,       setAccionando      ] = useState<number | null>(null);
   const [detalle,          setDetalle         ] = useState<ApiPedido | null>(null);
+  const { backdropProps: detalleBdProps } = useModalClose(() => setDetalle(null), detalle !== null);
   const [showEstadoFilter, setShowEstadoFilter] = useState(false);
   const [busqueda,         setBusqueda        ] = useState('');
 
@@ -344,8 +343,8 @@ export function PedidosAdmin() {
 
       {/* ── Modal detalle ── */}
       {detalle && (
-        <div className="adm-overlay" onClick={() => setDetalle(null)}>
-          <div className="adm-modal-box" onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" {...detalleBdProps}>
+          <div className="adm-modal-box" role="dialog" aria-modal="true">
             <div className="adm-modal-title">Pedido #{detalle.id} — {labelCliente(detalle)}</div>
             <ul className={styles.detalleList}>
               {detalle.detalles?.map(d => (

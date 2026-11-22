@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { NotificacionesService } from './notificaciones.service';
 import { SupabaseAdminService } from './supabase-admin.service';
 import { SupabaseGuard } from './supabase.guard';
+import { RolesGuard } from './roles.guard';
 import { UserStaff } from './entities/user-staff.entity';
 import { Cliente } from './entities/cliente.entity';
 import { SesionCliente } from './entities/sesion-cliente.entity';
@@ -14,7 +15,7 @@ import { SesionCliente } from './entities/sesion-cliente.entity';
     TypeOrmModule.forFeature([UserStaff, Cliente, SesionCliente]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, NotificacionesService, SupabaseAdminService, SupabaseGuard],
-  exports: [AuthService, NotificacionesService, SupabaseAdminService, SupabaseGuard],
+  providers: [AuthService, NotificacionesService, SupabaseAdminService, SupabaseGuard, RolesGuard],
+  exports: [AuthService, NotificacionesService, SupabaseAdminService, SupabaseGuard, RolesGuard],
 })
 export class AuthModule {}

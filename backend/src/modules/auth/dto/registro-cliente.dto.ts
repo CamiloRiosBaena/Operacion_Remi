@@ -1,14 +1,19 @@
 import { IsEmail, IsString, Length } from 'class-validator';
 
 export class RegistroClienteDto {
-  @IsString()
-  @Length(10, 30)
+  @IsString({ message: 'El nombre es obligatorio' })
+  @Length(10, 30, { message: 'El nombre debe tener entre 10 y 30 caracteres' })
   nombre: string;
 
-  @IsEmail()
+  @IsEmail(
+    {},
+    { message: 'El correo no tiene un formato válido (usuario@dominio.com)' },
+  )
   correo: string;
 
-  @IsString()
-  @Length(8, 20)
+  @IsString({ message: 'La contraseña es obligatoria' })
+  @Length(8, 20, {
+    message: 'La contraseña debe tener entre 8 y 20 caracteres',
+  })
   contrasena: string;
 }

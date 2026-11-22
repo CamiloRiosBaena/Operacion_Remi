@@ -54,6 +54,8 @@ export function PersonalizedSection() {
                       nombre: plato.nombre,
                       precio: plato.precio,
                       tasaIva: 0.19,
+                      cantidad: 1,
+                      categoria: 'Recomendados',
                       emoji: plato.emoji,
                     })
                   }
@@ -84,6 +86,8 @@ export function PersonalizedSection() {
                       nombre: plato.nombre,
                       precio: plato.precio,
                       tasaIva: 0.19,
+                      cantidad: 1,
+                      categoria: 'Recomendados',
                       emoji: plato.emoji,
                     })
                   }

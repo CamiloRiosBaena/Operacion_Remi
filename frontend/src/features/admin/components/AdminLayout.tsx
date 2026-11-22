@@ -42,7 +42,15 @@ function Icon({ name, size = 19 }: { name: string; size?: number }) {
 }
 
 /* ── Nav items ── */
-const NAV = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: string;
+  exact?: boolean;
+  badge?: string | number;
+}
+
+const NAV: NavItem[] = [
   { to: '/admin',              label: 'Dashboard',        icon: 'dashboard', exact: true },
   { to: '/admin/menu',         label: 'Gestión de Menú',  icon: 'menu' },
   { to: '/admin/promos',       label: 'Banners',          icon: 'banner' },
@@ -80,7 +88,12 @@ export function AdminLayout({ children, title, subtitle }: Props) {
     <div className={styles.shell}>
       {/* Overlay móvil */}
       {sidebarOpen && (
-        <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+        <button
+          type="button"
+          className={styles.overlay}
+          aria-label="Cerrar menú"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* ── Sidebar ── */}
@@ -127,7 +140,7 @@ export function AdminLayout({ children, title, subtitle }: Props) {
               <div className={styles.userRole}>ADMINISTRADOR</div>
             </div>
           </div>
-          <button className={styles.logoutBtn} onClick={handleLogout}>
+          <button className={styles.logoutBtn} onClick={handleLogout} aria-label="Cerrar sesión">
             <Icon name="logout" size={16} />
             <span>Salir</span>
           </button>
@@ -152,9 +165,9 @@ export function AdminLayout({ children, title, subtitle }: Props) {
         </header>
 
         {/* Content */}
-        <div className={styles.content}>
+        <main className={styles.content}>
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

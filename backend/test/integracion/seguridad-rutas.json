@@ -1,0 +1,904 @@
+{
+  "resumen": {
+    "rutas_totales": 66,
+    "rutas_publicas": 23,
+    "rutas_privadas": 43,
+    "rutas_con_rol": 41
+  },
+  "rutas": [
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/asistente/chat",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/clientes/:id/estado",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/auth/clientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/auth/staff",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/auth/sync/cliente",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/cocina/despacho",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/cocina/despacho",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/cocina/domiciliarios",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/en-cocina",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/listo",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/cocina/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/domicilios/pedidos/:id/entregado",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/domicilios/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/categorias/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/categorias/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/categorias",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/extras/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/extras/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/extras",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/ingredientes/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/ingredientes/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/ingredientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id/disponibilidad",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos/:id/ingredientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:platoId/ingredientes/:ingredienteId",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/promos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/promos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/menu/promos/todas",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/menu/promos",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/casillero",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/estado",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "DELETE",
+      "ruta": "/api/pedidos/mesas/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/mesas/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "POST",
+      "ruta": "/api/pedidos/mesas",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/verificar-qr/:token/confirmar",
+      "codigo": 401
+    },
+    {
+      "prueba": "sin token",
+      "metodo": "GET",
+      "ruta": "/api/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/asistente/chat",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/clientes/:id/estado",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/auth/clientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/staff/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/auth/staff",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/auth/sync/cliente",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/cocina/despacho",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/cocina/despacho",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/cocina/domiciliarios",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/en-cocina",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/listo",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/cocina/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/domicilios/pedidos/:id/entregado",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/domicilios/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/categorias/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/categorias/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/categorias",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/extras/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/extras/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/extras",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/ingredientes/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/ingredientes/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/ingredientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id/disponibilidad",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos/:id/ingredientes",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:platoId/ingredientes/:ingredienteId",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/promos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/promos/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/menu/promos/todas",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/menu/promos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/casillero",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/estado",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "DELETE",
+      "ruta": "/api/pedidos/mesas/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/mesas/:id",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "POST",
+      "ruta": "/api/pedidos/mesas",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/verificar-qr/:token/confirmar",
+      "codigo": 401
+    },
+    {
+      "prueba": "token falso",
+      "metodo": "GET",
+      "ruta": "/api/pedidos",
+      "codigo": 401
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/clientes/:id/estado",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/auth/clientes",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/auth/staff/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/auth/staff/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/auth/staff",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/auth/staff",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/cocina/despacho",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/cocina/despacho",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/cocina/domiciliarios",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/en-cocina",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/cocina/pedidos/:id/listo",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/cocina/pedidos",
+      "roles": [
+        "cocinero",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/domicilios/pedidos/:id/entregado",
+      "roles": [
+        "domiciliario",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/domicilios/pedidos",
+      "roles": [
+        "domiciliario",
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/categorias/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/categorias/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/categorias",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/extras/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/extras/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/extras",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/ingredientes/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/ingredientes/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/ingredientes",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id/disponibilidad",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos/:id/ingredientes",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/platos/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/platos/:platoId/ingredientes/:ingredienteId",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/platos",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/menu/promos/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/menu/promos/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/menu/promos/todas",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/menu/promos",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/casillero",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/:id/estado",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "DELETE",
+      "ruta": "/api/pedidos/mesas/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/mesas/:id",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "POST",
+      "ruta": "/api/pedidos/mesas",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "PATCH",
+      "ruta": "/api/pedidos/verificar-qr/:token/confirmar",
+      "roles": [
+        "admin",
+        "domiciliario"
+      ],
+      "codigo": 403
+    },
+    {
+      "prueba": "token de cliente",
+      "metodo": "GET",
+      "ruta": "/api/pedidos",
+      "roles": [
+        "admin"
+      ],
+      "codigo": 403
+    }
+  ]
+}

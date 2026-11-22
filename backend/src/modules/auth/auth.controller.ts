@@ -6,7 +6,6 @@ import {
   HttpCode,
   HttpStatus,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -23,6 +22,9 @@ import { RegistroClienteDto } from './dto/registro-cliente.dto';
 import { CrearSesionDto } from './dto/crear-sesion.dto';
 import { PushSuscripcionDto } from './dto/push-suscripcion.dto';
 import type { User } from '@supabase/supabase-js';
+import { SoloRoles } from './roles.guard';
+import { RolStaff } from './entities/user-staff.entity';
+import { ParseIdPipe } from '../../common/pipes/parse-id.pipe';
 
 @Controller('auth')
 export class AuthController {
@@ -50,7 +52,10 @@ export class AuthController {
   /** PATCH /api/auth/sesiones/push — registra la suscripción push de la sesión */
   @Patch('sesiones/push')
   registrarPush(@Body() dto: PushSuscripcionDto) {
-    return this.notiService.registrarPushToken(dto.tokenSesion, dto.suscripcion);
+    return this.notiService.registrarPushToken(
+      dto.tokenSesion,
+      dto.suscripcion,
+    );
   }
 
   // ─────────────────────────────────────────
@@ -84,27 +89,27 @@ export class AuthController {
   // ─────────────────────────────────────────
 
   @Get('staff')
-  @UseGuards(SupabaseGuard)
+  @SoloRoles(RolStaff.ADMIN)
   findAllStaff() {
     return this.authService.findAllStaff();
   }
 
   @Get('staff/:id')
-  @UseGuards(SupabaseGuard)
-  findOneStaff(@Param('id', ParseIntPipe) id: number) {
+  @SoloRoles(RolStaff.ADMIN)
+  findOneStaff(@Param('id', ParseIdPipe) id: number) {
     return this.authService.findOneStaff(id);
   }
 
   @Post('staff')
-  @UseGuards(SupabaseGuard)
+  @SoloRoles(RolStaff.ADMIN)
   createStaff(@Body() dto: CreateStaffDto) {
     return this.authService.createStaff(dto);
   }
 
   @Patch('staff/:id')
-  @UseGuards(SupabaseGuard)
+  @SoloRoles(RolStaff.ADMIN)
   updateStaff(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
     @Body() dto: UpdateStaffDto,
   ) {
     return this.authService.updateStaff(id, dto);
@@ -112,8 +117,8 @@ export class AuthController {
 
   @Delete('staff/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(SupabaseGuard)
-  deleteStaff(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+  @SoloRoles(RolStaff.ADMIN)
+  deleteStaff(@Param('id', ParseIdPipe) id: number, @Req() req: Request) {
     const caller = (req as any)['supabaseUser'] as User;
     return this.authService.deleteStaff(id, caller.id);
   }
@@ -123,16 +128,16 @@ export class AuthController {
   // ─────────────────────────────────────────
 
   @Get('clientes')
-  @UseGuards(SupabaseGuard)
+  @SoloRoles(RolStaff.ADMIN)
   findAllClientes() {
     return this.authService.findAllClientes();
   }
 
   /** PATCH /api/auth/clientes/:id/estado — activar/suspender/banear */
   @Patch('clientes/:id/estado')
-  @UseGuards(SupabaseGuard)
+  @SoloRoles(RolStaff.ADMIN)
   updateEstadoCliente(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIdPipe) id: number,
     @Body('estado') estado: EstadoCliente,
   ) {
     return this.authService.updateEstadoCliente(id, estado);

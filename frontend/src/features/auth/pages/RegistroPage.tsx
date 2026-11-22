@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { validarContrasena, validarCorreo, validarNombrePersona } from '@/shared/lib/validaciones';
 import { useAuth } from '../context/AuthContext';
 import { AnimatedBg } from '../components/AnimatedBg';
 import styles from './RegistroPage.module.css';
@@ -43,13 +44,14 @@ export function RegistroPage() {
       setErrorMsg('Las contraseñas no coinciden');
       return;
     }
-    if (contrasena.length < 6) {
-      setErrorMsg('La contraseña debe tener al menos 6 caracteres');
+    const invalido = validarNombrePersona(nombre) ?? validarCorreo(correo) ?? validarContrasena(contrasena);
+    if (invalido) {
+      setErrorMsg(invalido);
       return;
     }
 
     try {
-      await registrar({ nombre, correo, contrasena });
+      await registrar({ nombre: nombre.trim(), correo: correo.trim(), contrasena });
       navigate('/menu', { replace: true });
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Error al crear la cuenta');

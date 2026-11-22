@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import { infoPedidoPorToken, confirmarEntregaConToken, type ApiPedido } from '@/features/admin/services/admin.service';
 import styles from './QrScannerModal.module.css';
 
@@ -47,6 +48,7 @@ async function iniciarEscaner(
 }
 
 export function QrScannerModal({ onClose, onConfirmado }: Props) {
+  const { backdropProps } = useModalClose(onClose);
   const [fase, setFase]       = useState<Fase>('escaneando');
   const [pedido, setPedido]   = useState<ApiPedido | null>(null);
   const [token, setToken]     = useState('');
@@ -115,8 +117,8 @@ export function QrScannerModal({ onClose, onConfirmado }: Props) {
   }
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+    <div className={styles.overlay} {...backdropProps}>
+      <div className={styles.modal} role="dialog" aria-modal="true">
         <div className={styles.header}>
           <h2 className={styles.titulo}>Escanear QR del cliente</h2>
           <button className={styles.btnCerrar} onClick={onClose}>✕</button>

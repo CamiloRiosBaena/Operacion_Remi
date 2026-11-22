@@ -49,7 +49,8 @@ import { Promo } from './modules/menu/entities/promo.entity';
         ssl: cfg.get<string>('DB_SSL') === 'true'
           ? { rejectUnauthorized: false }
           : false,
-        extra: { family: 4 },
+        // max: conexiones del pool (pg usa 10 por defecto y se saturaba con 200 clientes)
+        extra: { family: 4, max: Number(cfg.get<string>('DB_POOL_MAX', '20')) },
         entities: [
           Categoria, Plato, Ingrediente, PlatoIngrediente, Extra, Promo,
           UserStaff, Cliente, SesionCliente,

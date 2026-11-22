@@ -1,10 +1,20 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { cabecerasSeguridad } from './common/cabeceras-seguridad';
+import { BaseDatosNoDisponibleFilter } from './common/filtros/base-datos-no-disponible.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cabeceras de seguridad: CSP estricta en la API y otra para Swagger (/docs)
+  app.use(cabecerasSeguridad);
+
+  // Si la base de datos no responde: 503 con Retry-After en lugar de un 500 genérico
+  app.useGlobalFilters(
+    new BaseDatosNoDisponibleFilter(app.get(HttpAdapterHost).httpAdapter),
+  );
 
   // CORS — permite peticiones del frontend React
   app.enableCors({

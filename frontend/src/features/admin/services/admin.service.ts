@@ -177,15 +177,15 @@ export function fetchQrToken(pedidoId: number): Promise<ApiQrToken> {
   return apiFetch<ApiQrToken>(`/pedidos/${pedidoId}/qr`);
 }
 
-// Estas dos son públicas (sin auth) — usan fetch directo
+// Consulta pública por token (el token del QR es el secreto) — usa fetch directo
 export function infoPedidoPorToken(token: string): Promise<ApiPedido> {
   return fetch(`${API_URL}/pedidos/verificar-qr/${token}`)
     .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
 }
 
+// Confirmar la entrega exige sesión de administrador o domiciliario
 export function confirmarEntregaConToken(token: string): Promise<ApiPedido> {
-  return fetch(`${API_URL}/pedidos/verificar-qr/${token}/confirmar`, { method: 'PATCH' })
-    .then((r) => r.ok ? r.json() : r.json().then((e: { message: string }) => Promise.reject(new Error(e.message))));
+  return apiFetch<ApiPedido>(`/pedidos/verificar-qr/${token}/confirmar`, { method: 'PATCH' });
 }
 
 export function asignarCasillero(pedidoId: number, casillero: 'X' | 'Y' | null): Promise<ApiPedido> {

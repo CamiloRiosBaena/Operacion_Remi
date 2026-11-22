@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
-import { getActivePedido, clearActivePedido } from '@/shared/lib/guestSession';
+import { clearActivePedido } from '@/shared/lib/guestSession';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import { useOrderTracking, type EstadoPedido } from '@/shared/hooks/useOrderTracking';
 import { cancelarPedidoPublico, fetchQrTokenPublico } from '@/features/pedidos/services/pedidos.service';
 import styles from './OrderTracker.module.css';
@@ -23,7 +24,7 @@ function IcoTipo({ tipo }: { tipo: string }) {
 }
 
 /* ── Pasos ── */
-interface Paso { estado: EstadoPedido; label: string; labelCorto: string; Ico: () => JSX.Element; }
+interface Paso { estado: EstadoPedido; label: string; labelCorto: string; Ico: () => ReactElement; }
 
 const PASOS_MESA_LLEVAR: Paso[] = [
   { estado: 'pendiente', label: 'Recibido',   labelCorto: 'Recibido',   Ico: IcoRecibo   },
@@ -65,6 +66,7 @@ export function OrderTracker({ pedidoId, onClose }: Props) {
   const [canceling,       setCanceling      ] = useState(false);
   const [confirmCancel,   setConfirmCancel  ] = useState(false);
   const [showQr,    setShowQr    ]  = useState(false);
+  const { backdropProps: qrBdProps } = useModalClose(() => setShowQr(false), showQr);
   const [qrToken,   setQrToken   ]  = useState<string | null>(null);
   const [qrLoading, setQrLoading ]  = useState(false);
   const [qrError,   setQrError   ]  = useState('');
@@ -236,8 +238,8 @@ export function OrderTracker({ pedidoId, onClose }: Props) {
 
       {/* QR flotante — portal para salir del overflow:hidden del tracker */}
       {showQr && createPortal(
-        <div className={styles.qrOverlay} onClick={() => setShowQr(false)}>
-          <div className={styles.qrCard} onClick={e => e.stopPropagation()}>
+        <div className={styles.qrOverlay} {...qrBdProps}>
+          <div className={styles.qrCard} role="dialog" aria-modal="true">
             <p className={styles.qrCardTitle}>Tu QR de entrega</p>
             <p className={styles.qrCardSub}>Muéstralo cuando recojas o te entreguen tu pedido</p>
 

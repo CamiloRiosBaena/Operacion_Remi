@@ -38,6 +38,61 @@ function Icon({ name, size = 17 }: { name: string; size?: number }) {
   );
 }
 
+// ── Lógica pura de la pantalla (fuera del componente para mantenerlo simple) ──
+
+function cumpleDisponibilidad(plato: Plato, filtro: FiltroDisp): boolean {
+  if (filtro === 'activos') return plato.disponible;
+  if (filtro === 'agotados') return !plato.disponible;
+  return true;
+}
+
+function filtrarPlatos(platos: Plato[], filtro: FiltroDisp, categoriaId: number, busqueda: string): Plato[] {
+  const texto = busqueda.toLowerCase();
+  return platos.filter(p =>
+    cumpleDisponibilidad(p, filtro)
+    && (categoriaId === 0 || p.categoriaId === categoriaId)
+    && (!texto || p.nombre.toLowerCase().includes(texto)));
+}
+
+type PlatoValidado = { nombre: string; precio: number; tasaIva: number };
+
+/** Valida el formulario del plato; devuelve el mensaje de error o los valores listos para guardar. */
+function validarPlato(form: FormState): { error: string } | PlatoValidado {
+  const nombre = form.nombre.trim();
+  const precio = Number.parseInt(form.precio);
+  const tasaIva = Number.parseFloat(form.tasaIva) / 100;
+  if (nombre.length < 10 || nombre.length > 50) return { error: 'El nombre debe tener entre 10 y 50 caracteres' };
+  if (Number.isNaN(precio) || precio <= 0) return { error: 'El precio debe ser mayor que 0' };
+  if (![0, 0.05, 0.19].includes(tasaIva)) return { error: 'El IVA debe ser 0 %, 5 % o 19 %' };
+  if (!form.categoriaId) return { error: 'Selecciona una categoría' };
+  return { nombre, precio, tasaIva };
+}
+
+const FILTROS_DISPONIBILIDAD: { id: FiltroDisp; texto: string }[] = [
+  { id: 'todos', texto: 'Todos' },
+  { id: 'activos', texto: 'Activos' },
+  { id: 'agotados', texto: 'Agotados' },
+];
+
+function precioPromedio(platos: Plato[]): number {
+  if (!platos.length) return 0;
+  return Math.round(platos.reduce((s, p) => s + p.precio, 0) / platos.length);
+}
+
+function textoBotonFoto(subiendo: boolean, tieneFoto: boolean): string {
+  if (subiendo) return 'Subiendo…';
+  return tieneFoto ? 'Cambiar foto' : 'Subir foto';
+}
+
+function textoBotonGuardar(guardando: boolean, creando: boolean): string {
+  if (guardando) return 'Guardando…';
+  return creando ? 'Crear plato' : 'Guardar cambios';
+}
+
+function mensajeDeError(err: unknown, porDefecto: string): string {
+  return err instanceof Error ? err.message : porDefecto;
+}
+
 export function MenuGestion() {
   const { platos, loading, upsertPlato, deletePlato, toggleDisponible } = usePlatos();
   const [categorias, setCategorias]   = useState<ApiCategoria[]>([]);
@@ -50,9 +105,8 @@ export function MenuGestion() {
   const [deleteId, setDeleteId]       = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState('');
   const [saving, setSaving]           = useState(false);
-  const { backdropProps: formBdProps }   = useModalClose(() => setModal(null));
-  const { backdropProps: catBdProps }    = useModalClose(() => setCatModal(null));
-  const { backdropProps: deleteBdProps } = useModalClose(() => { setDeleteId(null); setDeleteError(''); });
+  const { backdropProps: formBdProps }   = useModalClose(() => setModal(null), modal !== null);
+  const { backdropProps: deleteBdProps } = useModalClose(() => { setDeleteId(null); setDeleteError(''); }, deleteId !== null);
   const [errorMsg, setErrorMsg]       = useState('');
   const fileInputRef                  = useRef<HTMLInputElement>(null);
   const [uploadingImg, setUploadingImg] = useState(false);
@@ -61,6 +115,7 @@ export function MenuGestion() {
   const [extraPrecio, setExtraPrecio] = useState('');
   const [savingExtra, setSavingExtra] = useState(false);
   const [catModal, setCatModal]       = useState<CatModal>(null);
+  const { backdropProps: catBdProps }    = useModalClose(() => setCatModal(null), catModal !== null);
   const [catNombreInput, setCatNombreInput] = useState('');
   const [catSaving, setCatSaving]     = useState(false);
   const [catError, setCatError]       = useState('');
@@ -72,20 +127,10 @@ export function MenuGestion() {
   }, [categorias, form.categoriaId]);
 
   // ── Filtrado combinado ──
-  const platosFiltrados = platos.filter(p => {
-    const matchDisp =
-      filtroDisp === 'todos'    ? true :
-      filtroDisp === 'activos'  ? p.disponible :
-      !p.disponible;
-    const matchCat  = filtroCat === 0 || p.categoriaId === filtroCat;
-    const matchBusq = !busqueda || p.nombre.toLowerCase().includes(busqueda.toLowerCase());
-    return matchDisp && matchCat && matchBusq;
-  });
+  const platosFiltrados = filtrarPlatos(platos, filtroDisp, filtroCat, busqueda);
 
   // ── Stats ──
-  const precioPromedio = platos.length
-    ? Math.round(platos.reduce((s, p) => s + p.precio, 0) / platos.length)
-    : 0;
+  const promedio = precioPromedio(platos);
 
   // ── Handlers (todos idénticos a antes) ──
   function openCrear() {
@@ -102,8 +147,8 @@ export function MenuGestion() {
   }
   async function handleAgregarExtra() {
     if (!extraNombre.trim() || !extraPrecio || modal?.mode !== 'editar') return;
-    const precio = parseInt(extraPrecio);
-    if (isNaN(precio) || precio < 0) return;
+    const precio = Number.parseInt(extraPrecio);
+    if (Number.isNaN(precio) || precio < 0) return;
     setSavingExtra(true);
     try {
       const nuevo = await createExtra({ nombre: extraNombre.trim(), precio, platoId: modal.plato.id });
@@ -122,7 +167,7 @@ export function MenuGestion() {
       const publicUrl = await uploadPlatoImage(file);
       setForm(prev => ({ ...prev, imageUrl: publicUrl, imagePreview: publicUrl }));
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Error al subir la imagen');
+      setErrorMsg(mensajeDeError(err, 'Error al subir la imagen'));
       setForm(prev => ({ ...prev, imagePreview: undefined, imageUrl: undefined }));
     } finally { setUploadingImg(false); }
   }
@@ -131,21 +176,22 @@ export function MenuGestion() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   }
   async function handleGuardar() {
-    const precio = parseInt(form.precio); const tasaIva = parseFloat(form.tasaIva) / 100;
-    if (!form.nombre.trim() || isNaN(precio) || !form.categoriaId || isNaN(tasaIva)) return;
+    const validado = validarPlato(form);
+    if ('error' in validado) { setErrorMsg(validado.error); return; }
+    const { nombre, precio, tasaIva } = validado;
     const catNombre = categorias.find(c => c.id === form.categoriaId)?.nombre ?? '';
     setSaving(true); setErrorMsg('');
     try {
       if (modal?.mode === 'editar') {
         const existing = platos.find(p => p.id === modal.plato.id)!;
-        await upsertPlato({ ...existing, nombre: form.nombre, categoria: catNombre,
+        await upsertPlato({ ...existing, nombre, categoria: catNombre,
           categoriaId: form.categoriaId, precio, tasaIva, disponible: form.disponible, imageUrl: form.imageUrl });
       } else {
-        await upsertPlato({ id: 0, nombre: form.nombre, categoria: catNombre, categoriaId: form.categoriaId,
+        await upsertPlato({ id: 0, nombre, categoria: catNombre, categoriaId: form.categoriaId,
           precio, tasaIva, disponible: form.disponible, imageUrl: form.imageUrl, descripcion: '', ingredientes: [], extras: [] });
       }
       setModal(null);
-    } catch (err) { setErrorMsg(err instanceof Error ? err.message : 'Error guardando'); }
+    } catch (err) { setErrorMsg(mensajeDeError(err, 'Error guardando')); }
     finally { setSaving(false); }
   }
   async function handleCrearCategoria() {
@@ -154,7 +200,7 @@ export function MenuGestion() {
       const nueva = await createCategoria(catNombreInput.trim());
       setCategorias(prev => [...prev, nueva]); setForm(f => ({ ...f, categoriaId: nueva.id }));
       setCatModal(null); setCatNombreInput('');
-    } catch (err) { setCatError(err instanceof Error ? err.message : 'Error al crear categoría'); }
+    } catch (err) { setCatError(mensajeDeError(err, 'Error al crear categoría')); }
     finally { setCatSaving(false); }
   }
   async function handleToggleDisponible(id: number) {
@@ -163,7 +209,7 @@ export function MenuGestion() {
   async function confirmDelete() {
     if (deleteId === null) return; setDeleteError('');
     try { await deletePlato(deleteId); setDeleteId(null); }
-    catch (err: any) { setDeleteError(err.message ?? 'No se pudo eliminar el plato'); }
+    catch (err) { setDeleteError(mensajeDeError(err, 'No se pudo eliminar el plato')); }
   }
 
   const catNombreSeleccionada = categorias.find(c => c.id === form.categoriaId)?.nombre ?? '';
@@ -205,7 +251,7 @@ export function MenuGestion() {
                 <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M3 7a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9v6M18 9v6"/></svg>
               </div>
             </div>
-            <div className="adm-kpi-value" style={{ fontSize: 27 }}>{formatPrecio(precioPromedio)}</div>
+            <div className="adm-kpi-value" style={{ fontSize: 27 }}>{formatPrecio(promedio)}</div>
             <div className="adm-kpi-foot"><span className="muted">Por plato del menú</span></div>
           </div>
         </div>
@@ -219,9 +265,9 @@ export function MenuGestion() {
 
           {/* Seg: Todos / Activos / Agotados */}
           <div className="adm-seg">
-            <button className={filtroDisp === 'todos'   ? 'active' : ''} onClick={() => setFiltroDisp('todos')}>Todos</button>
-            <button className={filtroDisp === 'activos' ? 'active' : ''} onClick={() => setFiltroDisp('activos')}>Activos</button>
-            <button className={filtroDisp === 'agotados'? 'active' : ''} onClick={() => setFiltroDisp('agotados')}>Agotados</button>
+            {FILTROS_DISPONIBILIDAD.map(f => (
+              <button key={f.id} className={filtroDisp === f.id ? 'active' : ''} onClick={() => setFiltroDisp(f.id)}>{f.texto}</button>
+            ))}
           </div>
 
           <div className="adm-toolbar-spacer" />
@@ -308,6 +354,7 @@ export function MenuGestion() {
                     </td>
                     <td>
                       <button className={`adm-toggle ${plato.disponible ? 'on' : ''}`}
+                        aria-label={`Disponible: ${plato.nombre}`} aria-pressed={plato.disponible}
                         onClick={() => handleToggleDisponible(plato.id)} />
                     </td>
                     <td>
@@ -332,13 +379,13 @@ export function MenuGestion() {
       {/* ── Modal crear/editar ── */}
       {modal && (
         <div className="adm-overlay" {...formBdProps}>
-          <div className="adm-modal-box lg" onClick={e => e.stopPropagation()}>
+          <div className="adm-modal-box lg" role="dialog" aria-modal="true">
             <div className="adm-modal-title">
               {modal.mode === 'crear' ? 'Nuevo plato' : 'Editar plato'}
             </div>
             <div className="adm-modal-form">
-              <div className="adm-modal-field">
-                <label>Imagen del plato</label>
+              <div className="adm-modal-field" role="group" aria-labelledby="plato-imagen-titulo">
+                <span id="plato-imagen-titulo" className="adm-field-title">Imagen del plato</span>
                 <div className={styles.imgUploadArea}>
                   <div className={styles.imgPreview}>
                     <PlatoImage nombre={form.nombre || 'Plato'}
@@ -347,7 +394,7 @@ export function MenuGestion() {
                   <div className={styles.imgActions}>
                     <button type="button" className={styles.btnUpload}
                       onClick={() => fileInputRef.current?.click()} disabled={uploadingImg}>
-                      {uploadingImg ? 'Subiendo…' : form.imagePreview ? 'Cambiar foto' : 'Subir foto'}
+                      {textoBotonFoto(uploadingImg, Boolean(form.imagePreview))}
                     </button>
                     {form.imagePreview && (
                       <button type="button" className={styles.btnRemoveImg} onClick={removeImage}>Quitar imagen</button>
@@ -360,41 +407,41 @@ export function MenuGestion() {
               </div>
 
               <div className="adm-modal-field">
-                <label>Nombre del plato</label>
-                <input type="text" className="adm-input" value={form.nombre}
+                <label htmlFor="plato-nombre-del-plato">Nombre del plato</label>
+                <input id="plato-nombre-del-plato" type="text" className="adm-input" value={form.nombre}
                   onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Ej: Bandeja Paisa" />
               </div>
 
               <div className="adm-modal-row">
                 <div className="adm-modal-field">
-                  <label>Categoría</label>
-                  <select className="adm-input" value={form.categoriaId}
+                  <label htmlFor="plato-categoria">Categoría</label>
+                  <select id="plato-categoria" className="adm-input" value={form.categoriaId}
                     onChange={e => setForm({ ...form, categoriaId: Number(e.target.value) })}>
                     {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                   </select>
                 </div>
                 <div className="adm-modal-field">
-                  <label>Precio (COP)</label>
-                  <input type="number" className="adm-input" value={form.precio}
+                  <label htmlFor="plato-precio-cop">Precio (COP)</label>
+                  <input id="plato-precio-cop" type="number" className="adm-input" value={form.precio}
                     onChange={e => setForm({ ...form, precio: e.target.value })} placeholder="28000" />
                 </div>
               </div>
 
               <div className="adm-modal-row">
                 <div className="adm-modal-field">
-                  <label>IVA (%)</label>
-                  <select className="adm-input" value={form.tasaIva}
+                  <label htmlFor="plato-iva">IVA (%)</label>
+                  <select id="plato-iva" className="adm-input" value={form.tasaIva}
                     onChange={e => setForm({ ...form, tasaIva: e.target.value })}>
                     <option value="0">0% — Excluido</option>
                     <option value="5">5%</option>
                     <option value="19">19% — General</option>
                   </select>
                 </div>
-                {form.precio && !isNaN(parseInt(form.precio)) && (
+                {form.precio && !Number.isNaN(Number.parseInt(form.precio)) && (
                   <div className="adm-modal-field">
-                    <label>Precio final al cliente</label>
-                    <input className="adm-input" readOnly
-                      value={`$${Math.round(parseInt(form.precio)*(1+parseFloat(form.tasaIva)/100)).toLocaleString('es-CO')}`} />
+                    <label htmlFor="plato-precio-final-al">Precio final al cliente</label>
+                    <input id="plato-precio-final-al" className="adm-input" readOnly
+                      value={`$${Math.round(Number.parseInt(form.precio)*(1+Number.parseFloat(form.tasaIva)/100)).toLocaleString('es-CO')}`} />
                   </div>
                 )}
               </div>
@@ -402,12 +449,12 @@ export function MenuGestion() {
               <label className="adm-check-label">
                 <input type="checkbox" checked={form.disponible}
                   onChange={e => setForm({ ...form, disponible: e.target.checked })} />
-                Disponible en el menú
+                <span>Disponible en el menú</span>
               </label>
 
               {modal?.mode === 'editar' && (
-                <div className="adm-modal-field">
-                  <label>Extras del plato</label>
+                <div className="adm-modal-field" role="group" aria-labelledby="plato-extras-titulo">
+                  <span id="plato-extras-titulo" className="adm-field-title">Extras del plato</span>
                   <p className={styles.fieldHint}>Opciones adicionales que el cliente puede agregar</p>
                   {extras.length > 0 && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 10 }}>
@@ -441,7 +488,7 @@ export function MenuGestion() {
             <div className="adm-modal-actions">
               <button className="adm-btn adm-btn-ghost" onClick={() => setModal(null)} disabled={saving}>Cancelar</button>
               <button className="adm-btn adm-btn-primary" onClick={handleGuardar} disabled={saving}>
-                {saving ? 'Guardando…' : modal.mode === 'crear' ? 'Crear plato' : 'Guardar cambios'}
+                {textoBotonGuardar(saving, modal.mode === 'crear')}
               </button>
             </div>
           </div>
@@ -451,12 +498,12 @@ export function MenuGestion() {
       {/* ── Modal nueva categoría ── */}
       {catModal && (
         <div className="adm-overlay" {...catBdProps}>
-          <div className="adm-modal-box sm" onClick={e => e.stopPropagation()}>
+          <div className="adm-modal-box sm" role="dialog" aria-modal="true">
             <div className="adm-modal-title">Nueva categoría</div>
             <div className="adm-modal-form">
               <div className="adm-modal-field">
-                <label>Nombre de la categoría</label>
-                <input type="text" className="adm-input" value={catNombreInput}
+                <label htmlFor="plato-nombre-de-la">Nombre de la categoría</label>
+                <input id="plato-nombre-de-la" type="text" className="adm-input" value={catNombreInput}
                   onChange={e => setCatNombreInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCrearCategoria()}
                   placeholder="Ej: Platos fuertes" autoFocus maxLength={50} />
@@ -477,7 +524,7 @@ export function MenuGestion() {
       {/* ── Modal eliminar ── */}
       {deleteId !== null && (
         <div className="adm-overlay" {...deleteBdProps}>
-          <div className="adm-modal-box sm" onClick={e => e.stopPropagation()}>
+          <div className="adm-modal-box sm" role="dialog" aria-modal="true">
             <div className="adm-modal-title">Eliminar plato</div>
             <p className="adm-modal-text">
               ¿Seguro que quieres eliminar <strong>{platos.find(p => p.id === deleteId)?.nombre}</strong>? Esta acción no se puede deshacer.

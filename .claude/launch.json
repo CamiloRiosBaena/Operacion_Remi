@@ -2,10 +2,32 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "backend-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "backend", "run", "start:dev"],
+      "port": 3000
+    },
+    {
       "name": "frontend-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "frontend", "run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "test-reports",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "serve", "-l", "5600", "."],
+      "port": 5600
+    },
+    {
+      "name": "sonarqube",
+      "url": "http://localhost:9000",
+      "port": 9000
+    },
+    {
+      "name": "frontend-running",
+      "url": "http://127.0.0.1:5500",
+      "port": 5500
     }
   ]
 }

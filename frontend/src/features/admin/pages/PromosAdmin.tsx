@@ -33,14 +33,6 @@ const EMPTY: PromoPayload = {
   valorDescuento: null,
 };
 
-function isLight(hex: string): boolean {
-  const c = hex.replace('#', '');
-  const r = parseInt(c.substring(0, 2), 16);
-  const g = parseInt(c.substring(2, 4), 16);
-  const b = parseInt(c.substring(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 155;
-}
-
 // ── Componente ───────────────────────────────────────────────────────────────
 export function PromosAdmin() {
   const [promos, setPromos]             = useState<Promo[]>([]);
@@ -57,8 +49,8 @@ export function PromosAdmin() {
   const fileInputRef                    = useRef<HTMLInputElement>(null);
   const { platos } = usePlatos();
 
-  const { backdropProps: formBdProps }   = useModalClose(() => closeModal());
-  const { backdropProps: deleteBdProps } = useModalClose(() => { setDeleteId(null); setDeleteError(''); });
+  const { backdropProps: formBdProps }   = useModalClose(() => closeModal(), modal !== null);
+  const { backdropProps: deleteBdProps } = useModalClose(() => { setDeleteId(null); setDeleteError(''); }, deleteId !== null);
 
   useEffect(() => {
     load();
@@ -289,6 +281,8 @@ export function PromosAdmin() {
                     className={`adm-toggle ${promo.activo ? 'on' : ''}`}
                     onClick={() => handleToggleActivo(promo)}
                     title={promo.activo ? 'Desactivar' : 'Activar'}
+                    aria-label={`Activa: ${promo.titulo}`}
+                    aria-pressed={promo.activo}
                   />
                 </div>
 
@@ -346,38 +340,38 @@ export function PromosAdmin() {
             <div className={styles.formGrid}>
               {/* Tag */}
               <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Tag (emoji + texto)</label>
-                <input className={styles.input} placeholder="🔥 Oferta del día" value={form.tag} onChange={(e) => setField('tag', e.target.value)} />
+                <label htmlFor="promo-tag-emoji-texto" className={styles.label}>Tag (emoji + texto)</label>
+                <input id="promo-tag-emoji-texto" className={styles.input} placeholder="🔥 Oferta del día" value={form.tag} onChange={(e) => setField('tag', e.target.value)} />
               </div>
 
               {/* Título */}
               <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Título</label>
-                <input className={styles.input} placeholder="Bandeja Paisa" value={form.titulo} onChange={(e) => setField('titulo', e.target.value)} />
+                <label htmlFor="promo-titulo" className={styles.label}>Título</label>
+                <input id="promo-titulo" className={styles.input} placeholder="Bandeja Paisa" value={form.titulo} onChange={(e) => setField('titulo', e.target.value)} />
               </div>
 
               {/* Subtítulo */}
               <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Subtítulo</label>
-                <textarea className={styles.textarea} placeholder="Descripción corta de la promo" value={form.subtitulo} onChange={(e) => setField('subtitulo', e.target.value)} />
+                <label htmlFor="promo-subtitulo" className={styles.label}>Subtítulo</label>
+                <textarea id="promo-subtitulo" className={styles.textarea} placeholder="Descripción corta de la promo" value={form.subtitulo} onChange={(e) => setField('subtitulo', e.target.value)} />
               </div>
 
               {/* CTA texto */}
               <div className={styles.field}>
-                <label className={styles.label}>Texto del botón</label>
-                <input className={styles.input} placeholder="Pedir ahora" value={form.cta} onChange={(e) => setField('cta', e.target.value)} />
+                <label htmlFor="promo-texto-del-boton" className={styles.label}>Texto del botón</label>
+                <input id="promo-texto-del-boton" className={styles.input} placeholder="Pedir ahora" value={form.cta} onChange={(e) => setField('cta', e.target.value)} />
               </div>
 
               {/* Orden */}
               <div className={styles.field}>
-                <label className={styles.label}>Orden</label>
-                <input type="number" min={0} className={styles.input} value={form.orden} onChange={(e) => setField('orden', Number(e.target.value))} />
+                <label htmlFor="promo-orden" className={styles.label}>Orden</label>
+                <input id="promo-orden" type="number" min={0} className={styles.input} value={form.orden} onChange={(e) => setField('orden', Number(e.target.value))} />
               </div>
 
               {/* Acción */}
               <div className={styles.field}>
-                <label className={styles.label}>Destino del botón</label>
-                <select
+                <label htmlFor="promo-destino-del-boton" className={styles.label}>Destino del botón</label>
+                <select id="promo-destino-del-boton"
                   className={styles.select}
                   value={form.ctaAccion}
                   onChange={(e) => { setField('ctaAccion', e.target.value as 'plato' | 'categoria'); setField('ctaValor', ''); }}
@@ -389,11 +383,12 @@ export function PromosAdmin() {
 
               {/* Valor del CTA */}
               <div className={styles.field}>
-                <label className={styles.label}>
+                <label htmlFor="promo-cta-valor" className={styles.label}>
                   {form.ctaAccion === 'plato' ? 'Plato' : 'Categoría'}
                 </label>
                 {form.ctaAccion === 'plato' ? (
                   <select
+                    id="promo-cta-valor"
                     className={styles.select}
                     value={form.ctaValor}
                     onChange={(e) => setField('ctaValor', e.target.value)}
@@ -405,6 +400,7 @@ export function PromosAdmin() {
                   </select>
                 ) : (
                   <select
+                    id="promo-cta-valor"
                     className={styles.select}
                     value={form.ctaValor}
                     onChange={(e) => setField('ctaValor', e.target.value)}
@@ -418,8 +414,8 @@ export function PromosAdmin() {
               </div>
 
               {/* ── Colores ── */}
-              <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Colores del gradiente y acento</label>
+              <div className={`${styles.field} ${styles.formFull}`} role="group" aria-labelledby="promo-colores-titulo">
+                <span id="promo-colores-titulo" className={styles.label}>Colores del gradiente y acento</span>
                 <div className={styles.colorStack}>
                   {(['colorFrom', 'colorTo', 'colorAcento'] as const).map((key) => (
                     <div key={key} className={styles.colorStackRow}>
@@ -452,8 +448,8 @@ export function PromosAdmin() {
               </div>
 
               {/* ── Imagen del banner ── */}
-              <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Imagen del banner (opcional)</label>
+              <div className={`${styles.field} ${styles.formFull}`} role="group" aria-labelledby="promo-imagen-titulo">
+                <span id="promo-imagen-titulo" className={styles.label}>Imagen del banner (opcional)</span>
                 <div className={styles.imgUploadArea}>
                   {imgPreview ? (
                     <div className={styles.imgPreviewWrap}>
@@ -492,8 +488,8 @@ export function PromosAdmin() {
 
               {/* ── Descuento / Promoción ── */}
               <div className={`${styles.field} ${styles.formFull}`}>
-                <label className={styles.label}>Tipo de descuento</label>
-                <select
+                <label htmlFor="promo-tipo-de-descuento" className={styles.label}>Tipo de descuento</label>
+                <select id="promo-tipo-de-descuento"
                   className={styles.input}
                   value={form.tipoDescuento ?? ''}
                   onChange={(e) => {
@@ -514,10 +510,11 @@ export function PromosAdmin() {
 
               {form.tipoDescuento && form.tipoDescuento !== '2x1' && (
                 <div className={`${styles.field} ${styles.formFull}`}>
-                  <label className={styles.label}>
+                  <label htmlFor="promo-valor-descuento" className={styles.label}>
                     {form.tipoDescuento === 'porcentaje' ? 'Porcentaje de descuento (%)' : 'Monto de descuento ($)'}
                   </label>
                   <input
+                    id="promo-valor-descuento"
                     type="number"
                     className={styles.input}
                     value={form.valorDescuento ?? ''}
@@ -533,7 +530,7 @@ export function PromosAdmin() {
               {/* Activo */}
               <div className={`${styles.field} ${styles.formFull}`}>
                 <div className={styles.toggleRow}>
-                  <label className={styles.toggle}>
+                  <label className={styles.toggle} aria-label="Promoción activa">
                     <input
                       type="checkbox"
                       checked={form.activo}

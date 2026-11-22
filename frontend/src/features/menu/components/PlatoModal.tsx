@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useCarrito } from '@/features/carrito/context/CarritoContext';
 import { PlatoImage } from '@/shared/components/PlatoImage';
+import { useModalClose } from '@/shared/hooks/useModalClose';
 import type { Plato } from '../types/plato.types';
 import styles from './PlatoModal.module.css';
 
@@ -29,12 +30,8 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
     return () => { document.body.style.overflow = ''; };
   }, []);
 
-  // Cerrar con Escape
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === 'Escape') onClose(); }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
+  // Cerrar con Escape o con un clic en el fondo
+  const { backdropProps } = useModalClose(onClose);
 
   function toggleIngrediente(ing: string) {
     setRemovidos((prev) => {
@@ -81,7 +78,7 @@ export function PlatoModal({ plato, onClose, onAdded }: Props) {
   return (
     <div
       className={styles.backdrop}
-      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      {...backdropProps}
     >
       <div
         className={styles.sheet}

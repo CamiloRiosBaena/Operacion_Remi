@@ -41,14 +41,12 @@ function MesaQR({ mesa }: { mesa: ApiMesa }) {
 function QrModal({ mesa, onClose }: { mesa: ApiMesa; onClose: () => void }) {
   const { backdropProps } = useModalClose(onClose);
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', handler);
     document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', handler); document.body.style.overflow = ''; };
-  }, [onClose]);
+    return () => { document.body.style.overflow = ''; };
+  }, []);
   return createPortal(
     <div className="adm-overlay" {...backdropProps}>
-      <div className="adm-modal-box" onClick={e => e.stopPropagation()}>
+      <div className="adm-modal-box" role="dialog" aria-modal="true">
         <div className={styles.qrPanelHeader}>
           <div>
             <div className={styles.qrPanelTitle}>Mesa {mesa.numero}</div>
@@ -74,6 +72,7 @@ export function MesasAdmin() {
   const [filtro,       setFiltro      ] = useState<FiltroMesa>('todas');
   const [busqueda,     setBusqueda    ] = useState('');
   const [showNueva,    setShowNueva   ] = useState(false);
+  const { backdropProps: nuevaBdProps } = useModalClose(() => setShowNueva(false), showNueva);
   const [pedidosPorMesa, setPedidosPorMesa] = useState<Record<number, number>>({});
   const [pedidosHoy,   setPedidosHoy  ] = useState(0);
 
@@ -99,7 +98,8 @@ export function MesasAdmin() {
   useEffect(() => { cargar(); }, [cargar]);
 
   async function handleCrear() {
-    const num = parseInt(nuevaNum); if (isNaN(num) || num < 1) return;
+    const num = Number(nuevaNum);
+    if (!Number.isInteger(num) || num < 1) { setErrorMsg('El número de mesa debe ser un entero mayor que 0'); return; }
     setCreando(true); setErrorMsg('');
     try {
       const nueva = await createMesa(num);
@@ -331,13 +331,13 @@ export function MesasAdmin() {
 
       {/* ── Modal Nueva mesa ── */}
       {showNueva && (
-        <div className="adm-overlay" onClick={() => setShowNueva(false)}>
-          <div className="adm-modal-box sm" onClick={e => e.stopPropagation()}>
+        <div className="adm-overlay" {...nuevaBdProps}>
+          <div className="adm-modal-box sm" role="dialog" aria-modal="true">
             <div className="adm-modal-title">Nueva mesa</div>
             <div className="adm-modal-form">
               <div className="adm-modal-field">
-                <label>Número de mesa</label>
-                <input type="number" className="adm-input" autoFocus
+                <label htmlFor="mesa-numero-de-mesa">Número de mesa</label>
+                <input id="mesa-numero-de-mesa" type="number" className="adm-input" autoFocus
                   placeholder="Ej: 5" value={nuevaNum}
                   onChange={e => setNuevaNum(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleCrear()}

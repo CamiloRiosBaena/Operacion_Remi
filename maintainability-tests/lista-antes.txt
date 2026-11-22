@@ -1,0 +1,129 @@
+backend/src/modules/asistente/asistente.service.ts 192 typescript:S8786 Simplify this regular expression to reduce its runtime, as it has super-linear performance due to ba
+backend/src/modules/pagos/pagos.service.ts 122 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+backend/src/modules/pagos/pagos.service.ts 295 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/features/admin/components/AdminLayout.tsx 91 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/components/AdminLayout.tsx 91 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/components/QRScannerModal.tsx 116 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/components/QRScannerModal.tsx 116 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/components/QRScannerModal.tsx 117 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/components/QRScannerModal.tsx 117 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/AdminDashboard.module.css 111 css:S4656 Duplicate property "border"
+frontend/src/features/admin/pages/AdminDashboard.module.css 111 css:S4656 Duplicate property "background"
+frontend/src/features/admin/pages/AdminDashboard.tsx 52 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/features/admin/pages/AdminDashboard.tsx 216 typescript:S7723 Use `new Array()` instead of `Array()`.
+frontend/src/features/admin/pages/AdminDashboard.tsx 225 typescript:S7723 Use `new Array()` instead of `Array()`.
+frontend/src/features/admin/pages/AdminDashboard.tsx 234 typescript:S7723 Use `new Array()` instead of `Array()`.
+frontend/src/features/admin/pages/AdminDashboard.tsx 240 typescript:S7723 Use `new Array()` instead of `Array()`.
+frontend/src/features/admin/pages/AdminDashboard.tsx 271 typescript:S6772 Ambiguous spacing after previous element span
+frontend/src/features/admin/pages/IngredientesGestion.tsx 98 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 98 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 98 typescript:S7773 Prefer `Number.parseInt` over `parseInt`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 101 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 102 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 103 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 106 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 112 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 131 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 131 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 132 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 133 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 326 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 326 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/IngredientesGestion.tsx 330 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 336 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 355 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/IngredientesGestion.tsx 365 typescript:S6772 Ambiguous spacing after previous element input
+frontend/src/features/admin/pages/IngredientesGestion.tsx 395 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 41 typescript:S3776 Refactor this function to reduce its Cognitive Complexity from 19 to the 15 allowed.
+frontend/src/features/admin/pages/MenuGestion.tsx 105 typescript:S7773 Prefer `Number.parseInt` over `parseInt`.
+frontend/src/features/admin/pages/MenuGestion.tsx 106 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/MenuGestion.tsx 134 typescript:S7773 Prefer `Number.parseInt` over `parseInt`.
+frontend/src/features/admin/pages/MenuGestion.tsx 134 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/MenuGestion.tsx 137 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/MenuGestion.tsx 340 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MenuGestion.tsx 340 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MenuGestion.tsx 346 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 368 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 375 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 382 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 390 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 398 typescript:S7773 Prefer `Number.isNaN` over `isNaN`.
+frontend/src/features/admin/pages/MenuGestion.tsx 398 typescript:S7773 Prefer `Number.parseInt` over `parseInt`.
+frontend/src/features/admin/pages/MenuGestion.tsx 400 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 402 typescript:S7773 Prefer `Number.parseInt` over `parseInt`.
+frontend/src/features/admin/pages/MenuGestion.tsx 402 typescript:S7773 Prefer `Number.parseFloat` over `parseFloat`.
+frontend/src/features/admin/pages/MenuGestion.tsx 409 typescript:S6772 Ambiguous spacing after previous element input
+frontend/src/features/admin/pages/MenuGestion.tsx 415 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 459 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MenuGestion.tsx 459 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MenuGestion.tsx 463 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/MenuGestion.tsx 485 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MenuGestion.tsx 485 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MesasAdmin.tsx 51 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MesasAdmin.tsx 51 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MesasAdmin.tsx 335 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MesasAdmin.tsx 335 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MesasAdmin.tsx 336 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/MesasAdmin.tsx 336 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/MesasAdmin.tsx 340 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PedidosAdmin.tsx 344 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/PedidosAdmin.tsx 344 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/PedidosAdmin.tsx 345 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/PedidosAdmin.tsx 345 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/PromosAdmin.tsx 343 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 349 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 355 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 361 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 367 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 373 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 416 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 450 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 489 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/PromosAdmin.tsx 530 typescript:S6853 A form label must have accessible text.
+frontend/src/features/admin/pages/UsuariosGestion.tsx 229 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/admin/pages/UsuariosGestion.tsx 229 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/admin/pages/UsuariosGestion.tsx 235 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/UsuariosGestion.tsx 241 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/admin/pages/UsuariosGestion.tsx 247 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/asistente/components/ChatWidget.tsx 92 typescript:S6772 Ambiguous spacing after previous element span
+frontend/src/features/carrito/components/CartDrawer.tsx 397 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/carrito/components/CartDrawer.tsx 426 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/carrito/context/CarritoContext.tsx 16 typescript:S2871 Provide a compare function that depends on "String.localeCompare", to reliably sort elements alphabe
+frontend/src/features/carrito/context/CarritoContext.tsx 19 typescript:S2871 Provide a compare function that depends on "String.localeCompare", to reliably sort elements alphabe
+frontend/src/features/cocina/pages/CocinaDashboard.tsx 83 typescript:S5850 Group parts of the regex together to make the intended operator precedence explicit.
+frontend/src/features/cocina/pages/CocinaDashboard.tsx 91 typescript:S5850 Group parts of the regex together to make the intended operator precedence explicit.
+frontend/src/features/cocina/pages/CocinaDashboard.tsx 403 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/cocina/pages/CocinaDashboard.tsx 403 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/cocina/pages/CocinaDashboard.tsx 430 typescript:S6853 A form label must be associated with a control.
+frontend/src/features/domicilios/components/QrScannerModal.tsx 118 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/domicilios/components/QrScannerModal.tsx 118 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/domicilios/components/QrScannerModal.tsx 119 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/domicilios/components/QrScannerModal.tsx 119 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/landingpages/Pages/RemiLandingPage.css 81 css:S4649 Missing generic font family
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 92 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 409 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 410 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 411 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 412 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 419 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 420 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 421 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 422 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 429 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 430 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 431 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/landingpages/Pages/RemiLandingPage.tsx 432 typescript:S6844 The href attribute requires a valid value to be accessible. Provide a valid, navigable address as th
+frontend/src/features/menu/components/OrderTracker.tsx 239 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/menu/components/OrderTracker.tsx 239 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/menu/components/OrderTracker.tsx 240 typescript:S1082 Visible, non-interactive elements with click handlers must have at least one keyboard listener.
+frontend/src/features/menu/components/OrderTracker.tsx 240 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/menu/components/PlatoModal.tsx 82 typescript:S6848 Avoid non-native interactive elements. If using native HTML is not possible, add an appropriate role
+frontend/src/features/menu/pages/MenuPage.tsx 99 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/features/menu/pages/MenuPage.tsx 221 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/shared/components/AppShell.module.css 20 css:S4656 Duplicate property "position"
+frontend/src/shared/hooks/usePushNotifications.ts 14 typescript:S7781 Prefer `String#replaceAll()` over `String#replace()`.
+frontend/src/shared/hooks/usePushNotifications.ts 14 typescript:S7781 Prefer `String#replaceAll()` over `String#replace()`.
+frontend/src/shared/hooks/usePushNotifications.ts 16 typescript:S7758 Prefer `String#codePointAt()` over `String#charCodeAt()`.
+frontend/src/shared/hooks/useRealtimePedidos.ts 23 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/shared/lib/storage.ts 11 typescript:S2245 Make sure that using this pseudorandom number generator is safe here.
+frontend/src/shared/lib/validaciones.ts 3 typescript:S8786 Simplify this regular expression to reduce its runtime, as it has super-linear performance due to ba

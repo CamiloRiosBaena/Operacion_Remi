@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 810 600" width="810" height="600">
+  <style>
+    .bg { fill:#fdfbf5; }
+    .box.depth-0 { fill:#cf4520; stroke:#cf4520; stroke-width:1.6; }
+    .box.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1.4; }
+    .box.depth-2, .box.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1.3; }
+    .box.probada { fill:#fbe3d8; stroke:#cf4520; stroke-width:2.6; }
+    .box.contiene { stroke:#cf4520; stroke-width:2.6; }
+    .icon.depth-0 { fill:#cf4520; stroke:#fffdf8; stroke-width:1; }
+    .icon.depth-1 { fill:#efe7d2; stroke:#211d16; stroke-width:1; }
+    .icon.depth-2, .icon.depth-3 { fill:#ffffff; stroke:#211d16; stroke-width:1; }
+    .label { font-family:'IBM Plex Mono','Consolas','SFMono-Regular',monospace; text-anchor:middle; fill:#211d16; font-size:11.5px; }
+    .label.depth-0 { fill:#fffdf8; font-weight:700; font-size:15px; }
+    .label.depth-1 { font-weight:600; font-size:12.5px; }
+    .label.depth-2 { font-weight:500; }
+    .label.probada { font-weight:700; }
+    .tag { font-family:'IBM Plex Mono','Consolas',monospace; font-size:9px; fill:#8a7e63; }
+    .tag.depth-0 { fill:#fffdf8; }
+    .grande .label { font-size:14px; }
+    .grande .label.depth-1 { font-size:15px; }
+    .grande .tag { font-size:10.5px; }
+    .edge { fill:none; stroke:#8a7e63; stroke-width:1.3; }
+    .hdr-title { font-family:'IBM Plex Mono','Consolas',monospace; font-size:20px; font-weight:700; fill:#211d16; }
+    .hdr-sub { font-family:'IBM Plex Mono','Consolas',monospace; font-size:12px; fill:#8a7e63; }
+    .lg-text { font-family:'IBM Plex Mono','Consolas',monospace; font-size:11px; fill:#4a4436; }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#8a7e63"/>
+    </marker>
+  </defs>
+<rect class="bg" x="0" y="0" width="810" height="600"/>
+<text class="hdr-title" x="40" y="34">ÁRBOL FUNCIONAL — MÓDULO MENÚ (parte 1)</text><text class="hdr-sub" x="40" y="54">Módulo C · Platos, Ingredientes · funciones probadas: Registrar plato (AE), Registrar ingrediente (AI)</text>
+<g class="grande"><g transform="translate(40, 74)"><rect x="0" y="0" width="14" height="11" fill="#cf4520" stroke="#cf4520"/><text class="lg-text" x="20" y="10">Sistema</text><rect x="90" y="0" width="14" height="11" fill="#efe7d2" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="110" y="10">Módulo (controller)</text><rect x="270" y="0" width="14" height="11" fill="#ffffff" stroke="#211d16" stroke-width="1"/><text class="lg-text" x="290" y="10">Sub-recurso / función</text><rect x="470" y="0" width="14" height="11" fill="#fbe3d8" stroke="#cf4520" stroke-width="2"/><text class="lg-text" x="490" y="10">Función probada</text></g>
+<g><rect class="box depth-3 probada" x="560.0" y="100.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="107.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="119.0" width="11" height="7"/><text class="label depth-3 probada"><tspan x="665.0" y="129.0">Registrar plato</tspan></text><text class="tag depth-3" x="764.0" y="113.0" text-anchor="end">AE</text></g>
+<g><rect class="box depth-3" x="560.0" y="160.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="167.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="179.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="189.0">Consultar platos</tspan></text><text class="tag depth-3" x="764.0" y="173.0" text-anchor="end">AF</text></g>
+<g><rect class="box depth-3" x="560.0" y="220.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="227.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="239.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="249.0">Actualizar plato</tspan></text><text class="tag depth-3" x="764.0" y="233.0" text-anchor="end">AG</text></g>
+<g><rect class="box depth-3" x="560.0" y="280.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="287.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="299.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="309.0">Eliminar plato</tspan></text><text class="tag depth-3" x="764.0" y="293.0" text-anchor="end">AH</text></g>
+<path class="edge" d="M510,214.0 L535.0,214.0"/>
+<path class="edge" d="M535.0,124.0 L535.0,304.0"/>
+<path class="edge" d="M535.0,124.0 L551,124.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,184.0 L551,184.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,244.0 L551,244.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,304.0 L551,304.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-2" x="300.0" y="190.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="197.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="209.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="219.0">Platos</tspan></text><text class="tag depth-2" x="504.0" y="203.0" text-anchor="end">N</text></g>
+<g><rect class="box depth-3 probada" x="560.0" y="340.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="347.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="359.0" width="11" height="7"/><text class="label depth-3 probada"><tspan x="665.0" y="360.5">Registrar</tspan><tspan x="665.0" y="377.5">ingrediente</tspan></text><text class="tag depth-3" x="764.0" y="353.0" text-anchor="end">AI</text></g>
+<g><rect class="box depth-3" x="560.0" y="400.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="407.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="419.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="420.5">Actualizar</tspan><tspan x="665.0" y="437.5">ingrediente</tspan></text><text class="tag depth-3" x="764.0" y="413.0" text-anchor="end">AJ</text></g>
+<g><rect class="box depth-3" x="560.0" y="460.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="467.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="479.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="480.5">Eliminar</tspan><tspan x="665.0" y="497.5">ingrediente</tspan></text><text class="tag depth-3" x="764.0" y="473.0" text-anchor="end">AK</text></g>
+<g><rect class="box depth-3" x="560.0" y="520.0" width="210" height="48"/><rect class="icon depth-3" x="555.0" y="527.0" width="11" height="7"/><rect class="icon depth-3" x="555.0" y="539.0" width="11" height="7"/><text class="label depth-3"><tspan x="665.0" y="549.0">Consultar stock</tspan></text><text class="tag depth-3" x="764.0" y="533.0" text-anchor="end">AL</text></g>
+<path class="edge" d="M510,454.0 L535.0,454.0"/>
+<path class="edge" d="M535.0,364.0 L535.0,544.0"/>
+<path class="edge" d="M535.0,364.0 L551,364.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,424.0 L551,424.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,484.0 L551,484.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M535.0,544.0 L551,544.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-2" x="300.0" y="430.0" width="210" height="48"/><rect class="icon depth-2" x="295.0" y="437.0" width="11" height="7"/><rect class="icon depth-2" x="295.0" y="449.0" width="11" height="7"/><text class="label depth-2"><tspan x="405.0" y="459.0">Ingredientes</tspan></text><text class="tag depth-2" x="504.0" y="443.0" text-anchor="end">O</text></g>
+<path class="edge" d="M250,334.0 L275.0,334.0"/>
+<path class="edge" d="M275.0,214.0 L275.0,454.0"/>
+<path class="edge" d="M275.0,214.0 L291,214.0" marker-end="url(#arrow)"/>
+<path class="edge" d="M275.0,454.0 L291,454.0" marker-end="url(#arrow)"/>
+<g><rect class="box depth-1" x="40.0" y="310.0" width="210" height="48"/><rect class="icon depth-1" x="35.0" y="317.0" width="11" height="7"/><rect class="icon depth-1" x="35.0" y="329.0" width="11" height="7"/><text class="label depth-1"><tspan x="145.0" y="339.0">Menú</tspan></text><text class="tag depth-1" x="244.0" y="323.0" text-anchor="end">C</text></g></g>
+</svg>
