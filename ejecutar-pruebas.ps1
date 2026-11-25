@@ -136,8 +136,7 @@ while ($true) {
             Write-Host "Descargando $img ..." -ForegroundColor Cyan; docker pull $img
           }
         }
-        Push-Location (Join-Path $Repo 'portability-tests'); npx playwright install; Pop-Location
-        Write-Host 'Listo.' -ForegroundColor Green
+        Write-Host 'Listo. Los navegadores de Playwright se descargan en la opcion 6, que es la unica que los usa.' -ForegroundColor Green
       }
       'D' {
         foreach ($c in 'sonarqube', 'zap-gui', 'remi-test-db') { docker stop $c 2>$null | Out-Null }
@@ -180,7 +179,18 @@ while ($true) {
       '6' {
         Backend-Listo 'prueba'; Frontend-Listo 3001
         Instalar (Join-Path $Repo 'portability-tests')
-        Push-Location (Join-Path $Repo 'portability-tests'); & .\abrir-ui.ps1; Pop-Location
+        Push-Location (Join-Path $Repo 'portability-tests')
+        if ((Read-Host 'Descargar o verificar los navegadores de Playwright (Chromium, Firefox y WebKit, unos 500 MB)? S/N [N]').ToUpper() -eq 'S') {
+          # Uno por uno y con el detalle de la descarga, para ver en cual va. Si se corta, se puede repetir: retoma lo que falte.
+          $env:DEBUG = 'pw:install'
+          foreach ($nav in 'chromium', 'firefox', 'webkit') {
+            Write-Host "== Navegador: $nav ==" -ForegroundColor Cyan
+            npx playwright install $nav
+          }
+          Remove-Item Env:DEBUG
+        }
+        & .\abrir-ui.ps1
+        Pop-Location
       }
       '7' {
         Write-Host 'Instala y compila todo desde cero en un contenedor Linux (5 a 15 minutos)...' -ForegroundColor Cyan

@@ -100,6 +100,7 @@ Una forma rápida de ver que una prueba detecta un error es cambiar el código e
 
 ### Playwright y Selenium IDE (opciones 6 y 10)
 
+- La primera vez, la opción 6 pregunta si descargar los navegadores de Playwright (unos 500 MB) y los baja uno por uno mostrando el detalle; si la descarga se corta, se repite y retoma lo que falte.
 - Playwright abre su interfaz (UI mode): se elige el navegador y el caso, y se ve cada paso con su captura. Los casos están en `portability-tests\tests\portabilidad.spec.ts`.
 - En Selenium IDE, cada caso se puede abrir, cambiar un paso o un valor y volver a reproducirlo. La suite está en `acceptance-tests\remi-aceptacion.side`.
 
