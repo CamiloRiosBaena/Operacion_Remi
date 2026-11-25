@@ -24,3 +24,9 @@ respaldo_*.docx
 
 # Reportes generados por Playwright
 portability-tests/reporte/
+
+# Corridas de demostracion de ZAP
+security-tests/octubre/corrida/
+
+# Certificado y clave que genera ZAP en la carpeta montada
+security-tests/**/zap_root_ca.*

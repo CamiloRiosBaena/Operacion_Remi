@@ -37,10 +37,10 @@ def variables(pares):
 SERVIDOR = [('HOST', 'host', 'localhost', 'Servidor del backend'), ('PUERTO', 'puerto', '3000', 'Puerto del backend')]
 
 
-def listener(gui, nombre, archivo='', extra=''):
+def listener(gui, nombre, archivo='', extra='', solo_errores=False):
     arch = f'<stringProp name="filename">{escape(archivo)}</stringProp>' if archivo else ''
     return (f'<ResultCollector guiclass="{gui}" testclass="ResultCollector" testname="{nombre}" enabled="true">'
-            '<boolProp name="ResultCollector.error_logging">false</boolProp>'
+            f'<boolProp name="ResultCollector.error_logging">{str(solo_errores).lower()}</boolProp>'
             f'<objProp><name>saveConfig</name><value class="SampleSaveConfiguration">{SAVE}</value></objProp>'
             f'{arch}{extra}</ResultCollector><hashTree/>')
 
@@ -129,7 +129,7 @@ xml = ('<?xml version="1.0" encoding="UTF-8"?>\n<jmeterTestPlan version="1.2" pr
        '</ConfigTestElement><hashTree/>'
        + grupo('F1 - Clientes consultando el menú (F1_CLIENTES)', '${F1_CLIENTES}', 30, '${F1_PAUSA_MS}', f1)
        + grupo('F2 - Entradas inválidas (F2_HILOS)', '${F2_HILOS}', 5, '${F2_PAUSA_MS}', f2)
-       + listener('ViewResultsFullVisualizer', 'View Results Tree')
+       + listener('ViewResultsFullVisualizer', 'View Results Tree', solo_errores=True)
        + listener('SummaryReport', 'Summary Report', RESULTADOS)
        + listener('StatVisualizer', 'Aggregate Report')
        + listener('RespTimeGraphVisualizer', 'Response Time Graph', '', '<stringProp name="RespTimeGraph.interval">10000</stringProp>')

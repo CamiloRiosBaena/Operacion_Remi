@@ -6,15 +6,70 @@
       <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-        <collectionProp name="Arguments.arguments"/>
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="HOST" elementType="Argument">
+            <stringProp name="Argument.name">HOST</stringProp>
+            <stringProp name="Argument.value">${__P(host,localhost)}</stringProp>
+            <stringProp name="Argument.desc">Servidor del backend</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PUERTO" elementType="Argument">
+            <stringProp name="Argument.name">PUERTO</stringProp>
+            <stringProp name="Argument.value">${__P(puerto,3000)}</stringProp>
+            <stringProp name="Argument.desc">Puerto del backend</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="E1_CLIENTES" elementType="Argument">
+            <stringProp name="Argument.name">E1_CLIENTES</stringProp>
+            <stringProp name="Argument.value">${__P(clientes1,50)}</stringProp>
+            <stringProp name="Argument.desc">E1. Carga normal: clientes concurrentes</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="E1_ITERACIONES" elementType="Argument">
+            <stringProp name="Argument.name">E1_ITERACIONES</stringProp>
+            <stringProp name="Argument.value">${__P(iteraciones1,20)}</stringProp>
+            <stringProp name="Argument.desc">E1: veces que cada cliente consulta el menu</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="E2_CLIENTES" elementType="Argument">
+            <stringProp name="Argument.name">E2_CLIENTES</stringProp>
+            <stringProp name="Argument.value">${__P(clientes2,200)}</stringProp>
+            <stringProp name="Argument.desc">E2. Estres: clientes concurrentes</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="E2_ITERACIONES" elementType="Argument">
+            <stringProp name="Argument.name">E2_ITERACIONES</stringProp>
+            <stringProp name="Argument.value">${__P(iteraciones2,10)}</stringProp>
+            <stringProp name="Argument.desc">E2: veces que cada cliente consulta el menu</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="RAMPA_S" elementType="Argument">
+            <stringProp name="Argument.name">RAMPA_S</stringProp>
+            <stringProp name="Argument.value">${__P(rampa,10)}</stringProp>
+            <stringProp name="Argument.desc">Segundos para arrancar a todos los clientes</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PAUSA_MS" elementType="Argument">
+            <stringProp name="Argument.name">PAUSA_MS</stringProp>
+            <stringProp name="Argument.value">${__P(pausa,300)}</stringProp>
+            <stringProp name="Argument.desc">Pausa entre peticiones (ms)</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="LIMITE_MS" elementType="Argument">
+            <stringProp name="Argument.name">LIMITE_MS</stringProp>
+            <stringProp name="Argument.value">${__P(limite,2000)}</stringProp>
+            <stringProp name="Argument.desc">Tiempo maximo aceptado, RNF-02 (ms)</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
       </elementProp>
     </TestPlan>
     <hashTree>
       <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults">
         <intProp name="HTTPSampler.connect_timeout">5000</intProp>
         <intProp name="HTTPSampler.response_timeout">10000</intProp>
-        <stringProp name="HTTPSampler.domain">localhost</stringProp>
-        <stringProp name="HTTPSampler.port">3000</stringProp>
+        <stringProp name="HTTPSampler.domain">${HOST}</stringProp>
+        <stringProp name="HTTPSampler.port">${PUERTO}</stringProp>
         <stringProp name="HTTPSampler.protocol">http</stringProp>
         <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
           <collectionProp name="Arguments.arguments"/>
@@ -33,16 +88,16 @@
       </ResponseAssertion>
       <hashTree/>
       <DurationAssertion guiclass="DurationAssertionGui" testclass="DurationAssertion" testname="RNF-02 - Respuesta menor a 2 s">
-        <stringProp name="DurationAssertion.duration">2000</stringProp>
+        <stringProp name="DurationAssertion.duration">${LIMITE_MS}</stringProp>
       </DurationAssertion>
       <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Escenario 1 - Carga normal (50 clientes)">
-        <intProp name="ThreadGroup.num_threads">50</intProp>
-        <intProp name="ThreadGroup.ramp_time">10</intProp>
+        <stringProp name="ThreadGroup.num_threads">${E1_CLIENTES}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMPA_S}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">20</stringProp>
+          <stringProp name="LoopController.loops">${E1_ITERACIONES}</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -81,17 +136,17 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Pausa entre peticiones (300 ms)" enabled="true">
-          <stringProp name="ConstantTimer.delay">300</stringProp>
+          <stringProp name="ConstantTimer.delay">${PAUSA_MS}</stringProp>
         </ConstantTimer>
         <hashTree/>
       </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Escenario 2 - Estrés (200 clientes)">
-        <intProp name="ThreadGroup.num_threads">200</intProp>
-        <intProp name="ThreadGroup.ramp_time">10</intProp>
+        <stringProp name="ThreadGroup.num_threads">${E2_CLIENTES}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${RAMPA_S}</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">10</stringProp>
+          <stringProp name="LoopController.loops">${E2_ITERACIONES}</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -130,7 +185,7 @@
         </HTTPSamplerProxy>
         <hashTree/>
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Pausa entre peticiones (300 ms)" enabled="true">
-          <stringProp name="ConstantTimer.delay">300</stringProp>
+          <stringProp name="ConstantTimer.delay">${PAUSA_MS}</stringProp>
         </ConstantTimer>
         <hashTree/>
       </hashTree>
@@ -204,7 +259,7 @@
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename">C:\Users\PC\OneDrive\Documentos\Personal\WEB\Operacion_Remi\perf-tests\octubre\resultados.jtl</stringProp>
+        <stringProp name="filename">${__P(carpeta,.)}/resultados.jtl</stringProp>
       </ResultCollector>
       <hashTree/>
       <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
