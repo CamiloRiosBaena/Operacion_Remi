@@ -65,17 +65,19 @@ function Abrir-JMeter([string]$Plan, [string]$Carpeta, [string[]]$Jtl, [string[]
 
 function Generar-Dashboard {
   $jtls = @(@(
-    @{ n = '2.5.2 Rendimiento'; f = Join-Path $ren 'resultados.jtl' },
-    @{ n = '2.5.5 Fiabilidad'; f = Join-Path $fia 'resultados.jtl' },
-    @{ n = '3.3.2 Capacidad'; f = Join-Path $met 'capacidad.jtl' },
-    @{ n = '3.3.6 Rafaga'; f = Join-Path $met 'rafaga.jtl' }) | Where-Object { Test-Path $_.f })
+    # g = granularidad de las graficas "over time" en ms (JMeter usa 60 s por defecto: una prueba de menos de un
+    # minuto quedaria con un solo punto)
+    @{ n = '2.5.2 Rendimiento'; f = Join-Path $ren 'resultados.jtl'; g = 1000 },
+    @{ n = '2.5.5 Fiabilidad'; f = Join-Path $fia 'resultados.jtl'; g = 10000 },
+    @{ n = '3.3.2 Capacidad'; f = Join-Path $met 'capacidad.jtl'; g = 5000 },
+    @{ n = '3.3.6 Rafaga'; f = Join-Path $met 'rafaga.jtl'; g = 1000 }) | Where-Object { Test-Path $_.f })
   if (-not $jtls) { throw 'Todavia no hay resultados de JMeter. Corre primero una prueba de JMeter.' }
   for ($i = 0; $i -lt $jtls.Count; $i++) { Write-Host "  $($i + 1). $($jtls[$i].n)" }
   $k = [int](Read-Host 'Cual') - 1
   $jtl = $jtls[$k].f
   $salida = Join-Path (Split-Path $jtl) 'dashboard-corrida'
   Remove-Item $salida -Recurse -Force -ErrorAction SilentlyContinue
-  & (Buscar-JMeter) -g "$jtl" -o "$salida" | Out-Null
+  & (Buscar-JMeter) -g "$jtl" -o "$salida" "-Jjmeter.reportgenerator.overall_granularity=$($jtls[$k].g)" | Out-Null
   Start-Process (Join-Path $salida 'index.html')
 }
 
